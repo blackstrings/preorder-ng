@@ -1,0 +1,18 @@
+<div>
+  <div>
+    <p class="text-warning" [hidden]="!isLoginFailed">Invalid username or password</p>
+    <p>username: <input type="text" [formControl]="emailInput"> </p>
+    <p>password: <input type="text" [formControl]="passwordInput"> </p>
+  </div>
+
+  <div>
+    <button (click)="login()">Login</button>
+    <button (click)="logout()">Logout</button>
+  </div>
+
+  <div>
+    <button>Create New Account</button>
+    <button>Forgot Password</button>
+  </div>
+
+</div>
