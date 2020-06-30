@@ -73,9 +73,9 @@ export class HttpWrapperService {
 
   public login(email: string, pass: string): Observable<{}> {
     // turn on for quick testing
-    console.warn('<< HttpWrapper >> email and pass is hardcoded for test user');
-    email = 'email@email.com';
-    pass = 'password';
+    // console.warn('<< HttpWrapper >> email and pass is hardcoded for test user');
+    // email = 'email@email.com';
+    // pass = 'password';
 
     this.body = {'email': email, 'password': pass};
     const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
