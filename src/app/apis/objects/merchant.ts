@@ -4,7 +4,7 @@ export class Merchant {
 
   }
 
-  /*
+  /* todo xl remove when done implementing this class
   created_at: "2019-10-29T02:09:35-04:00"
 description: "eggs and rolls"
 id: 1

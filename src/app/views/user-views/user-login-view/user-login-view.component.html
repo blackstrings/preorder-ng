@@ -1,0 +1,26 @@
+<div>
+  <div>
+    <p class="text-warning" [hidden]="!isLoginFailed">Invalid username or password</p>
+    <p>username: <input type="text" [formControl]="emailInput"> </p>
+    <p>password: <input type="text" [formControl]="passwordInput"> </p>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button class="btn-primary btn-block" (click)="login()">Login</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button class="btn-primary btn-block" [routerLink]="'/' + ViewRoutes.USER_CREATE">New Account</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <button class="btn-primary btn-block" [routerLink]="'/' + ViewRoutes.USER_RESET_LOGIN">Forgot Password</button>
+    </div>
+  </div>
+
+</div>

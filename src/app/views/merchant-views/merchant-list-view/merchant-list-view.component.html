@@ -1,8 +1,20 @@
+<h1>
+  Merchants
+</h1>
+<div class="row">
+  <input class="col-12" [defaultValue]="'search by name'">
+</div>
 <div>
-  <h1>Merchant Lists</h1>
-  <ul>
-    <li *ngFor="let merchant of merchants">
-      {{merchant.id}} : {{merchant.name}}
-    </li>
-  </ul>
+  <table  class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+    </tr>
+    </thead>
+    <tr *ngFor="let contact of merchants">
+      <td> {{ contact.id }} </td>
+      <td> {{ contact.name }} </td>
+    </tr>
+  </table>
 </div>

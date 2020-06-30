@@ -11,6 +11,6 @@ export class ApiEndPoints {
 
   public static readonly USER_LOGIN: string = 'authenticate';
   public static readonly USER_LOGOUT: string = 'user/logout';
-  public static readonly MERCHANT_CREATE: string = 'merchant/create';
+  public static readonly MERCHANT_CREATE: string = 'merchants';
   public static readonly MERCHANT_LIST: string = 'merchants';
 }

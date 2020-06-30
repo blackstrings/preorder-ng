@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Observable, of, throwError} from "rxjs";
+import {Observable, of, ReplaySubject, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError} from "rxjs/operators";
 
@@ -26,6 +26,10 @@ export class HttpWrapperService {
 
   // the set the api version here so we can concate with the end points
   private apiVersion: string = ApiEndPoints.TARGET_VERSION;
+
+  // login subscription
+  private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  public onLogin: Observable<boolean> = this._onLogin.asObservable();
 
   // todo test to create
   // private merchantCreateProduct: string = 'http://localhost:3000/merchants/1/products/new';
@@ -56,17 +60,22 @@ export class HttpWrapperService {
   }
 
   public setAuthToken(token: string): void {
-    this.authToken = token;
+    if(token){
+      this.authToken = token;
+      this._onLogin.next(true);
+    }
   }
 
   public clearAuthToken(): void {
     this.authToken = null;
+    this._onLogin.next(false);
   }
 
   public login(email: string, pass: string): Observable<{}> {
     // turn on for quick testing
-    // email = 'email@email.com';
-    // pass = 'password';
+    console.warn('<< HttpWrapper >> email and pass is hardcoded for test user');
+    email = 'email@email.com';
+    pass = 'password';
 
     this.body = {'email': email, 'password': pass};
     const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
@@ -75,6 +84,7 @@ export class HttpWrapperService {
   }
 
   public logout(): Observable<{}> {
+    console.warn('todo logout from backend not fully wired yet');
     if(this.authToken){
       return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null).pipe(catchError(this.handleError));
     } else {
@@ -93,6 +103,17 @@ export class HttpWrapperService {
         .pipe(catchError(this.handleError));
     }
     return throwError('<< HttpWrapper >> getMerchantList failed, token is null');
+  }
+
+  // todo xl not complete
+  public createNewAccount(email: string, password: string): Observable<{}> {
+    console.warn('todo create account not yet complete');
+    if(!this.authToken) {
+      // todo xl make endpoint call to crate account
+      return of(null);
+    } else {
+      console.error('<< HttpWrapper >> Failed to create account, token is not null as user is signed in');
+    }
   }
 
   // create merchant products

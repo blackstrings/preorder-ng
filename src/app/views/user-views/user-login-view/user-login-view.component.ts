@@ -15,6 +15,9 @@ import {ResponseLogin} from "../../../apis/responses/response-login";
 })
 export class UserLoginViewComponent implements OnInit, OnDestroy {
 
+  // reference so we can use inside html
+  ViewRoutes = ViewRoutes;
+
   // custom
   public isLoginFailed: boolean;
 
@@ -31,7 +34,8 @@ export class UserLoginViewComponent implements OnInit, OnDestroy {
   constructor(private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute) {
     // go to merchant list if token is already fulfilled
     if(this.http.getAuthToken()) {
-      this.router.navigate(['merchant/list']);
+      console.log('<< UserLoginView >> User is signed in, routing to merchange list');
+      this.router.navigate([ViewRoutes.MERCHANT_LIST]);
     }
   }
 
