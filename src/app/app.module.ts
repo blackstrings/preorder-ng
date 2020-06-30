@@ -12,6 +12,7 @@ import {MerchantCreateViewComponent} from './views/merchant-views/merchant-creat
 import {MerchantListViewComponent} from './views/merchant-views/merchant-list-view/merchant-list-view.component';
 import { OrderHistoryViewComponent } from './views/customer-views/order-history-view/order-history-view.component';
 import {BasicViewGuard} from "./views/view-guards/basic-view-guard";
+import { BasicNavViewComponent } from './views/nav-views/basic-nav-view/basic-nav-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -25,6 +26,7 @@ import {BasicViewGuard} from "./views/view-guards/basic-view-guard";
     MerchantCreateViewComponent,
     MerchantListViewComponent,
     OrderHistoryViewComponent,
+    BasicNavViewComponent,
   ],
   imports: [
     BrowserModule,

@@ -11,11 +11,10 @@ const routes: Routes = [
   //{path: 'poki', loadChildren: () => import('./features/poki/poki.module').then(m => m.PokiModule)},
   {path: ViewRoutes.LOGIN, component: UserLoginViewComponent},
   {path: ViewRoutes.MERCHANT_LIST, component: MerchantListViewComponent, canActivate: [BasicViewGuard]},
-  // default routing fall back when no url matches, this should be last
-  {path: '', redirectTo: '/login', pathMatch: 'full'},
+  {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
+  {path: '', redirectTo: ViewRoutes.LOGIN, pathMatch: 'full'},
   {path: '**', component: UserLoginViewComponent },  // Wildcard route for a 404 page
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {preloadingStrategy: PreloadAllModules, useHash: true, enableTracing: false})],

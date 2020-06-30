@@ -71,8 +71,10 @@ export class UserLoginViewComponent implements OnInit, OnDestroy {
       )
       .subscribe( (response: ResponseLogin) => {
           if(response && response.auth_token) {
-            // store token
+
+            // set the token
             this.http.setAuthToken(response.auth_token);
+
             // take user to merchant list view
             this.router.navigate([ViewRoutes.MERCHANT_LIST]);
           } else {
