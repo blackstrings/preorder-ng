@@ -5,7 +5,7 @@ import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {Observable, of, Subject, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
-import { FormControl } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
 
 @Component({
@@ -31,7 +31,12 @@ export class UserLoginViewComponent implements OnInit, OnDestroy {
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
   private unSub: Observable<boolean> = this._unSub.asObservable();
 
-  constructor(private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute) {
+  forma: FormGroup;
+
+  constructor(private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute, fb: FormBuilder) {
+
+    this.forma = fb.group({})
+
     // go to merchant list if token is already fulfilled
     if(this.http.getAuthToken()) {
       console.log('<< UserLoginView >> User is signed in, routing to merchange list');
