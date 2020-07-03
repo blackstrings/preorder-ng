@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MerchantListViewComponent } from './merchant-list-view.component';
+import { UserMerchantListViewComponent } from './user-merchant-list-view.component';
 
 describe('MerhchantListViewComponent', () => {
-  let component: MerchantListViewComponent;
-  let fixture: ComponentFixture<MerchantListViewComponent>;
+  let component: UserMerchantListViewComponent;
+  let fixture: ComponentFixture<UserMerchantListViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MerchantListViewComponent ]
+      declarations: [ UserMerchantListViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MerchantListViewComponent);
+    fixture = TestBed.createComponent(UserMerchantListViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

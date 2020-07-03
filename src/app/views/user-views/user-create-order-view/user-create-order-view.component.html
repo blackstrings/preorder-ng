@@ -1,0 +1,17 @@
+<h1>Create Order</h1>
+<div>
+  <div class="merchant-address">
+    <div *ngIf="merchant else noAddress">{{merchant.getName()}}</div>
+    <ng-template #noAddress>no merchant found</ng-template>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 list-group">
+    <ng-container *ngFor="let p of products">
+      <a class="list-group-item list-group-item-action" (click)="addProduct(p.id)">
+        {{p.title}} - ${{p.price}}
+      </a>
+    </ng-container>
+  </div>
+</div>

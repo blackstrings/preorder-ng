@@ -14,7 +14,7 @@
         </a>
         <div  class="dropdown-menu"  aria-labelledby="navbarDropdown">
           <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_PROFILE"> Profile </a>
-          <a [hidden]="isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_CREATE"> Create Account </a>
+          <a [hidden]="isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_CREATE_PROFILE"> Create Account </a>
 
           <div [hidden]="!isLogin" class="dropdown-divider"></div>
           <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE"> Create Merchant Account</a>

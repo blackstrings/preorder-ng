@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable, of, ReplaySubject, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
-import {catchError} from "rxjs/operators";
+import {catchError, map} from "rxjs/operators";
+import {IMerchant} from "../objects/i-merchant";
+import {IProduct} from "../objects/i-product";
 
 /**
  * The front end service to make any backend calls.
@@ -59,6 +61,33 @@ export class HttpWrapperService {
     return this.authToken;
   }
 
+  private getHttpOptions(): {params: HttpParams, headers: HttpHeaders} {
+    if(this.authToken) {
+      const headers: HttpHeaders = this.getUserAuthHeader();
+      if(headers) {
+        return {params: this.params, headers: headers};
+      } else {
+        console.error('<< HttpWrapper >> getHttpOptions failed, headers null');
+      }
+    } else {
+      console.error('<< HttpWrapper >> getHttpOptions failed, token null');
+    }
+    throw new Error('<< HttpWrapper >> getHttpOptions failed, check call');
+  }
+
+  /**
+   * Returns user auth header for http calls
+   * @throws error if token is null
+   */
+  private getUserAuthHeader(): HttpHeaders {
+    if(this.authToken) {
+      const authHeader = new HttpHeaders({'Authorization': this.authToken});  //works
+      // authHeader.append('Authorization', this.getAuthToken()); // doesn't seem to work after in init
+      return authHeader;
+    }
+    throw new Error('<< HttpWrapper >> getUserAuthHeader failed, token null');
+  }
+
   public setAuthToken(token: string): void {
     if(token){
       this.authToken = token;
@@ -86,23 +115,47 @@ export class HttpWrapperService {
   public logout(): Observable<{}> {
     console.warn('todo logout from backend not fully wired yet');
     if(this.authToken){
-      return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null).pipe(catchError(this.handleError));
+      return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null)
+        .pipe(catchError(this.handleError));
     } else {
       console.warn('<< HttpWrapper >> logout unnecessary, token null');
     }
     return throwError('<< HttpWrapper >> Logout unnecessary, token is null');
   }
 
-  public getMerchantList(): Observable<{}> {
+  /**
+   * call to get merchant products
+   * @api api/version/merchants/merchant_id/products/
+   * */
+  public getMerchantProducts(merchantID: number): Observable<IProduct[]> {
+    if(merchantID && this.authToken) {
+      const url: string = this.apiVersion + ApiEndPoints.MERCHANT
+        + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
+
+      return this.httpClient.get<IProduct[]>(url, this.getHttpOptions())
+        .pipe(
+          //map(res => { return <IProduct[]>res }),
+          catchError(this.handleError));
+    }
+    return throwError('<< HttpWrapper >> getMerchantProducts failed, id or token null');
+  }
+
+  /**
+   * By default httpclient returns the json in the body.
+   * You can specified a return type Observable<HttpResponse<YourObject>> to
+   * traverse into the headers and body for more specific data.
+   */
+  public getMerchantList(): Observable<IMerchant[]> {
     if(this.authToken) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
-      const authHeader = new HttpHeaders({'Authorization': this.authToken});  //works
-      // authHeader.append('Authorization', this.getAuthToken()); // doesn't seem to work after in init
-      return this.httpClient
-        .get(url, {params: this.params, headers: authHeader})
-        .pipe(catchError(this.handleError));
+
+      return this.httpClient.get<IMerchant[]>(url, this.getHttpOptions())
+        .pipe(
+          map(res => { return <IMerchant[]>res; }),
+          catchError(this.handleError)
+        );
     }
-    return throwError('<< HttpWrapper >> getMerchantList failed, token is null');
+    return throwError('<< HttpWrapper >> getMerchantList failed, token null');
   }
 
   // todo xl not complete
