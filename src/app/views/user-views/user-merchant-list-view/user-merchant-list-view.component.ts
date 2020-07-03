@@ -3,7 +3,6 @@ import {Merchant} from "../../../apis/objects/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {take} from "rxjs/operators";
 import {ViewRoutes} from "../../view-routes";
-import {IMerchant} from "../../../apis/objects/i-merchant";
 import {Router} from "@angular/router";
 
 @Component({
@@ -20,7 +19,7 @@ export class UserMerchantListViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.getMerchantList().pipe(take(1)).subscribe((data: IMerchant[]) => {
+    this.http.getMerchantList().pipe(take(1)).subscribe((data: Merchant[]) => {
       console.log(data);
       this.merchants = Merchant.deserializeArray(data);
       // clone the data into the merchants from the IMerchant[] shape

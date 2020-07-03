@@ -1,5 +1,3 @@
-import {IMerchant} from "./i-merchant";
-
 export class Merchant {
 
   constructor(private id: number, private name: string) {
@@ -15,14 +13,14 @@ export class Merchant {
   }
 
   /** turns serialized object into the concrete form */
-  public static deserialize(data: IMerchant): Merchant {
+  public static deserialize(data: Merchant): Merchant {
     return new Merchant(
       data.id,
       data.name
     );
   }
 
-  public static deserializeArray(data: IMerchant[]): Merchant[] {
+  public static deserializeArray(data: Merchant[]): Merchant[] {
     if(data) {
       const merchants: Merchant[] = [];
       data.forEach(d => {

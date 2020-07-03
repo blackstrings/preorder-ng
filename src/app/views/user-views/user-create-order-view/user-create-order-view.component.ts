@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Merchant} from "../../../apis/objects/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {ActivatedRoute} from "@angular/router";
-import {IProduct} from "../../../apis/objects/i-product";
+import {Product} from "../../../apis/objects/product";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -12,7 +12,7 @@ import {IProduct} from "../../../apis/objects/i-product";
 export class UserCreateOrderViewComponent implements OnInit {
 
   public merchant: Merchant;
-  public products: IProduct[];
+  public products: Product[];
 
   constructor(private http: HttpWrapperService, private activatedRoute: ActivatedRoute) {
 
@@ -31,8 +31,9 @@ export class UserCreateOrderViewComponent implements OnInit {
         const merchantID: number = parseInt(id);
         if(!isNaN(merchantID)) {
 
-          this.http.getMerchantProducts(merchantID).subscribe( (data: IProduct[]) => {
+          this.http.getMerchantProducts(merchantID).subscribe( (data: Product[]) => {
             this.products = [...data];
+            this.merchant = Merchant.deserialize(this.products[0].merchant);
             console.log(this.products);
           }, (e) => {
             console.warn('<< UserCreateOrderView >> getProductsFailed, http failed');

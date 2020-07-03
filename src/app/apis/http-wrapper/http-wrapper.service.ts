@@ -3,8 +3,8 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/c
 import {Observable, of, ReplaySubject, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError, map} from "rxjs/operators";
-import {IMerchant} from "../objects/i-merchant";
-import {IProduct} from "../objects/i-product";
+import {Product} from "../objects/product";
+import {Merchant} from "../objects/merchant";
 
 /**
  * The front end service to make any backend calls.
@@ -127,15 +127,16 @@ export class HttpWrapperService {
    * call to get merchant products
    * @api api/version/merchants/merchant_id/products/
    * */
-  public getMerchantProducts(merchantID: number): Observable<IProduct[]> {
+  public getMerchantProducts(merchantID: number): Observable<Product[]> {
     if(merchantID && this.authToken) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT
         + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
 
-      return this.httpClient.get<IProduct[]>(url, this.getHttpOptions())
+      return this.httpClient.get<Product[]>(url, this.getHttpOptions())
         .pipe(
-          //map(res => { return <IProduct[]>res }),
-          catchError(this.handleError));
+          map(res => { return Product.deserializeAsArray(res) }),
+          catchError(this.handleError)
+        );
     }
     return throwError('<< HttpWrapper >> getMerchantProducts failed, id or token null');
   }
@@ -145,13 +146,13 @@ export class HttpWrapperService {
    * You can specified a return type Observable<HttpResponse<YourObject>> to
    * traverse into the headers and body for more specific data.
    */
-  public getMerchantList(): Observable<IMerchant[]> {
+  public getMerchantList(): Observable<Merchant[]> {
     if(this.authToken) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
 
-      return this.httpClient.get<IMerchant[]>(url, this.getHttpOptions())
+      return this.httpClient.get<Merchant[]>(url, this.getHttpOptions())
         .pipe(
-          map(res => { return <IMerchant[]>res; }),
+          map(res => { return <Merchant[]>res; }),
           catchError(this.handleError)
         );
     }

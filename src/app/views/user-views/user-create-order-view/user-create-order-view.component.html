@@ -10,7 +10,7 @@
   <div class="col-12 list-group">
     <ng-container *ngFor="let p of products">
       <a class="list-group-item list-group-item-action" (click)="addProduct(p.id)">
-        {{p.title}} - ${{p.price}}
+        {{p.title}} <span class="badge-pill float-right"> ${{p.getPrice().toFixed(2)}} </span>
       </a>
     </ng-container>
   </div>
