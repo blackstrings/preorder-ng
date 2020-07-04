@@ -4,7 +4,7 @@ import {Observable, of, ReplaySubject, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError, map} from "rxjs/operators";
 import {Product} from "../objects/product";
-import {Merchant} from "../objects/merchant";
+import {Merchant} from "../objects/merchant/merchant";
 
 /**
  * The front end service to make any backend calls.
@@ -33,6 +33,8 @@ export class HttpWrapperService {
   private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>();
   public onLogin: Observable<boolean> = this._onLogin.asObservable();
 
+  private selectedMerchant: Merchant;
+
   // todo test to create
   // private merchantCreateProduct: string = 'http://localhost:3000/merchants/1/products/new';
 
@@ -44,7 +46,7 @@ export class HttpWrapperService {
    * Generic error handler for http calls
    * @param error
    */
-  private handleError(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Unknown error!';
     if (error.error instanceof ErrorEvent) {
       // Client-side errors

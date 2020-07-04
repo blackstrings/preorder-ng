@@ -20,6 +20,10 @@ export class Merchant {
     );
   }
 
+  /**
+   * Deserialize an array of merchants objects to concrete if they are in json form
+   * @param data assumed to be in JSON format
+   */
   public static deserializeArray(data: Merchant[]): Merchant[] {
     if(data) {
       const merchants: Merchant[] = [];

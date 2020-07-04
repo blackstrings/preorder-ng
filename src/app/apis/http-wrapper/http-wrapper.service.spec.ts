@@ -1,12 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
 import { HttpWrapperService } from './http-wrapper.service';
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {HttpClient} from "@angular/common/http";
 
-describe('HttpServiceService', () => {
+describe('HttpWrapperService', () => {
   let service: HttpWrapperService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule
+      ],
+      providers: [
+        HttpWrapperService,
+      ]
+    });
     service = TestBed.inject(HttpWrapperService);
   });
 

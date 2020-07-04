@@ -5,15 +5,15 @@
 <!--    <p>password: <input type="text" [formControl]="passwordInput"> </p>-->
 <!--  </div>-->
 
-  <form [formGroup]="forma">
+  <form [formGroup]="form1">
     <div class="form-group">
       <label for="exampleInputEmail1">Email address</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" [formControl]="emailInput">
+      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="email" [formControl]="emailInput">
 <!--      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
     </div>
     <div class="form-group">
       <label for="exampleInputPassword1">Password</label>
-      <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" [formControl]="passwordInput">
+      <input type="password" class="form-control" id="exampleInputPassword1" placeholder="password" [formControl]="passwordInput">
     </div>
     <button type="submit" class="btn btn-primary" (click)="login()">Login</button>
   </form>

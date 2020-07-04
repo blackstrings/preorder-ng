@@ -1,13 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BasicNavViewComponent } from './basic-nav-view.component';
+import {RouterTestingModule} from "@angular/router/testing";
+import {HttpClientTestingModule} from "@angular/common/http/testing";
 
-describe('CustomerToolbarViewComponent', () => {
+describe('BasicNavViewComponent', () => {
   let component: BasicNavViewComponent;
   let fixture: ComponentFixture<BasicNavViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports:[
+        RouterTestingModule,
+        HttpClientTestingModule
+      ],
       declarations: [ BasicNavViewComponent ]
     })
     .compileComponents();

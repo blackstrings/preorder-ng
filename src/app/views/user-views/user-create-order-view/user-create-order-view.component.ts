@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Merchant} from "../../../apis/objects/merchant";
+import {Merchant} from "../../../apis/objects/merchant/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {ActivatedRoute} from "@angular/router";
 import {Product} from "../../../apis/objects/product";
@@ -33,7 +33,7 @@ export class UserCreateOrderViewComponent implements OnInit {
 
           this.http.getMerchantProducts(merchantID).subscribe( (data: Product[]) => {
             this.products = [...data];
-            this.merchant = Merchant.deserialize(this.products[0].merchant);
+            //this.merchant = Merchant.deserialize(this.products[0].merchant);
             console.log(this.products);
           }, (e) => {
             console.warn('<< UserCreateOrderView >> getProductsFailed, http failed');

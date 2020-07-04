@@ -1,12 +1,11 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
-import {catchError, take, takeUntil, timeout} from "rxjs/operators";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {Observable, of, Subject, throwError} from "rxjs";
-import {HttpErrorResponse} from "@angular/common/http";
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
+import {take, takeUntil, timeout} from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-login-view',
@@ -31,11 +30,12 @@ export class UserLoginViewComponent implements OnInit, OnDestroy {
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
   private unSub: Observable<boolean> = this._unSub.asObservable();
 
-  forma: FormGroup;
+  public form1: FormGroup;
 
-  constructor(private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute, fb: FormBuilder) {
+  constructor(private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute) {
 
-    this.forma = fb.group({})
+    //this.forma = fb.group({})
+    this.form1 = new FormGroup({});
 
     // go to merchant list if token is already fulfilled
     if(this.http.getAuthToken()) {

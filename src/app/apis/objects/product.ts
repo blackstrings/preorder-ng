@@ -1,4 +1,4 @@
-import {Merchant} from "./merchant";
+import {Merchant} from "./merchant/merchant";
 
 export class Product {
   constructor(
