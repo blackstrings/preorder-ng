@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Merchant} from "../../objects/merchant/merchant";
 
+/**
+ * Handles querying merchants and caching.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -51,6 +54,7 @@ export class MerchantServiceService {
       return this.merchantSelected;
     }
     console.warn('<< MerchantService >> getMerchantSelected failed, merchantSelected null');
+    return null;
   }
 
 }
