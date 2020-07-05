@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { MerchantServiceService } from './merchant-service.service';
-import {MerchantTest} from "../objects/merchant/merchant.test";
+import {MerchantTest} from "../../objects/merchant/merchant.test";
 
 describe('MerchantServiceService', () => {
   let service: MerchantServiceService;
@@ -26,7 +26,14 @@ describe('MerchantServiceService', () => {
       service['merchantsCached'] = merchantsCached;
       service.addToCache(merchantsCached);
       expect(service['merchantsCached'].length).toBe(2);
-    })
+    });
+
+    it('should cache new merchants', () => {
+      service['merchantsCached'] = merchantsCached;
+      const newMerchants: MerchantTest[] = [MerchantTest.create(3), MerchantTest.create(4)];
+      service.addToCache(newMerchants);
+      expect(service['merchantsCached'].length).toBe(4);
+    });
 
   });
 });

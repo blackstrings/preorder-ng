@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Merchant} from "../objects/merchant/merchant";
+import {Merchant} from "../../objects/merchant/merchant";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,21 @@ export class MerchantServiceService {
    * but a user may not necessary be loading 300k merchants at a time
    * probably only 1000 at the most
    * provides a way to grab merchant info from the cache vs making extra calls
+   *
+   * In order to make cache merchants useful, we'd have to know
+   * - when is it okay to cache
+   * - when to clear the cache
+   * - when to read from the cache.
+   *
+   * ## when to cache
+   * - navigating to another view
+   *
+   * ## when to read from cache
+   * - coming back from a nested view
+   *
+   * ## when to clear the cache
+   * - typing new address location
+   * - typing new keywords
    */
   private merchantsCached: Merchant[] = [];
 
@@ -25,7 +40,9 @@ export class MerchantServiceService {
   public addToCache(merchants: Merchant[]): void {
     if(merchants && this.merchantsCached) {
       const newMerchants = merchants.filter( x => !(this.merchantsCached.includes(x)) );
-      this.merchantsCached.push(...newMerchants);
+      if(newMerchants) {
+        this.merchantsCached.push(...newMerchants);
+      }
     }
   }
 
