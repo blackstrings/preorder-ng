@@ -17,7 +17,7 @@ export class UserMerchantListViewComponent implements OnInit {
   ViewRoutes = ViewRoutes;
   public merchants: Merchant[] = [];
 
-  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
+  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService<Merchant>) {
     console.log('<< UserMerchantListView >> View Initiated');
   }
 

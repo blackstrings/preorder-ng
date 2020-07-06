@@ -4,6 +4,7 @@ import {ViewRoutes} from "../../view-routes";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {take} from "rxjs/operators";
 import {UserService} from "../../../services/user-service/user.service";
+import {ResponseLogin} from "../../../apis/responses/response-login";
 
 @Component({
   selector: 'app-basic-nav-view',
@@ -17,7 +18,7 @@ export class BasicNavViewComponent implements OnInit {
 
   public isLogin: boolean = false;
 
-  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
+  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService<ResponseLogin>) {
     userService.onLogin.subscribe( result => {
       this.isLogin = result;
     });

@@ -25,55 +25,52 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   // the model
   public user: User = new User();
 
-  // form inputs
-  public emailInput = new FormControl(
+  // form inputs wired to form control for live feedbacks
+  public emailFC = new FormControl(
     this.user.email, [
       Validators.required, Validators.email
     ]);
 
-  public passwordInput = new FormControl(
+  public passwordFC = new FormControl(
     this.user.password, [
       Validators.required, Validators.minLength(4)
     ]);
 
-
-  // private email: string;
-  // private password: string;
-
-  // for unsubscribing to subscriptions on destroy
+  // for unsubscription when component is destroyed
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
   private unSub: Observable<boolean> = this._unSub.asObservable();
 
-  public form1: FormGroup;
+  public formLogin: FormGroup;
 
-  constructor(private userService: UserService, private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private userService: UserService, private http: HttpWrapperService<ResponseLogin>, private router: Router, private activatedRoute: ActivatedRoute) {
     console.log('<< UserLoginView >> View Initiated');
-  }
 
-  ngOnInit(): void {
-
-    //this.forma = fb.group({})
-    this.form1 = new FormGroup({
-      'email': this.emailInput,
-      'password': this.passwordInput
-    });
-
-    // go to merchant list if user is logged in
+    // auto route to merchant list if user is logged in
     if(this.userService.getAuthToken()) {
       console.log('<< UserLoginView >> User is signed in, routing to merchant list');
       this.router.navigate([ViewRoutes.MERCHANT_LIST]);
     }
   }
 
+  ngOnInit(): void {
+
+    //this.forma = fb.group({})
+    this.formLogin = new FormGroup({
+      'email': this.emailFC,
+      'password': this.passwordFC
+    });
+
+  }
+
   ngAfterViewInit(): void {
     // every change will update the values
-    // this.emailInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-    //   this.email = val;
-    // });
-    //
-    // this.passwordInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-    //   this.password = val;
-    // });
+    this.emailFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
+      this.user.email = val;
+    });
+
+    this.passwordFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
+      this.user.password = val;
+    });
 
   }
 
@@ -88,9 +85,9 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
    */
   public login(): void {
 
-    if(this.emailInput.value && this.passwordInput.value) {
+    if(this.isFormValid()) {
 
-      this.http.login(this.emailInput.value, this.passwordInput.value)
+      this.http.login(this.user.email, this.user.password)
         .pipe(
           take(1),
           timeout(7000)
@@ -113,9 +110,18 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
         );
 
     } else {
-      console.warn('<< UserLoginView >> login failed, email or passs null');
+      console.warn('<< UserLoginView >> login failed, form is invalid');
     }
 
+  }
+
+  /** final form check before making call */
+  private isFormValid(): boolean {
+    let result: boolean = true;
+    if(!this.user) {result = false; }
+    if(result && !this.user.email) { result = false; }
+    if(result && !this.user.password) { result = false; }
+    return true;
   }
 
 }

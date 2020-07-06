@@ -15,7 +15,7 @@ export class UserCreateOrderViewComponent implements OnInit {
   public merchant: Merchant;
   public products: Product[];
 
-  constructor(private userService: UserService, private http: HttpWrapperService, private activatedRoute: ActivatedRoute) {
+  constructor(private userService: UserService, private http: HttpWrapperService<Product>, private activatedRoute: ActivatedRoute) {
     console.log('<< UserCreateOrderView >> View Initiated');
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');

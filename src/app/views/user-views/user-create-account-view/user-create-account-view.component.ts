@@ -4,6 +4,7 @@ import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.servic
 import {takeUntil} from "rxjs/operators";
 import {Observable, Subject} from "rxjs";
 import {ViewRoutes} from "../../view-routes";
+import {User} from "../../../models/user/user";
 
 @Component({
   selector: 'app-user-create-account-view',
@@ -29,7 +30,7 @@ export class UserCreateAccountView implements OnInit {
   private password1: string;
   private password2: string;
 
-  constructor(private http: HttpWrapperService) { }
+  constructor(private http: HttpWrapperService<User>) { }
 
   ngOnInit(): void {
     // every change will update the values
