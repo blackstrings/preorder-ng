@@ -3,6 +3,7 @@ import {Merchant} from "../../../apis/objects/merchant/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {ActivatedRoute} from "@angular/router";
 import {Product} from "../../../apis/objects/product";
+import {UserService} from "../../../apis/services/user-service/user.service";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -14,7 +15,7 @@ export class UserCreateOrderViewComponent implements OnInit {
   public merchant: Merchant;
   public products: Product[];
 
-  constructor(private http: HttpWrapperService, private activatedRoute: ActivatedRoute) {
+  constructor(private userService: UserService, private http: HttpWrapperService, private activatedRoute: ActivatedRoute) {
 
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');
@@ -31,7 +32,7 @@ export class UserCreateOrderViewComponent implements OnInit {
         const merchantID: number = parseInt(id);
         if(!isNaN(merchantID)) {
 
-          this.http.getMerchantProducts(merchantID).subscribe( (data: Product[]) => {
+          this.http.getMerchantProducts(merchantID, this.userService.getAuthToken()).subscribe( (data: Product[]) => {
             this.products = [...data];
             //this.merchant = Merchant.deserialize(this.products[0].merchant);
             console.log(this.products);

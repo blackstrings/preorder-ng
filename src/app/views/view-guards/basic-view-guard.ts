@@ -1,7 +1,7 @@
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from "@angular/router";
-import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {ViewRoutes} from "../view-routes";
 import {Injectable} from "@angular/core";
+import {UserService} from "../../apis/services/user-service/user.service";
 
 /**
  * Ensures before user is able to visit a view, at minimum a auth token needs to be present
@@ -10,12 +10,12 @@ import {Injectable} from "@angular/core";
 @Injectable()
 export class BasicViewGuard implements CanActivate {
 
-  constructor(private http: HttpWrapperService, private router: Router){
+  constructor(private userService: UserService, private router: Router){
 
   }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if(this.http && this.http.getAuthToken()) {
+    if(this.userService && this.userService.getAuthToken()) {
       return true;
     } else {
       console.warn('<< BasicViewGuard >> View is prevented, http or token is null, routing to login');

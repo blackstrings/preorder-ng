@@ -5,6 +5,8 @@ import {ApiEndPoints} from "../api-end-points";
 import {catchError, map} from "rxjs/operators";
 import {Product} from "../objects/product";
 import {Merchant} from "../objects/merchant/merchant";
+import {UserService} from "../services/user-service/user.service";
+import {ResponseLogin} from "../responses/response-login";
 
 /**
  * The front end service to make any backend calls.
@@ -14,10 +16,7 @@ import {Merchant} from "../objects/merchant/merchant";
 @Injectable({
   providedIn: 'root'
 })
-export class HttpWrapperService {
-
-  // save user token once they login successfully
-  private authToken: string;
+export class HttpWrapperService {ß
 
   // http default configs - sets the commonly used default type of headers for sending over http request
   private postHeadersJSON: HttpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
@@ -39,7 +38,7 @@ export class HttpWrapperService {
   // private merchantCreateProduct: string = 'http://localhost:3000/merchants/1/products/new';
 
   // constructor
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private userService: UserService) {
   }
 
   /**
@@ -59,13 +58,10 @@ export class HttpWrapperService {
   }
 
   // API calls to backend all below here
-  public getAuthToken(): string {
-    return this.authToken;
-  }
 
-  private getHttpOptions(): {params: HttpParams, headers: HttpHeaders} {
-    if(this.authToken) {
-      const headers: HttpHeaders = this.getUserAuthHeader();
+  private getHttpOptions(token: string): {params: HttpParams, headers: HttpHeaders} {
+    if(token) {
+      const headers: HttpHeaders = this.getUserAuthHeader(token);
       if(headers) {
         return {params: this.params, headers: headers};
       } else {
@@ -81,60 +77,41 @@ export class HttpWrapperService {
    * Returns user auth header for http calls
    * @throws error if token is null
    */
-  private getUserAuthHeader(): HttpHeaders {
-    if(this.authToken) {
-      const authHeader = new HttpHeaders({'Authorization': this.authToken});  //works
+  private getUserAuthHeader(token: string): HttpHeaders {
+    if(token) {
+      const authHeader = new HttpHeaders({'Authorization': token});  //works
       // authHeader.append('Authorization', this.getAuthToken()); // doesn't seem to work after in init
       return authHeader;
     }
     throw new Error('<< HttpWrapper >> getUserAuthHeader failed, token null');
   }
 
-  public setAuthToken(token: string): void {
-    if(token){
-      this.authToken = token;
-      this._onLogin.next(true);
-    }
-  }
-
-  public clearAuthToken(): void {
-    this.authToken = null;
-    this._onLogin.next(false);
-  }
-
-  public login(email: string, pass: string): Observable<{}> {
-    // turn on for quick testing
-    // console.warn('<< HttpWrapper >> email and pass is hardcoded for test user');
-    // email = 'email@email.com';
-    // pass = 'password';
-
+  public login(email: string, pass: string): Observable<ResponseLogin> {
     this.body = {'email': email, 'password': pass};
     const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
-    return this.httpClient.post(url, this.body, {params: this.params, headers: this.postHeadersJSON})
+    return this.httpClient.post<ResponseLogin>(url, this.body, {params: this.params, headers: this.postHeadersJSON})
       .pipe(catchError(this.handleError));
   }
 
   public logout(): Observable<{}> {
     console.warn('todo logout from backend not fully wired yet');
-    if(this.authToken){
+    if(this.userService.getAuthToken()){
       return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null)
         .pipe(catchError(this.handleError));
-    } else {
-      console.warn('<< HttpWrapper >> logout unnecessary, token null');
     }
-    return throwError('<< HttpWrapper >> Logout unnecessary, token is null');
+    return throwError('<< HttpWrapper >> Logout backend unnecessary, token is null, logging out on frontend');
   }
 
   /**
    * call to get merchant products
    * @api api/version/merchants/merchant_id/products/
    * */
-  public getMerchantProducts(merchantID: number): Observable<Product[]> {
-    if(merchantID && this.authToken) {
+  public getMerchantProducts(merchantID: number, token: string): Observable<Product[]> {
+    if(merchantID && token) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT
         + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
 
-      return this.httpClient.get<Product[]>(url, this.getHttpOptions())
+      return this.httpClient.get<Product[]>(url, this.getHttpOptions(token))
         .pipe(
           map(res => { return Product.deserializeAsArray(res) }),
           catchError(this.handleError)
@@ -148,11 +125,11 @@ export class HttpWrapperService {
    * You can specified a return type Observable<HttpResponse<YourObject>> to
    * traverse into the headers and body for more specific data.
    */
-  public getMerchantList(): Observable<Merchant[]> {
-    if(this.authToken) {
+  public getMerchantList(token: string): Observable<Merchant[]> {
+    if(token) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
 
-      return this.httpClient.get<Merchant[]>(url, this.getHttpOptions())
+      return this.httpClient.get<Merchant[]>(url, this.getHttpOptions(token))
         .pipe(
           map(res => { return <Merchant[]>res; }),
           catchError(this.handleError)
@@ -164,12 +141,8 @@ export class HttpWrapperService {
   // todo xl not complete
   public createNewAccount(email: string, password: string): Observable<{}> {
     console.warn('todo create account not yet complete');
-    if(!this.authToken) {
-      // todo xl make endpoint call to crate account
-      return of(null);
-    } else {
-      console.error('<< HttpWrapper >> Failed to create account, token is not null as user is signed in');
-    }
+    // todo xl make endpoint call to crate account
+    return of(null);
   }
 
   // create merchant products

@@ -13,6 +13,7 @@ export class UserProfileViewComponent implements OnInit {
 
   ngOnInit(): void {
     // todo test
+    console.warn('<< UserProfileView >> todo not complete');
     this.user = new User('Tom', 'Kernally', 1, 220);
   }
 

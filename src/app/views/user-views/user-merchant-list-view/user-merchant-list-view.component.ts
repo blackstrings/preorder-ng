@@ -5,6 +5,7 @@ import {take} from "rxjs/operators";
 import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 import {Observable, Subscription} from "rxjs";
+import {UserService} from "../../../apis/services/user-service/user.service";
 
 @Component({
   selector: 'app-user-merhchant-list-view',
@@ -16,11 +17,12 @@ export class UserMerchantListViewComponent implements OnInit {
   ViewRoutes = ViewRoutes;
   public merchants: Merchant[] = [];
 
-  constructor(private router: Router, private http: HttpWrapperService) {
+  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
   }
 
   ngOnInit(): void {
-    const result: Observable<Merchant[]> = this.http.getMerchantList();
+    const token: string = this.userService.getAuthToken();
+    const result: Observable<Merchant[]> = this.http.getMerchantList(token);
     if(result) {
       result.pipe(take(1)).subscribe((data: Merchant[]) => {
         console.log(data);
@@ -30,8 +32,8 @@ export class UserMerchantListViewComponent implements OnInit {
         // this.merchants = {...data}
         // this.merchants = [...data]
       }, (e) => {
-        console.error('<< MerchantListView >> getMerchantList failed');
         console.error(e);
+        console.error('<< MerchantListView >> getMerchantList failed');
       });
     }
   }

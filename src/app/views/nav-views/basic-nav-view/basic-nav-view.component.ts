@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {take} from "rxjs/operators";
+import {UserService} from "../../../apis/services/user-service/user.service";
 
 @Component({
   selector: 'app-basic-nav-view',
@@ -16,7 +17,7 @@ export class BasicNavViewComponent implements OnInit {
 
   public isLogin: boolean = false;
 
-  constructor(private router: Router, private http: HttpWrapperService) {
+  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
     http.onLogin.subscribe( result => {
       this.isLogin = result;
     });
@@ -32,14 +33,16 @@ export class BasicNavViewComponent implements OnInit {
 
   public logout(): void {
     //todo might want to just move this all into the http wrapper
-    this.http.logout().pipe(take(1)).subscribe( result => {
-        this.http.clearAuthToken();
-        this.router.navigate([ViewRoutes.LOGIN]);
-      }, (e) => {
-        console.error('<< UserCreateAccount >> logout errored in backend, however logging out');
-        this.http.clearAuthToken();
-        this.router.navigate([ViewRoutes.LOGIN]);
-      }
-    );
+    this.http.logout()
+      .pipe(take(1))
+      .subscribe( result => {
+          this.userService.logout();
+          this.router.navigate([ViewRoutes.LOGIN]);
+        }, (e) => {
+          console.error('<< UserCreateAccount >> logout errored in backend, logging out front end anyways');
+          this.userService.logout();
+          this.router.navigate([ViewRoutes.LOGIN]);
+        }
+      );
   }
 }

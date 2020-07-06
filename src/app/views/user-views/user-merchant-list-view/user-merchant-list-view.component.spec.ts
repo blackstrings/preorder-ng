@@ -5,17 +5,21 @@ import {RouterTestingModule} from "@angular/router/testing";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {HttpWrapperServiceTest} from "../../../apis/http-wrapper/http-wrapper.service.test";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {UserServiceTest} from "../../../apis/services/user-service/user.service.test";
+import {UserService} from "../../../apis/services/user-service/user.service";
 
 describe('UserMerchantListViewComponent', () => {
   let component: UserMerchantListViewComponent;
   let fixture: ComponentFixture<UserMerchantListViewComponent>;
 
   let httpWrapperServiceTest: HttpWrapperServiceTest;
+  let userServiceTest: UserServiceTest;
 
   beforeEach(async(() => {
 
     // create mock services
     httpWrapperServiceTest = new HttpWrapperServiceTest();
+    userServiceTest = new UserServiceTest();
 
     TestBed.configureTestingModule({
       declarations: [ UserMerchantListViewComponent ],
@@ -23,7 +27,8 @@ describe('UserMerchantListViewComponent', () => {
         RouterTestingModule
       ],
       providers: [
-        {provide: HttpWrapperService, useValue: httpWrapperServiceTest}
+        {provide: HttpWrapperService, useValue: httpWrapperServiceTest},
+        {provide: UserService, useValue: userServiceTest},
       ]
     })
     .compileComponents();
