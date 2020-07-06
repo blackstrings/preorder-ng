@@ -18,7 +18,7 @@ export class BasicNavViewComponent implements OnInit {
   public isLogin: boolean = false;
 
   constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
-    http.onLogin.subscribe( result => {
+    userService.onLogin.subscribe( result => {
       this.isLogin = result;
     });
   }

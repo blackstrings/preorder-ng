@@ -7,6 +7,7 @@ export class ApiEndPoints {
 
   // the version to concat to all api calls
   public static readonly VERSION1: string = 'api/v1/';
+  public static readonly VERSION2: string = 'api/v2/';
   public static readonly TARGET_VERSION: string = ApiEndPoints.VERSION1;
 
   public static readonly USER_LOGIN: string = 'authenticate';

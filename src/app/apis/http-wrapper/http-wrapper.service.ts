@@ -12,6 +12,8 @@ import {ResponseLogin} from "../responses/response-login";
  * The front end service to make any backend calls.
  * Holds all the api calls to backend services.
  * Should the end points grow large, create sub services.
+ *
+ * In http request, you usually build a url with [headers, body, params]
  */
 @Injectable({
   providedIn: 'root'
@@ -27,12 +29,6 @@ export class HttpWrapperService {
 
   // the set the api version here so we can concate with the end points
   private apiVersion: string = ApiEndPoints.TARGET_VERSION;
-
-  // login subscription
-  private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  public onLogin: Observable<boolean> = this._onLogin.asObservable();
-
-  private selectedMerchant: Merchant;
 
   // todo test to create
   // private merchantCreateProduct: string = 'http://localhost:3000/merchants/1/products/new';
@@ -93,6 +89,7 @@ export class HttpWrapperService {
       .pipe(catchError(this.handleError));
   }
 
+  /** should publish a logout observable */
   public logout(): Observable<{}> {
     console.warn('todo logout from backend not fully wired yet');
     if(this.userService.getAuthToken()){

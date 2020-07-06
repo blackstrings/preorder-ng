@@ -3,10 +3,11 @@ import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.servic
 import {ActivatedRoute, Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {Observable, Subject} from "rxjs";
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
 import {take, takeUntil, timeout} from 'rxjs/operators';
 import {UserService} from "../../../services/user-service/user.service";
+import {User} from "../../../models/user/user";
 
 @Component({
   selector: 'app-user-login-view',
@@ -21,11 +22,23 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   // custom
   public isLoginFailed: boolean;
 
-  public emailInput = new FormControl('');
-  public passwordInput = new FormControl('');
+  // the model
+  public user: User = new User();
 
-  private email: string;
-  private password: string;
+  // form inputs
+  public emailInput = new FormControl(
+    this.user.email, [
+      Validators.required, Validators.email
+    ]);
+
+  public passwordInput = new FormControl(
+    this.user.password, [
+      Validators.required, Validators.minLength(4)
+    ]);
+
+
+  // private email: string;
+  // private password: string;
 
   // for unsubscribing to subscriptions on destroy
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
@@ -40,7 +53,10 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnInit(): void {
 
     //this.forma = fb.group({})
-    this.form1 = new FormGroup({});
+    this.form1 = new FormGroup({
+      'email': this.emailInput,
+      'password': this.passwordInput
+    });
 
     // go to merchant list if user is logged in
     if(this.userService.getAuthToken()) {
@@ -51,13 +67,13 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     // every change will update the values
-    this.emailInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.email = val;
-    });
-
-    this.passwordInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.password = val;
-    });
+    // this.emailInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
+    //   this.email = val;
+    // });
+    //
+    // this.passwordInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
+    //   this.password = val;
+    // });
 
   }
 
@@ -72,9 +88,9 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
    */
   public login(): void {
 
-    if(this.email && this.password) {
+    if(this.emailInput.value && this.passwordInput.value) {
 
-      this.http.login(this.email, this.password)
+      this.http.login(this.emailInput.value, this.passwordInput.value)
         .pipe(
           take(1),
           timeout(7000)
@@ -90,8 +106,9 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
             }
           },
           (e) => {
+            console.error(e);
+
             this.isLoginFailed = true;
-            console.error(e)
           }
         );
 
