@@ -2,6 +2,13 @@ import { TestBed, async } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
+// allows spying on private and protected methods globally in all typescript spec files
+declare global {
+  function spyOn<T>(object: T, method: keyof T): jasmine.Spy;
+  /** @deprecated Consider to grant 'public' access level for spied method. */
+  function spyOn<T>(object: T, method: string): jasmine.Spy;
+}
+
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({

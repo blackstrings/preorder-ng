@@ -8,8 +8,6 @@ export class UserServiceTest {
   public setAuthToken: jasmine.Spy = spyOn(UserService.prototype, 'setAuthToken');
   public resetAuthTokenTimer: jasmine.Spy = spyOn(UserService.prototype, 'resetAuthTokenTimer');
   public logout: jasmine.Spy = spyOn(UserService.prototype, 'logout');
-  // public clearAuthToken: jasmine.Spy = spyOn(UserService.prototype, 'clearAuthToken');
-  // public isLoggedIn: jasmine.Spy = spyOn(UserService.prototype, 'isLoggedIn');
-  // public isLoginExpired: jasmine.Spy = spyOn(UserService.prototype, 'isLoginExpired');
+  public isLoginExpired: jasmine.Spy = spyOn(UserService.prototype, 'isLoginExpired');
 
 }
