@@ -3,7 +3,7 @@ import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {take} from "rxjs/operators";
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {UserService} from "../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-basic-nav-view',

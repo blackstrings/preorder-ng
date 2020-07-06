@@ -1,7 +1,7 @@
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from "@angular/router";
 import {ViewRoutes} from "../view-routes";
 import {Injectable} from "@angular/core";
-import {UserService} from "../../apis/services/user-service/user.service";
+import {UserService} from "../../services/user-service/user.service";
 
 /**
  * Ensures before user is able to visit a view, at minimum a auth token needs to be present

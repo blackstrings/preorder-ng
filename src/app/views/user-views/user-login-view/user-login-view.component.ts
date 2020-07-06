@@ -6,7 +6,7 @@ import {Observable, Subject} from "rxjs";
 import {FormControl, FormGroup} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
 import {take, takeUntil, timeout} from 'rxjs/operators';
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {UserService} from "../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-user-login-view',

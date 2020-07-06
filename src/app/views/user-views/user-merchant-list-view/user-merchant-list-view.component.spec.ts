@@ -5,8 +5,8 @@ import {RouterTestingModule} from "@angular/router/testing";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {HttpWrapperServiceTest} from "../../../apis/http-wrapper/http-wrapper.service.test";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
-import {UserServiceTest} from "../../../apis/services/user-service/user.service.test";
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {UserServiceTest} from "../../../services/user-service/user.service.test";
+import {UserService} from "../../../services/user-service/user.service";
 
 describe('UserMerchantListViewComponent', () => {
   let component: UserMerchantListViewComponent;

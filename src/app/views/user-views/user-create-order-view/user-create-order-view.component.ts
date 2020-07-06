@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Merchant} from "../../../apis/objects/merchant/merchant";
+import {Merchant} from "../../../models/merchant/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {ActivatedRoute} from "@angular/router";
-import {Product} from "../../../apis/objects/product";
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {Product} from "../../../models/product";
+import {UserService} from "../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-user-create-order-view',

@@ -3,9 +3,9 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/c
 import {Observable, of, ReplaySubject, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError, map} from "rxjs/operators";
-import {Product} from "../objects/product";
-import {Merchant} from "../objects/merchant/merchant";
-import {UserService} from "../services/user-service/user.service";
+import {Product} from "../../models/product";
+import {Merchant} from "../../models/merchant/merchant";
+import {UserService} from "../../services/user-service/user.service";
 import {ResponseLogin} from "../responses/response-login";
 
 /**

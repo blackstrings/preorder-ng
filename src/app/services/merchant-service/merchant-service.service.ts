@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Merchant} from "../../objects/merchant/merchant";
+import {Merchant} from "../../models/merchant/merchant";
 
 /**
  * Handles querying merchants and caching.

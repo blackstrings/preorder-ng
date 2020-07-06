@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {Merchant} from "../../../apis/objects/merchant/merchant";
+import {Merchant} from "../../../models/merchant/merchant";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {take} from "rxjs/operators";
 import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 import {Observable, Subscription} from "rxjs";
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {UserService} from "../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-user-merhchant-list-view',

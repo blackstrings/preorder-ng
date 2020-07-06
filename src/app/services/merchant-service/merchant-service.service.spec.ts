@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { MerchantServiceService } from './merchant-service.service';
-import {MerchantTest} from "../../objects/merchant/merchant.test";
+import {MerchantTest} from "../../models/merchant/merchant.test";
 
 describe('MerchantServiceService', () => {
   let service: MerchantServiceService;

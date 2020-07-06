@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {TimerUtils} from "../../utils/timer-utils";
+import {TimerUtils} from "../../utils/timer-utils/timer-utils";
 import {Observable, ReplaySubject} from "rxjs";
 
 @Injectable({

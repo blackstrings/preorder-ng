@@ -5,8 +5,8 @@ import {HttpWrapperServiceTest} from "../../../apis/http-wrapper/http-wrapper.se
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {RouterTestingModule} from "@angular/router/testing";
 import {ActivatedRoute} from "@angular/router";
-import {UserServiceTest} from "../../../apis/services/user-service/user.service.test";
-import {UserService} from "../../../apis/services/user-service/user.service";
+import {UserServiceTest} from "../../../services/user-service/user.service.test";
+import {UserService} from "../../../services/user-service/user.service";
 
 describe('UserCreateOrderViewComponent', () => {
   let component: UserCreateOrderViewComponent;
