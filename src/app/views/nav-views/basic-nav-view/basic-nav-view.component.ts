@@ -5,31 +5,29 @@ import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.servic
 import {take} from "rxjs/operators";
 import {UserService} from "../../../services/user-service/user.service";
 import {ResponseLogin} from "../../../apis/responses/response-login";
+import {UserServiceSubscription} from "../../../services/user-service/user-service-subscription";
 
 @Component({
   selector: 'app-basic-nav-view',
   templateUrl: './basic-nav-view.component.html',
   styleUrls: ['./basic-nav-view.component.scss']
 })
-export class BasicNavViewComponent implements OnInit {
+export class BasicNavViewComponent {
 
   // reference so we can use in html
   ViewRoutes = ViewRoutes;
 
   public isLogin: boolean = false;
 
-  constructor(private router: Router, private userService: UserService, private http: HttpWrapperService<ResponseLogin>) {
-    userService.onLogin.subscribe( result => {
+  constructor(private router: Router,
+              private userServiceSub: UserServiceSubscription,
+              private userService: UserService,
+              private http: HttpWrapperService<ResponseLogin>)
+  {
+    // wire in subscription
+    userServiceSub.onLogin.subscribe( result => {
       this.isLogin = result;
     });
-  }
-
-  ngOnInit(): void {
-  }
-
-  public goToMerchantCreateView(): void {
-    console.log('routing to create merchant view');
-    this.router.navigate([ViewRoutes.MERCHANT_CREATE]);
   }
 
   public logout(): void {

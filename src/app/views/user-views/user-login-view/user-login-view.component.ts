@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
-import {Observable, Subject} from "rxjs";
+import {Observable, of, Subject} from "rxjs";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
-import {take, takeUntil, timeout} from 'rxjs/operators';
+import {map, take, takeUntil, timeout} from 'rxjs/operators';
 import {UserService} from "../../../services/user-service/user.service";
 import {User} from "../../../models/user/user";
 
@@ -20,7 +19,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   ViewRoutes = ViewRoutes;
 
   // custom
-  public isLoginFailed: boolean;
+  public isLoginSuccess: boolean = true;
 
   // the model
   public user: User = new User();
@@ -42,7 +41,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public formLogin: FormGroup;
 
-  constructor(private userService: UserService, private http: HttpWrapperService<ResponseLogin>, private router: Router, private activatedRoute: ActivatedRoute) {
+  constructor(private userService: UserService, private router: Router, private activatedRoute: ActivatedRoute) {
     console.log('<< UserLoginView >> View Initiated');
 
     // auto route to merchant list if user is logged in
@@ -63,7 +62,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    // every change will update the values
+    // wire the form inputs so on every change it will update the values in the model
     this.emailFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
       this.user.email = val;
     });
@@ -87,25 +86,25 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
 
     if(this.isFormValid()) {
 
-      this.http.login(this.user.email, this.user.password)
+      this.userService.login(this.user.email, this.user.password)
         .pipe(
           take(1),
-          timeout(7000)
+          timeout(7000),
+          map((resp) => {return resp})
         )
-        .subscribe( (response: ResponseLogin) => {
-            if(response && response.auth_token) {
+        .subscribe( (response) => {
+            if(response) {
               console.log('<< UserLoginView >> Login success');
-              this.userService.setAuthToken(response.auth_token);
               this.router.navigate([ViewRoutes.MERCHANT_LIST]);
+              this.isLoginSuccess = true;
             } else {
               console.error('<< UserLoginView >> login failed, data returned is null');
-              this.isLoginFailed = true;
+              this.isLoginSuccess = false;
             }
           },
           (e) => {
             console.error(e);
-
-            this.isLoginFailed = true;
+            this.isLoginSuccess = false;
           }
         );
 

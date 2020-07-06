@@ -1,3 +1,4 @@
 export interface ResponseLogin {
-  auth_token: string
+  auth_token: string,
+  loginSuccess: boolean
 }

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import {TimerUtils} from "../../utils/timer-utils/timer-utils";
-import {Observable, ReplaySubject} from "rxjs";
+import {Observable, of, ReplaySubject} from "rxjs";
+import {UserServiceSubscription} from "./user-service-subscription";
+import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
+import {ResponseLogin} from "../../apis/responses/response-login";
+import {catchError, map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  // login subscription
+  // Use UserServiceSubscription to listen to the subjects
   private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-  public onLogin: Observable<boolean> = this._onLogin.asObservable();
 
   /**
    * This is a front end expire timer regardless of what's set in the backend.
@@ -20,11 +23,12 @@ export class UserService {
   private readonly logoutExpirationTimeLimit: number = 1;
   private loggedInTime: Date;
 
-  /** we want to assure the token gets a refresh timer in the backend each successful request with token */
   private authToken: string;
 
-  constructor() {
+  constructor(private userServiceSub: UserServiceSubscription, private httpWrapper: HttpWrapperService<ResponseLogin>) {
 
+    // wire the subscription
+    userServiceSub.onLogin = this._onLogin.asObservable();
   }
 
   /**
@@ -50,6 +54,22 @@ export class UserService {
   /** reset the login timer on every request activity to monitor activeness */
   private resetAuthTokenTimer(): void {
     this.loggedInTime = new Date();
+  }
+
+  public login(email: string, password: string): Observable<boolean> {
+    return this.httpWrapper.login(email, password)
+      .pipe(
+        map((resp: ResponseLogin) => {
+          if (resp && resp.auth_token) {
+            this.setAuthToken(resp.auth_token);
+            this._onLogin.next(true);
+            return of(resp.loginSuccess);
+          } else {
+            return of(false);
+          }
+        }),
+        catchError( e => {return of(e)})
+      );
   }
 
   public logout(): void {

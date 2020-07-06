@@ -34,7 +34,8 @@ export class HttpWrapperService<T> {
   // private merchantCreateProduct: string = 'http://localhost:3000/merchants/1/products/new';
 
   // constructor
-  constructor(private httpClient: HttpClient, private userService: UserService) {
+  constructor(private httpClient: HttpClient) {
+    console.log('<< HttpWrapper >> Instantiated');
   }
 
   /**
@@ -82,6 +83,20 @@ export class HttpWrapperService<T> {
     throw new Error('<< HttpWrapper >> getUserAuthHeader failed, token null');
   }
 
+  public post(url): Observable<T> {
+    throwError('TODO Post ot yet implemented');
+    return null;
+  }
+
+  public get(url): Observable<T> {
+    throwError('TODO Get ot yet implemented');
+    return null;
+  }
+
+  /**
+   * don't subscribe directly in the request if others wish to subscribe to the call.
+   * Only return the observable.
+   */
   public login(email: string, pass: string): Observable<ResponseLogin> {
     this.body = {'email': email, 'password': pass};
     const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
@@ -92,11 +107,8 @@ export class HttpWrapperService<T> {
   /** should publish a logout observable */
   public logout(): Observable<{}> {
     console.warn('todo logout from backend not fully wired yet');
-    if(this.userService.getAuthToken()){
-      return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null)
-        .pipe(catchError(this.handleError));
-    }
-    return throwError('<< HttpWrapper >> Logout backend unnecessary, token is null, logging out on frontend');
+    return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null)
+      .pipe(catchError(this.handleError));
   }
 
   /**
@@ -104,8 +116,7 @@ export class HttpWrapperService<T> {
    * @api api/version/merchants/merchant_id/products/
    * */
   public getMerchantProducts(merchantID: number, token: string): Observable<Product[]> {
-    if(merchantID && token) {
-      const url: string = this.apiVersion + ApiEndPoints.MERCHANT
+    if(merchantID && token) {      const url: string = this.apiVersion + ApiEndPoints.MERCHANT
         + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
 
       return this.httpClient.get<Product[]>(url, this.getHttpOptions(token))
