@@ -16,7 +16,7 @@ import {ResponseLogin} from "../responses/response-login";
 @Injectable({
   providedIn: 'root'
 })
-export class HttpWrapperService {ß
+export class HttpWrapperService {
 
   // http default configs - sets the commonly used default type of headers for sending over http request
   private postHeadersJSON: HttpHeaders = new HttpHeaders({'Content-Type': 'application/json'});

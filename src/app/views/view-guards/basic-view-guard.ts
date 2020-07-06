@@ -20,6 +20,8 @@ export class BasicViewGuard implements CanActivate {
     } else {
       console.warn('<< BasicViewGuard >> View is prevented, http or token is null, routing to login');
     }
+    // force logout
+    this.userService.logout();
     // go to login view
     this.router.navigate([ViewRoutes.LOGIN]);
     return false;

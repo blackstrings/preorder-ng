@@ -18,6 +18,7 @@ export class UserMerchantListViewComponent implements OnInit {
   public merchants: Merchant[] = [];
 
   constructor(private router: Router, private userService: UserService, private http: HttpWrapperService) {
+    console.log('<< UserMerchantListView >> View Initiated');
   }
 
   ngOnInit(): void {

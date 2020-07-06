@@ -34,7 +34,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   public form1: FormGroup;
 
   constructor(private userService: UserService, private http: HttpWrapperService, private router: Router, private activatedRoute: ActivatedRoute) {
-
+    console.log('<< UserLoginView >> View Initiated');
   }
 
   ngOnInit(): void {
@@ -43,7 +43,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
     this.form1 = new FormGroup({});
 
     // go to merchant list if user is logged in
-    if(this.userService.getAuthToken() && this.userService.isLoginValid()) {
+    if(this.userService.getAuthToken()) {
       console.log('<< UserLoginView >> User is signed in, routing to merchant list');
       this.router.navigate([ViewRoutes.MERCHANT_LIST]);
     }
@@ -58,6 +58,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
     this.passwordInput.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
       this.password = val;
     });
+
   }
 
   ngOnDestroy(): void {
@@ -80,6 +81,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
         )
         .subscribe( (response: ResponseLogin) => {
             if(response && response.auth_token) {
+              console.log('<< UserLoginView >> Login success');
               this.userService.setAuthToken(response.auth_token);
               this.router.navigate([ViewRoutes.MERCHANT_LIST]);
             } else {

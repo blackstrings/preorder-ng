@@ -16,7 +16,7 @@ export class UserCreateOrderViewComponent implements OnInit {
   public products: Product[];
 
   constructor(private userService: UserService, private http: HttpWrapperService, private activatedRoute: ActivatedRoute) {
-
+    console.log('<< UserCreateOrderView >> View Initiated');
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');
 
@@ -30,9 +30,10 @@ export class UserCreateOrderViewComponent implements OnInit {
       const id = params.get('id');
       if(id) {
         const merchantID: number = parseInt(id);
-        if(!isNaN(merchantID)) {
+        const token: string = this.userService.getAuthToken();
+        if(!isNaN(merchantID) && token) {
 
-          this.http.getMerchantProducts(merchantID, this.userService.getAuthToken()).subscribe( (data: Product[]) => {
+          this.http.getMerchantProducts(merchantID, token).subscribe( (data: Product[]) => {
             this.products = [...data];
             //this.merchant = Merchant.deserialize(this.products[0].merchant);
             console.log(this.products);
