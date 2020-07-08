@@ -1,12 +1,13 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
-import {Observable, of, Subject} from "rxjs";
+import {Observable, Subject, throwError} from "rxjs";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
-import {map, take, takeUntil, timeout} from 'rxjs/operators';
+import {catchError, take, takeUntil} from 'rxjs/operators';
 import {UserService} from "../../../services/user-service/user.service";
 import {User} from "../../../models/user/user";
+import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-container";
 
 @Component({
   selector: 'app-user-login-view',
@@ -19,7 +20,8 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   ViewRoutes = ViewRoutes;
 
   // custom
-  public isLoginSuccess: boolean = true;
+  public showLoginFailed: boolean = false;
+  public showServerError: boolean = false;
 
   // the model
   public user: User = new User();
@@ -89,22 +91,33 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
       this.userService.login(this.user.email, this.user.password)
         .pipe(
           take(1),
-          timeout(7000),
-          map((resp) => {return resp})
+          catchError( e => throwError(e))
         )
-        .subscribe( (response) => {
+        .subscribe( (response: ResponseLogin | HttpErrorContainer) => {
             if(response) {
-              console.log('<< UserLoginView >> Login success');
-              this.router.navigate([ViewRoutes.MERCHANT_LIST]);
-              this.isLoginSuccess = true;
+              // handle server errors
+              if(response instanceof HttpErrorContainer) {
+                if(response.status === 401) {
+                  this.showLoginFailed = true;
+                  this.showServerError = false;
+                } else {
+                  this.showLoginFailed = false;
+                  this.showServerError = true;
+                }
+              } else {
+                console.log('<< UserLoginView >> Login success');
+                this.router.navigate([ViewRoutes.MERCHANT_LIST]);
+                this.showLoginFailed = !response.isLoginSuccess;
+              }
+
             } else {
               console.error('<< UserLoginView >> login failed, data returned is null');
-              this.isLoginSuccess = false;
+              this.showLoginFailed = true;
             }
           },
           (e) => {
             console.error(e);
-            this.isLoginSuccess = false;
+            this.showLoginFailed = true;
           }
         );
 

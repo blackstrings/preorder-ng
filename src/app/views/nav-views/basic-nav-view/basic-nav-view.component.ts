@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
-import {take} from "rxjs/operators";
 import {UserService} from "../../../services/user-service/user.service";
 import {ResponseLogin} from "../../../apis/responses/response-login";
 import {UserServiceSubscription} from "../../../services/user-service/user-service-subscription";
@@ -21,8 +20,7 @@ export class BasicNavViewComponent {
 
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,
-              private userService: UserService,
-              private http: HttpWrapperService<ResponseLogin>)
+              private userService: UserService)
   {
     // wire in subscription
     userServiceSub.onLogin.subscribe( result => {
@@ -31,17 +29,26 @@ export class BasicNavViewComponent {
   }
 
   public logout(): void {
+    this.userService.logout()
+      .subscribe( (resp: boolean) => {
+          this.router.navigate([ViewRoutes.LOGIN]);
+        },
+        e => {
+          console.error(e);
+          this.router.navigate([ViewRoutes.LOGIN]);
+        });
+
     //todo might want to just move this all into the http wrapper
-    this.http.logout()
-      .pipe(take(1))
-      .subscribe( result => {
-          this.userService.logout();
-          this.router.navigate([ViewRoutes.LOGIN]);
-        }, (e) => {
-          console.error('<< UserCreateAccount >> logout errored in backend, logging out front end anyways');
-          this.userService.logout();
-          this.router.navigate([ViewRoutes.LOGIN]);
-        }
-      );
+    // this.http.logout()
+    //   .pipe(take(1))
+    //   .subscribe( result => {
+    //       this.userService.logout();
+    //       this.router.navigate([ViewRoutes.LOGIN]);
+    //     }, (e) => {
+    //       console.error('<< UserCreateAccount >> logout errored in backend, logging out front end anyways');
+    //       this.userService.logout();
+    //       this.router.navigate([ViewRoutes.LOGIN]);
+    //     }
+    //   );
   }
 }

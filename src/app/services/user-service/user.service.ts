@@ -5,6 +5,8 @@ import {UserServiceSubscription} from "./user-service-subscription";
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {ResponseLogin} from "../../apis/responses/response-login";
 import {catchError, map} from "rxjs/operators";
+import {ApiEndPoints} from "../../apis/api-end-points";
+import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +24,13 @@ export class UserService {
    */
   private readonly logoutExpirationTimeLimit: number = 1;
   private loggedInTime: Date;
+  private loginFailedAttempts: number = 0;
 
   private authToken: string;
 
   constructor(private userServiceSub: UserServiceSubscription, private httpWrapper: HttpWrapperService<ResponseLogin>) {
 
-    // wire the subscription
+    // setup the observable so others can listen to the subscription service
     userServiceSub.onLogin = this._onLogin.asObservable();
   }
 
@@ -46,7 +49,6 @@ export class UserService {
   public setAuthToken(token: string): void {
     if(token) {
       this.authToken = token;
-      this._onLogin.next(true);
       this.resetAuthTokenTimer();
     }
   }
@@ -56,24 +58,70 @@ export class UserService {
     this.loggedInTime = new Date();
   }
 
-  public login(email: string, password: string): Observable<boolean> {
-    return this.httpWrapper.login(email, password)
+  public login(email: string, password: string): Observable<ResponseLogin | HttpErrorContainer> {
+    // build the http params
+    const body = {'email': email, 'password': password}
+
+    // by using the map, we can auto map the response json into our object ResponseLogin
+    return this.httpWrapper.post(ApiEndPoints.USER_LOGIN, body)
       .pipe(
         map((resp: ResponseLogin) => {
           if (resp && resp.auth_token) {
-            this.setAuthToken(resp.auth_token);
-            this._onLogin.next(true);
-            return of(resp.loginSuccess);
+            return this.processLogin(true, resp);
           } else {
-            return of(false);
+            return this.processLogin(false, resp);
           }
         }),
-        catchError( e => {return of(e)})
+        catchError( (e: HttpErrorContainer) => {
+          return of(e)
+        })
       );
   }
 
-  public logout(): void {
+  /**
+   * process necessary setups when login is successful.
+   * @param success true for success otherwise false
+   * @param resp the response from server
+   */
+  private processLogin(success: boolean, resp: ResponseLogin): ResponseLogin {
+    if(success){
+      if(resp && resp.auth_token) {
+        this.setAuthToken(resp.auth_token);
+
+        // publish user has logged in successfully
+        this._onLogin.next(true);
+        this.loginFailedAttempts = 0;
+
+        // null the token and only send the flag back for security reason
+        resp.auth_token = null;
+        resp.isLoginSuccess = true;
+      } else {
+        throw new Error('<< UserService >> processLogin failed, response or token null');
+      }
+    } else {
+      // publish logging in  failed
+      this.loginFailedAttempts++;
+      this._onLogin.next(false);
+      resp.isLoginSuccess = false;
+      return resp;
+    }
+    return resp;
+  }
+
+
+  public logout(): Observable<boolean> {
     console.log('<< UserService >> logout initiated');
+    return this.httpWrapper.post(ApiEndPoints.USER_LOGOUT)
+      .pipe(
+        map( (resp: ResponseLogin) => {
+          console.log('<< UserService >> logout result returned status: ' + resp.isLoginSuccess);
+          this.processLogout();
+          return resp.isLoginSuccess;
+        })
+      );
+  }
+
+  private processLogout(): void {
     this.authToken = null;
     this.loggedInTime = null;
     this._onLogin.next(false);

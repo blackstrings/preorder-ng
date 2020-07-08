@@ -3,8 +3,11 @@
   <!-- ngOnSubmit will handle pressing enter and when the form is done -->
   <form [formGroup]="formLogin" (ngSubmit)="login()">
 
-    <div *ngIf="!isLoginSuccess" class="alert alert-danger" role="alert">
+    <div *ngIf="showLoginFailed" class="alert alert-danger" role="alert">
       Invalid password or email
+    </div>
+    <div *ngIf="showServerError" class="alert alert-danger" role="alert">
+      Server Error - Try again later
     </div>
 
     <div class="form-group">

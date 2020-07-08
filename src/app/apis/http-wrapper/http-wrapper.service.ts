@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Observable, of, ReplaySubject, throwError} from "rxjs";
+import {Observable, of, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
-import {catchError, map} from "rxjs/operators";
+import {catchError, map, timeout} from "rxjs/operators";
 import {Product} from "../../models/product";
 import {Merchant} from "../../models/merchant/merchant";
-import {UserService} from "../../services/user-service/user.service";
-import {ResponseLogin} from "../responses/response-login";
+import {HttpOptions} from "./http-options";
+import {HttpErrorContainer} from "./http-error-container";
 
 /**
  * The front end service to make any backend calls.
@@ -40,18 +40,20 @@ export class HttpWrapperService<T> {
 
   /**
    * Generic error handler for http calls
+   * We can also handle specific backend server errors and properly construct the errors here.
    * @param error
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'Unknown error!';
+  private handleError(error: HttpErrorResponse): Observable<HttpErrorContainer> {
+    const container: HttpErrorContainer = new HttpErrorContainer();
     if (error.error instanceof ErrorEvent) {
       // Client-side errors
-      errorMessage = `Error: ${error.error.message}`;
+      container.message = error.error.message;
     } else {
       // Server-side errors
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      container.status = error.status;  // status code
+      container.message = error.message;
     }
-    return throwError(errorMessage);
+    return throwError(container);
   }
 
   // API calls to backend all below here
@@ -83,26 +85,45 @@ export class HttpWrapperService<T> {
     throw new Error('<< HttpWrapper >> getUserAuthHeader failed, token null');
   }
 
-  public post(url): Observable<T> {
-    throwError('TODO Post ot yet implemented');
-    return null;
+  public post(uri: string, body: any = {}, httpOptions: HttpOptions = new HttpOptions(), timeout: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.postByLocation(this.apiVersion + uri, '', body, httpOptions, timeout);
   }
 
-  public get(url): Observable<T> {
-    throwError('TODO Get ot yet implemented');
-    return null;
+  public get(uri, httpOptions: HttpOptions = null, timeout: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.getByLocation('', this.apiVersion + uri, httpOptions, timeout);
+  }
+
+  public postByLocation(uri: string, location: string = '', body: any = null, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.httpClient
+      .post<T>(location + uri, body, {params: options.params, headers: options.headers})
+      .pipe(
+        timeout(timeoutVal),
+        map( (resp: T) => { return resp }),
+        catchError(this.handleError)
+      );
+  }
+
+  public getByLocation(location: string = '', uri: string, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.httpClient
+      .get<T>(location + uri, {params: options.params, headers: options.headers})
+      .pipe(
+        timeout(timeoutVal),
+        map( (resp: T) => { return resp }),
+        catchError(this.handleError)
+      );
   }
 
   /**
    * don't subscribe directly in the request if others wish to subscribe to the call.
    * Only return the observable.
+   * @deprecated
    */
-  public login(email: string, pass: string): Observable<ResponseLogin> {
-    this.body = {'email': email, 'password': pass};
-    const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
-    return this.httpClient.post<ResponseLogin>(url, this.body, {params: this.params, headers: this.postHeadersJSON})
-      .pipe(catchError(this.handleError));
-  }
+  // public login(email: string, pass: string): Observable<ResponseLogin | HttpErrorContainer> {
+  //   this.body = {'email': email, 'password': pass};
+  //   const url: string = this.apiVersion + ApiEndPoints.USER_LOGIN;
+  //   return this.httpClient.post<ResponseLogin>(url, this.body, {params: this.params, headers: this.postHeadersJSON})
+  //     .pipe(catchError(this.handleError));
+  // }
 
   /** should publish a logout observable */
   public logout(): Observable<{}> {
@@ -115,7 +136,7 @@ export class HttpWrapperService<T> {
    * call to get merchant products
    * @api api/version/merchants/merchant_id/products/
    * */
-  public getMerchantProducts(merchantID: number, token: string): Observable<Product[]> {
+  public getMerchantProducts(merchantID: number, token: string): Observable<Product[] | HttpErrorContainer> {
     if(merchantID && token) {      const url: string = this.apiVersion + ApiEndPoints.MERCHANT
         + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
 
@@ -133,7 +154,7 @@ export class HttpWrapperService<T> {
    * You can specified a return type Observable<HttpResponse<YourObject>> to
    * traverse into the headers and body for more specific data.
    */
-  public getMerchantList(token: string): Observable<Merchant[]> {
+  public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
     if(token) {
       const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
 
