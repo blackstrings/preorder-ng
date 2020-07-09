@@ -30,25 +30,13 @@ export class BasicNavViewComponent {
 
   public logout(): void {
     this.userService.logout()
-      .subscribe( (resp: boolean) => {
+      .subscribe( (resp: ResponseLogin) => {
           this.router.navigate([ViewRoutes.LOGIN]);
         },
-        e => {
+        (e) => {
           console.error(e);
           this.router.navigate([ViewRoutes.LOGIN]);
-        });
-
-    //todo might want to just move this all into the http wrapper
-    // this.http.logout()
-    //   .pipe(take(1))
-    //   .subscribe( result => {
-    //       this.userService.logout();
-    //       this.router.navigate([ViewRoutes.LOGIN]);
-    //     }, (e) => {
-    //       console.error('<< UserCreateAccount >> logout errored in backend, logging out front end anyways');
-    //       this.userService.logout();
-    //       this.router.navigate([ViewRoutes.LOGIN]);
-    //     }
-    //   );
+        }
+      );
   }
 }

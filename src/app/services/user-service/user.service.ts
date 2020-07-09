@@ -109,16 +109,28 @@ export class UserService {
   }
 
 
-  public logout(): Observable<boolean> {
+  public logout(): Observable<ResponseLogin | HttpErrorContainer> {
     console.log('<< UserService >> logout initiated');
-    return this.httpWrapper.post(ApiEndPoints.USER_LOGOUT)
-      .pipe(
-        map( (resp: ResponseLogin) => {
-          console.log('<< UserService >> logout result returned status: ' + resp.isLoginSuccess);
-          this.processLogout();
-          return resp.isLoginSuccess;
-        })
-      );
+    // if no token, we just do frontend logout no need do perform http call
+    if(!this.getAuthToken()) {
+      this.processLogout();
+      const resp: ResponseLogin = {auth_token: null, isLoginSuccess: false};
+      return of(resp);
+    } else {
+      // make http call
+      return this.httpWrapper.post(ApiEndPoints.USER_LOGOUT)
+        .pipe(
+          map( (resp: ResponseLogin) => {
+            console.log('<< UserService >> logout result returned status: ' + resp.isLoginSuccess);
+            this.processLogout();
+            return resp;
+          }),
+          catchError( (e: HttpErrorContainer) => {
+            this.processLogout();
+            return of(e);
+          })
+        );
+    }
   }
 
   private processLogout(): void {

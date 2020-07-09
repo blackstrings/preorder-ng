@@ -6,6 +6,7 @@ import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 import {Observable, Subscription} from "rxjs";
 import {UserService} from "../../../services/user-service/user.service";
+import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-container";
 
 @Component({
   selector: 'app-user-merhchant-list-view',
@@ -23,7 +24,7 @@ export class UserMerchantListViewComponent implements OnInit {
 
   ngOnInit(): void {
     const token: string = this.userService.getAuthToken();
-    const result: Observable<Merchant[]> = this.http.getMerchantList(token);
+    const result: Observable<Merchant[] | HttpErrorContainer> = this.http.getMerchantList(token);
     if(result) {
       result.pipe(take(1)).subscribe((data: Merchant[]) => {
         console.log(data);
