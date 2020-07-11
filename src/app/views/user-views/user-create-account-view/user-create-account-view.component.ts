@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {takeUntil} from "rxjs/operators";
 import {Observable, Subject} from "rxjs";
 import {ViewRoutes} from "../../view-routes";
-import {User} from "../../../models/user/user";
+import {UserService} from "../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-user-create-account-view',
@@ -30,7 +29,7 @@ export class UserCreateAccountView implements OnInit {
   private password1: string;
   private password2: string;
 
-  constructor(private http: HttpWrapperService<User>) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit(): void {
     // every change will update the values
@@ -49,7 +48,9 @@ export class UserCreateAccountView implements OnInit {
 
   public createNewAccount(): void {
     if(this.password1 === this.password2) {
-      this.http.createNewAccount(this.email, this.password1);
+      console.error('createAccount() not implmemented');
+      this.userService.createAccount();
+      //this.userService.createNewAccount(this.email, this.password1);
     }
   }
 

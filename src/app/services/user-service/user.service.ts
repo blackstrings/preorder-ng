@@ -60,7 +60,7 @@ export class UserService {
 
   public login(email: string, password: string): Observable<ResponseLogin | HttpErrorContainer> {
     // build the http params
-    const body = {'email': email, 'password': password}
+    const body = {'email': email, 'password': password};
 
     // by using the map, we can auto map the response json into our object ResponseLogin
     return this.httpWrapper.post(ApiEndPoints.USER_LOGIN, body)
@@ -163,5 +163,9 @@ export class UserService {
       return !TimerUtils.isWithinHoursAgo(this.loggedInTime, this.logoutExpirationTimeLimit);
     }
     return true;
+  }
+
+  public createAccount(): boolean {
+    throw new Error('not implemented');
   }
 }

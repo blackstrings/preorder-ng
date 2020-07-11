@@ -3,11 +3,14 @@ import {Merchant} from "./merchant";
 export class MerchantTest extends Merchant {
 
   public static createGeneric(): MerchantTest {
-    return new MerchantTest(1, 'testMerchant');
+    return MerchantTest.create(1, 'testMerchant');
   }
 
   public static create(id: number, name: string = 'testMerchant'): MerchantTest {
-    return new MerchantTest(id, name);
+    const m: MerchantTest = new MerchantTest();
+    m.name = name;
+    m.id = id;
+    return m;
   }
 
 }

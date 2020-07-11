@@ -1,18 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserCreateAccountView } from './user-create-account-view.component';
-import {HttpWrapperServiceTest} from "../../../apis/http-wrapper/http-wrapper.service.test";
 import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {UserServiceTest} from "../../../services/user-service/user.service.test";
 
 describe('CreateUserAccountComponent', () => {
   let component: UserCreateAccountView;
   let fixture: ComponentFixture<UserCreateAccountView>;
 
-  let httpWrapperServiceTest: HttpWrapperServiceTest;
+  let userServiceTest: UserServiceTest;
 
   beforeEach(async(() => {
-    httpWrapperServiceTest = new HttpWrapperServiceTest();
+    userServiceTest = new UserServiceTest();
 
     TestBed.configureTestingModule({
       imports: [
@@ -20,7 +20,7 @@ describe('CreateUserAccountComponent', () => {
       ],
       declarations: [ UserCreateAccountView ],
       providers: [
-        {provide: HttpWrapperService, useValue: httpWrapperServiceTest}
+        {provide: HttpWrapperService, useValue: userServiceTest}
       ]
     })
     .compileComponents();
