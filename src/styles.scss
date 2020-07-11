@@ -3,9 +3,12 @@
 // this will make bootstrap scale all font-sizes respective to the value here.
 html {
   font-size: 14px;
+  background-color: #333333;
 }
 
 .text-warning {
   color: red;
 }
+
+$color-primary: #ffd400;
 
