@@ -8,8 +8,9 @@
 <div class="row">
   <div class="col-12 list-group">
     <ng-container *ngFor="let merchant of merchants">
-      <a class="list-group-item list-group-item-action" (click)="goToUserCreateOrderView(merchant.getID())">
-        {{merchant.getName()}}
+      <a class="list-group-item list-group-item-action"
+         (click)="goToUserCreateOrderView(merchant.id)">
+        {{merchant.name}}
       </a>
     </ng-container>
   </div>

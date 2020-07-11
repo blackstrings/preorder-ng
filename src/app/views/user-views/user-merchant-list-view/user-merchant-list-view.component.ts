@@ -23,11 +23,14 @@ export class UserMerchantListViewComponent implements OnInit {
 
   ngOnInit(): void {
     const token: string = this.userService.getAuthToken();
+
+    // todo check if need to fetch new merchants or not, if not, grab from cache instead
     this.merchantService.getMerchantList(token)
       .pipe(take(1))
       .subscribe((data: Merchant[]) => {
         console.log(data);
-        this.merchants = Merchant.deserializeArray(data);
+        this.merchants = data;
+        console.log(this.merchants);
         // clone the data into the merchants from the IMerchant[] shape
         // if the object is a blob, you can try to push it into its shape with
         // this.merchants = {...data}

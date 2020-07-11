@@ -1,9 +1,12 @@
 export class Merchant {
 
-  constructor(private id: number, private name: string) {
+  public id: number;
+  public name: string;
 
-  }
+  /** leave constructor empty */
+  constructor() {}
 
+  /*
   public getName(): string {
     return this.name;
   }
@@ -12,7 +15,7 @@ export class Merchant {
     return this.id;
   }
 
-  /** turns serialized object into the concrete form */
+  // turns serialized object into the concrete form
   public static deserialize(data: Merchant): Merchant {
     return new Merchant(
       data.id,
@@ -20,10 +23,6 @@ export class Merchant {
     );
   }
 
-  /**
-   * Deserialize an array of merchants objects to concrete if they are in json form
-   * @param data assumed to be in JSON format
-   */
   public static deserializeArray(data: Merchant[]): Merchant[] {
     if(data) {
       const merchants: Merchant[] = [];
@@ -33,6 +32,8 @@ export class Merchant {
       return merchants;
     }
   }
+   */
+
 
   /* todo xl remove when done implementing this class
   created_at: "2019-10-29T02:09:35-04:00"

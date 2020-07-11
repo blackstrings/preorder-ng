@@ -19,6 +19,8 @@ export class MerchantService {
   /** the current merchant the user has selected */
   private merchantSelected: Merchant;
 
+  private useCache: boolean = false;
+
   /**
    * depending if we want to store local cache of merchants
    * when say there are more than 300,000 merchants
@@ -49,7 +51,7 @@ export class MerchantService {
   /** adds incoming merchants into the cache preventing duplicates */
   public addToCache(incomingMerchants: Merchant[]): void {
     if(incomingMerchants && this.merchantsCached) {
-      const newMerchants = incomingMerchants.filter( x => !(this.merchantsCached.some(y => y.getID() === x.getID())) );
+      const newMerchants = incomingMerchants.filter( x => !(this.merchantsCached.some(y => y.id === x.id)) );
       // const newMerchants = merchants.filter( x => !(this.merchantsCached.includes(x)) );
       if(newMerchants) {
         this.merchantsCached.push(...newMerchants);
@@ -65,20 +67,61 @@ export class MerchantService {
     return null;
   }
 
+  /** returns a clone list of the cached merchants */
+  public getMerchantListCached(): Merchant[] {
+    if(this.merchantsCached) {
+      return this.merchantsCached.slice();
+    }
+    console.warn('<< MerchantService >> getMerchantListCached failed, merchantsCached null, returning []');
+    return [];
+  }
+
+  public clearCache(): void {
+    this.useCache = false;
+    if(this.merchantsCached) {
+      this.merchantsCached = [];
+    }
+  }
+
   /**
-   * returns a all list of merchants.
+   * http call to returns a new list of all merchants.
    * When the data grows really big, this may not be appropriate and should be calling a filter api.
    */
   public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
+    if(this.useCache){
+      console.log('<< MerchantService >> getMerchantList from cache');
+      return of(this.getMerchantListCached());
+    }
     if(token) {
       const uri: string = ApiEndPoints.MERCHANT_LIST;
       const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
       return this.httpWrapper.get(uri, options)
         .pipe(
           map( (resp: Merchant[]) => {
-            this.addToCache(resp);
-            return resp;
-          })
+            const temp: Merchant[] = [];
+
+            resp.forEach( x => {
+              // if you want to control what properties get carried on
+              const m: Merchant = new Merchant();
+              m.id = x.id;
+              m.name = x.name;
+              temp.push(m);
+            });
+
+            this.addToCache(temp);
+
+            this.useCache = true;
+            return this.getMerchantListCached();
+          }),
+          // if you just want to return all the returned properties on merchant
+          // map( (resp: Merchant[]) => {
+          //   resp.forEach( x => {
+          //     const m: Merchant = new Merchant();
+          //     Object.assign(m, x); // copy the properties
+          //     this.addToCache([m]);
+          //   });
+          //   return this.getMerchantListCached();
+          // })
         );
     } else {
       return of(null);
