@@ -79,7 +79,7 @@ export class MerchantService {
     let merchant: Merchant = null;
     if(id && this.merchantsCached && this.merchantsCached.length) {
       // some will stop the loop soon as it finds one
-      merchant = this.merchantsCached.filter(m => m.id = id)[0];
+      merchant = this.merchantsCached.filter(m => m.id === id)[0];
     } else {
       console.error('<< MerchantService >> getMerchantFromCache failed, one or more params invalid');
     }
@@ -145,7 +145,8 @@ export class MerchantService {
   public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
     if(this.useCache){
       console.debug('<< MerchantService >> getMerchantList, fetching from cache');
-      return of(this.getMerchantsFromCache());
+      const merchants: Merchant[] = this.getMerchantsFromCache();
+      return of(merchants);
     }
     if(token) {
       const uri: string = ApiEndPoints.MERCHANT_LIST;

@@ -70,11 +70,17 @@ export class UserCreateOrderViewComponent implements OnInit {
     });
   }
 
-  /** a separate call to get and set the merchant locally in here */
+  /**
+   * http call to set the merchant if not in cache.
+   */
   private setMerchant(id: number): void {
     if(id){
+
+      // try to get merchant from cache
       this.merchantService.setMerchantID(id);
       this.merchant = this.merchantService.getMerchantFromCache(id);
+
+      // http call to get merchant from server
       if(!this.merchant) {
         const token: string = this.userService.getAuthToken();
         if(token) {
@@ -92,6 +98,7 @@ export class UserCreateOrderViewComponent implements OnInit {
           console.error('<< UserCreateOrderView >> setMerchant failed, token null');
         }
       }
+
     } else {
       console.error('<< UserCreateOrderView >> setMerchant failed, id null');
     }
