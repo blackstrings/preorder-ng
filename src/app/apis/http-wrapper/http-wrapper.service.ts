@@ -154,18 +154,18 @@ export class HttpWrapperService<T> {
    * You can specified a return type Observable<HttpResponse<YourObject>> to
    * traverse into the headers and body for more specific data.
    */
-  public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
-    if(token) {
-      const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
-
-      return this.httpClient.get<Merchant[]>(url, this.getHttpOptions(token))
-        .pipe(
-          map(res => { return <Merchant[]>res; }),
-          catchError(this.handleError)
-        );
-    }
-    return throwError('<< HttpWrapper >> getMerchantList failed, token null');
-  }
+  // public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
+  //   if(token) {
+  //     const url: string = this.apiVersion + ApiEndPoints.MERCHANT_LIST;
+  //
+  //     return this.httpClient.get<Merchant[]>(url, this.getHttpOptions(token))
+  //       .pipe(
+  //         map(res => { return <Merchant[]>res; }),
+  //         catchError(this.handleError)
+  //       );
+  //   }
+  //   return throwError('<< HttpWrapper >> getMerchantList failed, token null');
+  // }
 
   // todo xl not complete
   public createNewAccount(email: string, password: string): Observable<{}> {

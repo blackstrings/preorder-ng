@@ -2,8 +2,6 @@ import {Merchant} from "./merchant";
 
 export class MerchantTest extends Merchant {
 
-  public getNameSpy: jasmine.Spy;
-
   public static createGeneric(): MerchantTest {
     return new MerchantTest(1, 'testMerchant');
   }

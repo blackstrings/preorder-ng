@@ -7,7 +7,7 @@ import {UserServiceTest} from "../../services/user-service/user.service.test";
 import {UserService} from "../../services/user-service/user.service";
 
 describe('HttpWrapperService', () => {
-  let service: HttpWrapperService;
+  let service: HttpWrapperService<any>;
   let userServiceMock: UserServiceTest;
 
   beforeEach(() => {

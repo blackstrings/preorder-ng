@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
 import {Merchant} from "../../models/merchant/merchant";
+import {Observable, of} from "rxjs";
+import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
+import {ApiEndPoints} from "../../apis/api-end-points";
+import {HttpOptions} from "../../apis/http-wrapper/http-options";
+import {HttpBuilders} from "../../apis/http-builders/http-builders";
+import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
+import {map} from 'rxjs/operators';
 
 /**
  * Handles querying merchants and caching.
@@ -7,7 +14,7 @@ import {Merchant} from "../../models/merchant/merchant";
 @Injectable({
   providedIn: 'root'
 })
-export class MerchantServiceService {
+export class MerchantService {
 
   /** the current merchant the user has selected */
   private merchantSelected: Merchant;
@@ -37,12 +44,13 @@ export class MerchantServiceService {
   private merchantsCached: Merchant[] = [];
 
   /** handles merchant related services */
-  constructor() { }
+  constructor(private httpWrapper: HttpWrapperService<Merchant[]>) { }
 
   /** adds incoming merchants into the cache preventing duplicates */
-  public addToCache(merchants: Merchant[]): void {
-    if(merchants && this.merchantsCached) {
-      const newMerchants = merchants.filter( x => !(this.merchantsCached.includes(x)) );
+  public addToCache(incomingMerchants: Merchant[]): void {
+    if(incomingMerchants && this.merchantsCached) {
+      const newMerchants = incomingMerchants.filter( x => !(this.merchantsCached.some(y => y.getID() === x.getID())) );
+      // const newMerchants = merchants.filter( x => !(this.merchantsCached.includes(x)) );
       if(newMerchants) {
         this.merchantsCached.push(...newMerchants);
       }
@@ -55,6 +63,26 @@ export class MerchantServiceService {
     }
     console.warn('<< MerchantService >> getMerchantSelected failed, merchantSelected null');
     return null;
+  }
+
+  /**
+   * returns a all list of merchants.
+   * When the data grows really big, this may not be appropriate and should be calling a filter api.
+   */
+  public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
+    if(token) {
+      const uri: string = ApiEndPoints.MERCHANT_LIST;
+      const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
+      return this.httpWrapper.get(uri, options)
+        .pipe(
+          map( (resp: Merchant[]) => {
+            this.addToCache(resp);
+            return resp;
+          })
+        );
+    } else {
+      return of(null);
+    }
   }
 
 }

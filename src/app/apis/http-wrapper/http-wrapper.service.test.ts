@@ -5,8 +5,8 @@ import {Injectable} from "@angular/core";
 @Injectable()
 export class HttpWrapperServiceTest {
   public getMerchantProducts: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'getMerchantProducts');
-  public getMerchantList: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'getMerchantList');
-  public login: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'login');
-  public createNewAccount: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'createNewAccount');
+  // public getMerchantList: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'getMerchantList');
+  // public login: jasmine.Spy = spyOn(HttpWrapperService.prototype, 'login');
+  // public createNewAccount: jasmine.Spy = spyOn(HttpWrapperService.prototype,createNewAccount');
 
 }
