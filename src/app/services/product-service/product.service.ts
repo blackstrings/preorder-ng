@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
-import {Product} from "../../models/product";
+import {Product} from "../../models/product/product";
 import {Observable, of} from "rxjs";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpOptions} from "../../apis/http-wrapper/http-options";

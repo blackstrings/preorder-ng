@@ -1,5 +1,5 @@
 import {Merchant} from "../merchant/merchant";
-import {Product} from "../product";
+import {Product} from "../product/product";
 
 export class MerchantProducts {
   public merchant: Merchant;

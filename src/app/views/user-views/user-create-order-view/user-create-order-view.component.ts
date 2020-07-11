@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Merchant} from "../../../models/merchant/merchant";
 import {ActivatedRoute} from "@angular/router";
-import {Product} from "../../../models/product";
+import {Product} from "../../../models/product/product";
 import {UserService} from "../../../services/user-service/user.service";
 import {ProductService} from "../../../services/product-service/product.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
