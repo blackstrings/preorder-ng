@@ -28,9 +28,8 @@ export class UserMerchantListViewComponent implements OnInit {
     this.merchantService.getMerchantList(token)
       .pipe(take(1))
       .subscribe((data: Merchant[]) => {
-        console.log(data);
+        console.debug(data);
         this.merchants = data;
-        console.log(this.merchants);
         // clone the data into the merchants from the IMerchant[] shape
         // if the object is a blob, you can try to push it into its shape with
         // this.merchants = {...data}

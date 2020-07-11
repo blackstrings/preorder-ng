@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Merchant} from "../../models/merchant/merchant";
-import {Observable, of} from "rxjs";
+import {Observable, of, throwError} from "rxjs";
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpOptions} from "../../apis/http-wrapper/http-options";
@@ -17,7 +17,7 @@ import {map} from 'rxjs/operators';
 export class MerchantService {
 
   /** the current merchant the user has selected */
-  private merchantSelected: Merchant;
+  private selectedMerchantID: number;
 
   /**
    * This is a front end expire timer to no longer pull from the cache.
@@ -65,20 +65,69 @@ export class MerchantService {
     }
   }
 
+  /** set the selected merchant, only sets the ID for security */
+  public setMerchantID(id: number): void {
+    if(id) {
+      this.selectedMerchantID = id;
+    } else {
+      console.error('<< MerchantService >> setMerchant failed, id null');
+    }
+  }
+
+  /** returns a single merchant from the cache */
+  public getMerchantFromCache(id: number): Merchant {
+    let merchant: Merchant = null;
+    if(id && this.merchantsCached && this.merchantsCached.length) {
+      // some will stop the loop soon as it finds one
+      merchant = this.merchantsCached.filter(m => m.id = id)[0];
+    } else {
+      console.error('<< MerchantService >> getMerchantFromCache failed, one or more params invalid');
+    }
+    return merchant;
+  }
+
+  /**
+   * Use this when not available in the cache.
+   * http call to get the merchant.
+   * returns as an array however due to the interface
+   */
+  public getMerchant(token: string, id: number): Observable<Merchant[] | HttpErrorContainer> {
+    if(id){
+      let merchant: Merchant = this.getMerchantFromCache(id);
+      if(merchant) {
+        return of([merchant]);
+      } else {
+
+        const uri: string = ApiEndPoints.MERCHANT + '/' + id;
+        const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
+        this.httpWrapper.get(uri, options)
+          .pipe(
+            // it's an array to follow the interface but only one should return
+            map( (resp: Merchant[]) => {
+              return this.modelToMerchant(resp);
+            })
+          )
+      }
+    } else {
+      return throwError('<< MerchantService >> getMerchant failed, id null');
+    }
+  }
+
+  /** returns selected merchant from cache if set and available */
   public getMerchantSelected(): Merchant {
-    if(this.merchantSelected) {
-      return this.merchantSelected;
+    if(this.selectedMerchantID) {
+      return this.getMerchantFromCache(this.selectedMerchantID);
     }
     console.warn('<< MerchantService >> getMerchantSelected failed, merchantSelected null');
     return null;
   }
 
-  /** returns a clone list of the cached merchants */
-  public getMerchantListCached(): Merchant[] {
-    if(this.merchantsCached) {
+  /** returns a clone list of ALL the cached merchants */
+  public getMerchantsFromCache(): Merchant[] {
+    if(this.merchantsCached && this.merchantsCached.length) {
       return this.merchantsCached.slice();
     }
-    console.warn('<< MerchantService >> getMerchantListCached failed, merchantsCached null, returning []');
+    console.warn('<< MerchantService >> getMerchantsFromCache failed, merchantsCached null, returning []');
     return [];
   }
 
@@ -95,8 +144,8 @@ export class MerchantService {
    */
   public getMerchantList(token: string): Observable<Merchant[] | HttpErrorContainer> {
     if(this.useCache){
-      console.log('<< MerchantService >> getMerchantList from cache');
-      return of(this.getMerchantListCached());
+      console.debug('<< MerchantService >> getMerchantList, fetching from cache');
+      return of(this.getMerchantsFromCache());
     }
     if(token) {
       const uri: string = ApiEndPoints.MERCHANT_LIST;
@@ -108,16 +157,14 @@ export class MerchantService {
 
             resp.forEach( x => {
               // if you want to control what properties get carried on
-              const m: Merchant = new Merchant();
-              m.id = x.id;
-              m.name = x.name;
+              const m: Merchant = this.modelToMerchant(x);
               temp.push(m);
             });
 
             this.addToCache(temp);
 
             this.useCache = true;
-            return this.getMerchantListCached();
+            return this.getMerchantsFromCache();
           }),
           // if you just want to return all the returned properties on merchant
           // map( (resp: Merchant[]) => {
@@ -131,6 +178,15 @@ export class MerchantService {
         );
     } else {
       return of(null);
+    }
+  }
+
+  private modelToMerchant(model: any): Merchant {
+    if(model) {
+      const m: Merchant = new Merchant();
+      m.id = model.id;
+      m.name = model.name;
+      return m;
     }
   }
 

@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
+// this will make bootstrap scale all font-sizes respective to the value here.
+html {
+  font-size: 14px;
+}
+
 .text-warning {
   color: red;
 }
