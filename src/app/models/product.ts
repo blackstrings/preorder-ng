@@ -1,22 +1,23 @@
 import {Merchant} from "./merchant/merchant";
 
 export class Product {
-  constructor(
-    public additional_time: string,
-    public available_end: string,
-    public available_start: string,
-    public created_at: string,
-    public description: string,
-    public id: number,
-    public merchant_id: number,
-    public price: number,
-    public title: string,
-    public updated_at: string,
-    public merchant: Merchant
-  ){
 
-  }
+  // properties
+  public additional_time: string;
+  public available_end: string;
+  public available_start: string;
+  public created_at: string;
+  public description: string;
+  public id: number;
+  public merchant_id: number;
+  public price: number;
+  public title: string;
+  public updated_at: string;
+  public merchant: Merchant;
 
+  constructor(){}
+
+  /*
   public getId(): number {
     return this.id;
   }
@@ -31,7 +32,7 @@ export class Product {
     return this.price;
   }
 
-  /** turns serialized object into the concrete form */
+  // turns serialized object into the concrete form
   public static deserialize(data: Product): Product {
 
     return new Product(
@@ -58,4 +59,5 @@ export class Product {
       return products;
     }
   }
+  */
 }

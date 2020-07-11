@@ -3,8 +3,6 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/c
 import {Observable, of, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError, map, timeout} from "rxjs/operators";
-import {Product} from "../../models/product";
-import {Merchant} from "../../models/merchant/merchant";
 import {HttpOptions} from "./http-options";
 import {HttpErrorContainer} from "./http-error-container";
 
@@ -24,7 +22,6 @@ export class HttpWrapperService<T> {
   private postHeadersJSON: HttpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
   private postOptionsJSON = {headers: this.postHeadersJSON, body: null, pathParams: new HttpParams()};
 
-  private body = null;
   private params: HttpParams = new HttpParams();
 
   // the set the api version here so we can concate with the end points
@@ -136,6 +133,7 @@ export class HttpWrapperService<T> {
    * call to get merchant products
    * @api api/version/merchants/merchant_id/products/
    * */
+  /*
   public getMerchantProducts(merchantID: number, token: string): Observable<Product[] | HttpErrorContainer> {
     if(merchantID && token) {      const url: string = this.apiVersion + ApiEndPoints.MERCHANT
         + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
@@ -148,6 +146,7 @@ export class HttpWrapperService<T> {
     }
     return throwError('<< HttpWrapper >> getMerchantProducts failed, id or token null');
   }
+  */
 
   /**
    * By default httpclient returns the json in the body.

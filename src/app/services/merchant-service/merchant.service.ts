@@ -19,6 +19,12 @@ export class MerchantService {
   /** the current merchant the user has selected */
   private merchantSelected: Merchant;
 
+  /**
+   * This is a front end expire timer to no longer pull from the cache.
+   * 1 hour expire time on front end - convert accordingly depending on the method that intakes the param.
+   */
+  private readonly cacheTimeLimit: number = 1;
+  private cacheTimeStamp: Date;
   private useCache: boolean = false;
 
   /**
