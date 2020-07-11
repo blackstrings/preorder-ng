@@ -1,7 +1,10 @@
 <div>
-  <div class="merchant-address">
-    <h1 *ngIf="merchant else noAddress">{{merchant.name | titlecase}}</h1>
-    <ng-template #noAddress>no merchant found</ng-template>
+  <div id="merchant-info" class="merchant-address">
+    <h3 *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
+    <ng-template #noMerchant>no merchant found</ng-template>
+    <hr>
+    <p>Open/Close - 7am - 9pm</p>
+    <p>3533 N Clairmont, Eau Claire, WI</p>
   </div>
 </div>
 <hr>
