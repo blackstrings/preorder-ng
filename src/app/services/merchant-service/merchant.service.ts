@@ -89,7 +89,7 @@ export class MerchantService {
   /**
    * Use this when not available in the cache.
    * http call to get the merchant.
-   * returns as an array however due to the interface
+   * returns as an array due to the interface protocol
    */
   public getMerchant(token: string, id: number): Observable<Merchant[] | HttpErrorContainer> {
     if(id){

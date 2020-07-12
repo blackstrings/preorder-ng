@@ -5,6 +5,7 @@ import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 import {UserService} from "../../../services/user-service/user.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
+import {FormGroup} from "@angular/forms";
 
 @Component({
   selector: 'app-user-merhchant-list-view',
@@ -16,6 +17,8 @@ export class UserMerchantListViewComponent implements OnInit {
   ViewRoutes = ViewRoutes;
 
   public merchants: Merchant[] = [];
+  public readonly maxCharLimit: number = 36;
+  public formSearchType: FormGroup = new FormGroup({});
 
   constructor(private router: Router, private userService: UserService, private merchantService: MerchantService) {
     console.log('<< UserMerchantListView >> View Initiated');

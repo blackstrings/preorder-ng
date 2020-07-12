@@ -10,5 +10,11 @@ html {
   color: red;
 }
 
-$color-primary: #ffd400;
+.no-padding-right {
+  padding-right: 0 !important;
+}
+
+// global variables
+// to use global scss variables in component's css, you need to import the style into each component's css
+$color-primary: #ffd400; // gold
 

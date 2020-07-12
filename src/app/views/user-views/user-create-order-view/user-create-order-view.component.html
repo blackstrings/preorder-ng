@@ -1,20 +1,25 @@
 <div>
-  <div id="merchant-info" class="merchant-address">
-    <h3 *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
-    <ng-template #noMerchant>no merchant found</ng-template>
-    <hr>
-    <p>Open/Close - 7am - 9pm</p>
-    <p>3533 N Clairmont, Eau Claire, WI</p>
+
+  <div>
+    <div id="merchant-info" class="merchant-address">
+      <h3 *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
+      <ng-template #noMerchant>no merchant found</ng-template>
+      <hr>
+      <p>Open/Close - 7am - 9pm</p>
+      <p>3533 N Clairmont, Eau Claire, WI</p>
+    </div>
   </div>
-</div>
-<hr>
-<h2>Menu</h2>
-<div class="row">
-  <div class="col-12 list-group">
-    <ng-container *ngFor="let p of products">
-      <a class="list-group-item list-group-item-action" (click)="addProduct(p.id)">
-        {{p.title}} <span class="badge-pill float-right"> {{p.price | currency}} </span>
-      </a>
-    </ng-container>
+  <hr>
+  <h2>Menu</h2>
+  <div class="row">
+    <div class="col-12 list-group no-padding-right">
+      <ng-container *ngFor="let p of products">
+        <div class="list-group-item list-group-item-action" (click)="addProduct(p.id)">
+          {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
+          <span class="badge-pill float-right"> {{p.price | currency}} </span>
+        </div>
+      </ng-container>
+    </div>
   </div>
+
 </div>

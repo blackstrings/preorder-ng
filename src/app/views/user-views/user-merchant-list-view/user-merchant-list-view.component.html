@@ -1,16 +1,23 @@
-<h1>
-  Merchants
-</h1>
-<div class="row">
-  <input class="col-12" [defaultValue]="'search by name'">
+<div id="search-box" class="row">
+  <div class="col-12">
+    <input class="col-12 input-group-text" placeholder="pizza, chinese, store name, ...">
+  </div>
+<!--  <input class="col-12 input-group-text" [defaultValue]="'search by name'">-->
+</div>
+
+<div style="padding-bottom: 10px;">
+  <form [formGroup]="formSearchType">
+    <input type="radio" value="selected" id="opt1"> Location
+    <input type="radio" value="v1" id="opt2"> Keyword
+  </form>
 </div>
 
 <div class="row">
-  <div class="col-12 list-group">
+  <div class="col-12 list-group no-padding-right">
     <ng-container *ngFor="let merchant of merchants">
       <a class="list-group-item list-group-item-action"
          (click)="goToUserCreateOrderView(merchant.id)">
-        {{merchant.name}}
+        {{ (merchant.name.length>maxCharLimit) ? (merchant.name | titlecase | slice:0:maxCharLimit)+'...' : (merchant.name | titlecase) }}
       </a>
     </ng-container>
   </div>

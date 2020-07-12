@@ -16,6 +16,9 @@ export class UserCreateOrderViewComponent implements OnInit {
   public merchant: Merchant;
   public products: Product[];
 
+  /** prevent displaying long product names in the view */
+  public readonly productNameMaxCharacter: number = 30;
+
   /**
    *
    * @param userService
