@@ -1,5 +1,5 @@
 <nav  class="navbar navbar-expand-lg navbar-light fixed-top">
-  <a  class="navbar-brand"  href="#">PreOrder</a>
+  <a  class="navbar-brand"  href="#">BayHeaven</a>
 
   <button  class="navbar-toggler"  type="button"  data-toggle="collapse"  data-target="#navbarSupportedContent"  aria-controls="navbarSupportedContent"  aria-expanded="false"  aria-label="Toggle navigation">
     <span  class="navbar-toggler-icon"></span>
@@ -9,13 +9,12 @@
       <li  class="nav-item active">
         <a  class="nav-link"  href="#">Home <span  class="sr-only">(current)</span></a>
       </li>
-      <li  class="nav-item dropdown">
+      <li [hidden]="!isLogin" class="nav-item dropdown">
         <a  class="nav-link dropdown-toggle"  href="#"  id="navbarDropdown"  role="button"  data-toggle="dropdown"  aria-haspopup="true"  aria-expanded="false">
-          Actions
+          more
         </a>
         <div  class="dropdown-menu"  aria-labelledby="navbarDropdown">
           <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_PROFILE"> Profile </a>
-          <a [hidden]="isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_CREATE_PROFILE"> Create Account </a>
 
           <div [hidden]="!isLogin" class="dropdown-divider"></div>
           <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a Seller</a>

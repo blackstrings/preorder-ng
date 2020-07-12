@@ -1,12 +1,16 @@
-#footer {
-  background-color: #333;
-  text-align: center;
-  padding: 30px;
+@import "src/styles";
+
+footer {
+  background-color: $color-primary-dark;
+  padding-top: 20px;
 }
 
 #footer ul li {
-  display: block;
   list-style: none;
   list-style-type: none;
-  color: grey;
+}
+
+footer span {
+  font-weight: bold;
+  color: $color-primary;
 }
