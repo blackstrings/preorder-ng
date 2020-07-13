@@ -16,6 +16,8 @@ import { BasicNavViewComponent } from './views/nav-views/basic-nav-view/basic-na
 import { UserProfileViewComponent } from './views/user-views/user-profile-view/user-profile-view.component';
 import { UserCreateAccountView } from './views/user-views/user-create-account-view/user-create-account-view.component';
 import { UserCreateOrderViewComponent } from './views/user-views/user-create-order-view/user-create-order-view.component';
+import {NgbModalModule} from "@ng-bootstrap/ng-bootstrap";
+import { ProductAddModalViewComponent } from './views/common-views/product-add-view/product-add-modal-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -33,12 +35,14 @@ import { UserCreateOrderViewComponent } from './views/user-views/user-create-ord
     UserProfileViewComponent,
     UserCreateAccountView,
     UserCreateOrderViewComponent,
+    ProductAddModalViewComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModalModule
   ],
   providers: [BasicViewGuard],
   bootstrap: [AppComponent]
