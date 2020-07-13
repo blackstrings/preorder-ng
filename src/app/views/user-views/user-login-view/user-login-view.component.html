@@ -11,7 +11,6 @@
     </div>
 
     <div class="form-group">
-<!--      <label for="email_id">Email address</label>-->
       <input type="email" class="form-control" id="email_id" placeholder="email" [formControl]="emailFC">
       <div *ngIf="emailFC.invalid && (emailFC.dirty || emailFC.touched)" class="alert alert-danger form-field-invalid">
         <div *ngIf="emailFC.errors.required">email is required. </div>
@@ -20,7 +19,6 @@
     </div>
 
     <div class="form-group">
-<!--      <label for="password_id">Password</label>-->
       <input type="password" class="form-control" id="password_id" placeholder="password" [formControl]="passwordFC">
       <div *ngIf="passwordFC.invalid && (passwordFC.dirty || passwordFC.touched)" class="alert alert-danger form-field-invalid">
         <div *ngIf="passwordFC.errors.required">password is required. </div>
@@ -40,7 +38,5 @@
       <a class="text-dark" [routerLink]="'/' + ViewRoutes.USER_RESET_LOGIN">Forgot Password</a>
     </div>
   </div>
-
-  <br>
 
 </div>
