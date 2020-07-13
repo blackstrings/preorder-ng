@@ -6,6 +6,8 @@ import {UserService} from "../../../services/user-service/user.service";
 import {ProductService} from "../../../services/product-service/product.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
 import {ViewRoutes} from "../../view-routes";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {ProductAddModalViewComponent} from "../../common-views/product-add-view/product-add-modal-view.component";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -29,7 +31,8 @@ export class UserCreateOrderViewComponent implements OnInit {
    * @param activatedRoute
    */
   constructor(private userService: UserService, private productService: ProductService,
-              private merchantService: MerchantService, private activatedRoute: ActivatedRoute) {
+              private merchantService: MerchantService, private activatedRoute: ActivatedRoute,
+              private modalService: NgbModal) {
     console.log('<< UserCreateOrderView >> View Initiated');
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');
@@ -41,8 +44,17 @@ export class UserCreateOrderViewComponent implements OnInit {
     this.fetchMerchantProducts()
   }
 
-  public addProduct(id: number): void {
-    throw new Error('to be implemented' + id);
+  public openProduct(id: number): void {
+    if(id) {
+      const product: Product = this.productService.getProductFromCache(id);
+      if(product) {
+        const modalRef = this.modalService.open(ProductAddModalViewComponent);
+        // pass in the product to the component modal
+        modalRef.componentInstance.product = product;
+      } else {
+        console.error('<< UserCreateOrderView >> openProduct failed, product null');
+      }
+    }
   }
 
   /** retrieves products and sets target merchant */

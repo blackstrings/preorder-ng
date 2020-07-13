@@ -13,11 +13,13 @@ import {map} from "rxjs/operators";
 })
 export class ProductService {
 
+  private currentProducts: Product[];
+
   constructor(private httpWrapper: HttpWrapperService<Product[]>) {
 
   }
 
-  /** returns merchant products */
+  /** returns merchant products from http call and caches it */
   public getProducts(token: string, merchantID: number): Observable<Product[] | HttpErrorContainer> {
     if(token && merchantID) {
       const uri: string = ApiEndPoints.MERCHANT + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
@@ -32,11 +34,23 @@ export class ProductService {
               Object.assign(m, x); // copy the properties
               temp.push(m);
             });
+            this.currentProducts = temp;
             return temp;
           })
         );
     }
     return of(null);
 
+  }
+
+  public getProductFromCache(id: number): Product {
+    if(this.currentProducts && this.currentProducts.length) {
+      return this.currentProducts.filter(x => x.id === id)[0];
+    }
+  }
+
+  /** returns shallow copies of all current cached products of the selected merchant */
+  public getCurrentProducts(): Product[] {
+    return this.currentProducts.slice();
   }
 }
