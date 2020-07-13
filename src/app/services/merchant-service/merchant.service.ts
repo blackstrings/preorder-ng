@@ -99,7 +99,7 @@ export class MerchantService {
       } else {
 
         const uri: string = ApiEndPoints.MERCHANT + '/' + id;
-        const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
+        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
         this.httpWrapper.get(uri, options)
           .pipe(
             // it's an array to follow the interface but only one should return
@@ -150,7 +150,7 @@ export class MerchantService {
     }
     if(token) {
       const uri: string = ApiEndPoints.MERCHANT_LIST;
-      const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
+      const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
       return this.httpWrapper.get(uri, options)
         .pipe(
           map( (resp: Merchant[]) => {

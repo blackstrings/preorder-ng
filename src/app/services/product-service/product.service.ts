@@ -21,7 +21,7 @@ export class ProductService {
   public getProducts(token: string, merchantID: number): Observable<Product[] | HttpErrorContainer> {
     if(token && merchantID) {
       const uri: string = ApiEndPoints.MERCHANT + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
-      const options: HttpOptions = HttpBuilders.getHttOptionsWithAuthHeaders(token);
+      const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
       return this.httpWrapper.get(uri, options)
         .pipe(
           // if you just want to return all the returned properties on merchant

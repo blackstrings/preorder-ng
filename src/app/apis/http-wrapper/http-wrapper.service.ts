@@ -18,12 +18,6 @@ import {HttpErrorContainer} from "./http-error-container";
 })
 export class HttpWrapperService<T> {
 
-  // http default configs - sets the commonly used default type of headers for sending over http request
-  private postHeadersJSON: HttpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
-  private postOptionsJSON = {headers: this.postHeadersJSON, body: null, pathParams: new HttpParams()};
-
-  private params: HttpParams = new HttpParams();
-
   // the set the api version here so we can concate with the end points
   private apiVersion: string = ApiEndPoints.TARGET_VERSION;
 
@@ -51,22 +45,6 @@ export class HttpWrapperService<T> {
       container.message = error.message;
     }
     return throwError(container);
-  }
-
-  // API calls to backend all below here
-
-  private getHttpOptions(token: string): {params: HttpParams, headers: HttpHeaders} {
-    if(token) {
-      const headers: HttpHeaders = this.getUserAuthHeader(token);
-      if(headers) {
-        return {params: this.params, headers: headers};
-      } else {
-        console.error('<< HttpWrapper >> getHttpOptions failed, headers null');
-      }
-    } else {
-      console.error('<< HttpWrapper >> getHttpOptions failed, token null');
-    }
-    throw new Error('<< HttpWrapper >> getHttpOptions failed, check call');
   }
 
   /**
@@ -122,12 +100,6 @@ export class HttpWrapperService<T> {
   //     .pipe(catchError(this.handleError));
   // }
 
-  /** should publish a logout observable */
-  public logout(): Observable<{}> {
-    console.warn('todo logout from backend not fully wired yet');
-    return this.httpClient.post(ApiEndPoints.USER_LOGOUT, null)
-      .pipe(catchError(this.handleError));
-  }
 
   /**
    * call to get merchant products
@@ -166,12 +138,4 @@ export class HttpWrapperService<T> {
   //   return throwError('<< HttpWrapper >> getMerchantList failed, token null');
   // }
 
-  // todo xl not complete
-  public createNewAccount(email: string, password: string): Observable<{}> {
-    console.warn('todo create account not yet complete');
-    // todo xl make endpoint call to crate account
-    return of(null);
-  }
-
-  // create merchant products
 }
