@@ -1,28 +1,44 @@
 <nav  class="navbar navbar-expand-lg navbar-light fixed-top">
-  <a  class="navbar-brand"  href="#">BayHeaven</a>
+  <a  class="navbar-brand"  [routerLink]="ViewRoutes.MERCHANT_LIST">BayHeaven</a>
 
-  <button  class="navbar-toggler"  type="button"  data-toggle="collapse"  data-target="#navbarSupportedContent"  aria-controls="navbarSupportedContent"  aria-expanded="false"  aria-label="Toggle navigation">
-    <span  class="navbar-toggler-icon"></span>
-  </button>
-  <div  class="collapse navbar-collapse"  id="navbarSupportedContent">
-    <ul  class="navbar-nav mr-auto">
-      <li  class="nav-item active">
-        <a  class="nav-link"  href="#">Home <span  class="sr-only">(current)</span></a>
-      </li>
-      <li [hidden]="!isLogin" class="nav-item dropdown">
-        <a  class="nav-link dropdown-toggle"  href="#"  id="navbarDropdown"  role="button"  data-toggle="dropdown"  aria-haspopup="true"  aria-expanded="false">
-          more
-        </a>
-        <div  class="dropdown-menu"  aria-labelledby="navbarDropdown">
-          <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_PROFILE"> Profile </a>
+    <div class="nav-item dropdown mr-auto">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        <span class="text-dark">more</span>
+      </a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" [hidden]="!isLogin">Account Settings</a>
+        <a class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a Partner</a>
 
-          <div [hidden]="!isLogin" class="dropdown-divider"></div>
-          <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a Seller</a>
+        <div class="dropdown-divider" [hidden]="!isLogin" ></div>
+        <a class="dropdown-item" [hidden]="!isLogin" (click)="logout()">Logout</a>
 
-          <div [hidden]="!isLogin" class="dropdown-divider"></div>
-          <a [hidden]="!isLogin" class="dropdown-item" (click)="logout()"> Logout </a>
-        </div>
-      </li>
-    </ul>
-  </div>
+      </div>
+    </div>
+
+  <ul [hidden]="!isLogin" class="nav">
+    <li class="nav-item">
+      <button class="btn btn-primary">Cart</button>
+    </li>
+  </ul>
+
+<!--  <button  class="navbar-toggler"  type="button"  data-toggle="collapse"  data-target="#navbarSupportedContent"  aria-controls="navbarSupportedContent"  aria-expanded="false"  aria-label="Toggle navigation">-->
+<!--    <span  class="navbar-toggler-icon"></span>-->
+<!--  </button>-->
+
+
+<!--  <div  class="collapse navbar-collapse"  id="navbarSupportedContent">-->
+<!--    <ul  class="navbar-nav mr-auto">-->
+<!--      <li [hidden]="!isLogin" class="nav-item dropdown">-->
+<!--        <a  class="nav-link dropdown-toggle"  href="#"  id="navbarDropdown"  role="button"  data-toggle="dropdown"  aria-haspopup="true"  aria-expanded="false">-->
+<!--          more-->
+<!--        </a>-->
+<!--        <div  class="dropdown-menu"  aria-labelledby="navbarDropdown">-->
+<!--          <a [hidden]="!isLogin" class="dropdown-item" [routerLink]="ViewRoutes.USER_PROFILE"> Profile </a>-->
+
+<!--          <div [hidden]="!isLogin" class="dropdown-divider"></div>-->
+<!--          <a [hidden]="!isLogin" class="dropdown-item" (click)="logout()"> Logout </a>-->
+<!--        </div>-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </div>-->
 </nav>
