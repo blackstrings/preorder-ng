@@ -5,8 +5,11 @@
       <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
         <span class="text-dark">more</span>
       </a>
+
       <div class="dropdown-menu">
+
         <a class="dropdown-item" [hidden]="!isLogin">Account Settings</a>
+        <a class="dropdown-item" [hidden]="!isLogin">Orders</a>
         <a class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a Partner</a>
 
         <div class="dropdown-divider" [hidden]="!isLogin" ></div>
