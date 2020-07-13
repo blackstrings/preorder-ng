@@ -5,6 +5,7 @@ import {Product} from "../../../models/product/product";
 import {UserService} from "../../../services/user-service/user.service";
 import {ProductService} from "../../../services/product-service/product.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
+import {ViewRoutes} from "../../view-routes";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -13,6 +14,7 @@ import {MerchantService} from "../../../services/merchant-service/merchant.servi
 })
 export class UserCreateOrderViewComponent implements OnInit {
 
+  ViewRoutes = ViewRoutes;
   public merchant: Merchant;
   public products: Product[];
 

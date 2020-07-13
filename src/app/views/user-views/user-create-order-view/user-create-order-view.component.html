@@ -1,6 +1,10 @@
 <div>
 
   <div>
+    <a [routerLink]="'/' + ViewRoutes.MERCHANT_LIST">Back</a>
+  </div>
+
+  <div>
     <div id="merchant-info" class="merchant-address">
       <h3 *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
       <ng-template #noMerchant>no merchant found</ng-template>

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
-import {HttpWrapperService} from "../../../apis/http-wrapper/http-wrapper.service";
 import {UserService} from "../../../services/user-service/user.service";
 import {ResponseLogin} from "../../../apis/responses/response-login";
 import {UserServiceSubscription} from "../../../services/user-service/user-service-subscription";
