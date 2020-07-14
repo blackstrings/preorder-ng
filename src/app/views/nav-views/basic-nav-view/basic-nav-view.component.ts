@@ -16,6 +16,7 @@ export class BasicNavViewComponent {
   ViewRoutes = ViewRoutes;
 
   public isLogin: boolean = false;
+  public shoppingCartItemCount: number = 0;
 
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,
@@ -37,5 +38,9 @@ export class BasicNavViewComponent {
           this.router.navigate([ViewRoutes.LOGIN]);
         }
       );
+  }
+
+  public test(): void {
+    this.shoppingCartItemCount++;
   }
 }
