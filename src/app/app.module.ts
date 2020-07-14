@@ -18,6 +18,18 @@ import { UserCreateAccountView } from './views/user-views/user-create-account-vi
 import { UserCreateOrderViewComponent } from './views/user-views/user-create-order-view/user-create-order-view.component';
 import {NgbModalModule} from "@ng-bootstrap/ng-bootstrap";
 import { ProductAddModalViewComponent } from './views/common-views/product-add-view/product-add-modal-view.component';
+import { FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
+
+// https://fontawesome.com/icons?d=gallery&q=shop&m=free
+// only use these for testing till you find the right icon
+// best to import specific icons as you need - turn off on commit
+// import { fas } from '@fortawesome/free-solid-svg-icons';
+// import { far } from '@fortawesome/free-regular-svg-icons';
+// individual icons
+import { faBell as farBell, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faBell as fasBell } from '@fortawesome/free-regular-svg-icons';
+import { faFacebookSquare, faTwitterSquare } from '@fortawesome/free-brands-svg-icons';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -35,16 +47,26 @@ import { ProductAddModalViewComponent } from './views/common-views/product-add-v
     UserProfileViewComponent,
     UserCreateAccountView,
     UserCreateOrderViewComponent,
-    ProductAddModalViewComponent,
+    ProductAddModalViewComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    NgbModalModule
+    NgbModalModule,
+    FontAwesomeModule
   ],
   providers: [BasicViewGuard],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(library: FaIconLibrary){
+    //font awesome libraries as whole - only for testing, so don't commit with it on
+    // library.addIconPacks(fas, far);
+    // individual icons - better approach - leave on for commit
+    library.addIcons(
+      faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH
+    );
+  }
+}
