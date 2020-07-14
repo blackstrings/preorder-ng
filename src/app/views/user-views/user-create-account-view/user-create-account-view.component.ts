@@ -79,7 +79,7 @@ export class UserCreateAccountView implements OnInit {
         // this.user.email = 'email@email.com';
         // this.user.password = 'password';
   
-        this.userService.login(this.user.email, this.user.password)
+        this.userService.createAccount(this.user.email, this.user.password)
           .pipe(
             take(1),
             catchError( e => throwError(e))
@@ -113,7 +113,7 @@ export class UserCreateAccountView implements OnInit {
           );
   
       } else {
-        console.warn('<< UserLoginView >> login failed, form is invalid');
+        console.warn('<< UserCreateView >> create new account failed, form is invalid');
       }
   }
 
@@ -123,7 +123,8 @@ export class UserCreateAccountView implements OnInit {
     if(!this.user) {result = false; }
     if(result && !this.user.email) { result = false; }
     if(result && !this.user.password) { result = false; }
-    return true;
+    if(result && this.user.password !== this.user.password2){result = false; }
+    return result;
   }
 
 }
