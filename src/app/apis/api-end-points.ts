@@ -10,7 +10,7 @@ export class ApiEndPoints {
   public static readonly VERSION2: string = 'api/v2/';
   public static readonly TARGET_VERSION: string = ApiEndPoints.VERSION1;
 
-  public static readonly USER_CREATE: string = '/api/v1/registrations';
+  public static readonly USER_CREATE: string = 'registrations';
   public static readonly USER_LOGIN: string = 'authenticate';
   public static readonly USER_LOGOUT: string = 'user/logout';
   public static readonly MERCHANT: string = 'merchants';
