@@ -8,6 +8,7 @@ import {MerchantService} from "../../../services/merchant-service/merchant.servi
 import {ViewRoutes} from "../../view-routes";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ProductAddModalViewComponent} from "../../common-views/product-add-view/product-add-modal-view.component";
+import {CartService} from '../../../services/cart-service/cart.service';
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -31,8 +32,8 @@ export class UserCreateOrderViewComponent implements OnInit {
    * @param activatedRoute
    */
   constructor(private userService: UserService, private productService: ProductService,
-              private merchantService: MerchantService, private activatedRoute: ActivatedRoute,
-              private modalService: NgbModal) {
+              private merchantService: MerchantService, private cartService: CartService,
+			  private activatedRoute: ActivatedRoute, private modalService: NgbModal) {
     console.log('<< UserCreateOrderView >> View Initiated');
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');
@@ -44,25 +45,47 @@ export class UserCreateOrderViewComponent implements OnInit {
     this.fetchMerchantProducts()
   }
 
-  /** opens the product in a separate modal for further modifying and changing qty */
-  public openProduct(id: number): void {
+  /** opens up the product in a separate modal view */
+  public viewProduct(id: number): void {
     if(id) {
-      const product: Product = this.productService.getProduct(id);
+      const product: Product = this.productService.getProductFromCache(id);
       if(product) {
-        const modalRef = this.modalService.open(ProductAddModalViewComponent);
+
+        const modalRef = this.modalService.open(ProductAddModalViewComponent, {scrollable: true});
         // pass in the product to the component modal
         modalRef.componentInstance.product = product;
-        modalRef.result.then( (modifiedProduct: Product) => {
-          if(modifiedProduct) {
-            // todo create add to cartService
-            console.error('<< UserCreateOrderView >> Add to cart service not yet implemented');
-            //this.productService.addToCart(modifiedProduct);
-          }
+		    // listen to modal on close
+        (modalRef.componentInstance as ProductAddModalViewComponent).onClose.subscribe( (val: Product) => {
+        	if(val) {
+        		this.addToCart(val);
+			    }
         });
+
       } else {
         console.error('<< UserCreateOrderView >> openProduct failed, product null');
       }
     }
+  }
+
+  private addToCart(product): void {
+  	if(this.merchant && product) {
+  		// if the product is of a different merchant,
+		// we need to let the user know their previous order will have to be discarded
+  		if(this.cartService.canAddProductToOrder(product)) {
+			this.cartService.addToCart(this.merchant, product);
+		} else {
+  			console.warn('<< UserCreateOrderView >> addToCart failed, attempting to add new products from new store');
+			// todo add yesNo modal
+			const modalRef = this.modalService.open(ProductAddModalViewComponent);
+			const header: string = 'Discard all orders from previous merchant and start new order?';
+			modalRef.componentInstance.product = product; // change this to a header string instead
+			(modalRef.componentInstance as ProductAddModalViewComponent).onClose.subscribe( (val: Product) => {
+				if(val) {
+					this.cartService.addToCart(this.merchant, product);
+				}
+			});
+		}
+	}
   }
 
   /** retrieves products and sets target merchant */
@@ -96,7 +119,8 @@ export class UserCreateOrderViewComponent implements OnInit {
   }
 
   /**
-   * http call to set the merchant if not in cache.
+   * Sets the merchant from the cache, it not avaiable
+   * makes http call to set the merchant.
    */
   private setMerchant(id: number): void {
     if(id){
