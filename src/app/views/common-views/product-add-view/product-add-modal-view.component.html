@@ -1,7 +1,7 @@
 <!-- header -->
 <div class="modal-header">
   <h4 class="modal-title">{{product.title}}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+  <button type="button" class="close" aria-label="Close" (click)="dismiss()">
       <fa-icon [icon]="['fas', 'times']" size="1x"></fa-icon>
   </button>
 </div>
@@ -15,9 +15,7 @@
 
   <!-- for sub items and nested product addon and selections we need to dynamically generate it from the product -->
   <!-- so buttons to control qty for sub items needs to get populated here -->
-  <div id="sub-items-and-forms">
-
-  </div>
+  <div id="sub-items-and-forms"></div>
 
 </div>
 
@@ -29,7 +27,7 @@
     <div class="text-center font-qty">{{qty}}</div>
     <button type="button" class="btn" (click)="add()"> <fa-icon [icon]="['fas', 'plus']" size="1x"></fa-icon> </button>
   </div>
-  <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">
+  <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="close()">
     Add To Bag <span>{{totalPrice | currency}}</span>
   </button>
 

@@ -6,9 +6,11 @@ import {UserService} from "../../../services/user-service/user.service";
 import {ProductService} from "../../../services/product-service/product.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
 import {ViewRoutes} from "../../view-routes";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbModalOptions} from "@ng-bootstrap/ng-bootstrap";
 import {ProductAddModalViewComponent} from "../../common-views/product-add-view/product-add-modal-view.component";
 import {CartService} from '../../../services/cart-service/cart.service';
+import {take} from "rxjs/operators";
+import {YesNoModalViewComponent} from "../../common-views/yes-no-modal-view/yes-no-modal-view.component";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -33,59 +35,81 @@ export class UserCreateOrderViewComponent implements OnInit {
    */
   constructor(private userService: UserService, private productService: ProductService,
               private merchantService: MerchantService, private cartService: CartService,
-			  private activatedRoute: ActivatedRoute, private modalService: NgbModal) {
+              private activatedRoute: ActivatedRoute, private modalService: NgbModal) {
     console.log('<< UserCreateOrderView >> View Initiated');
     // using snapShot to get the param (older way and won't work if the component doesn't init again
     // this.merchantID = this.activatedRoute.snapshot.paramMap.get('id');
   }
 
-
+  /** on init it will fetch all products for the user to choose from */
   ngOnInit(): void {
-    // use observable - better approach to grab params from url
     this.fetchMerchantProducts()
   }
 
-  /** opens up the product in a separate modal view */
-  public viewProduct(id: number): void {
+  /**
+   * opens up the product in a separate modal view.
+   * We pass an ID rather than the product directly because we need a new deep copy of the product.
+   * When grabbing a product from productService it returns a deep copy so we can mutate it for use
+   * without affecting the original.
+   */
+  public showModalProductView(id: number): void {
     if(id) {
       const product: Product = this.productService.getProductFromCache(id);
       if(product) {
 
-        const modalRef = this.modalService.open(ProductAddModalViewComponent, {scrollable: true});
-        // pass in the product to the component modal
-        modalRef.componentInstance.product = product;
-		    // listen to modal on close
-        (modalRef.componentInstance as ProductAddModalViewComponent).onClose.subscribe( (val: Product) => {
-        	if(val) {
-        		this.addToCart(val);
-			    }
-        });
+        // set config to not allow keyboard esc or click on backdrop to close
+        const modalConfigs: NgbModalOptions = {backdrop: 'static', keyboard: false, scrollable: true};
+        const modalRef = this.modalService.open(ProductAddModalViewComponent, modalConfigs);
+        if(modalRef.componentInstance instanceof ProductAddModalViewComponent) {
+          modalRef.componentInstance.init(product);
+          modalRef.componentInstance.onClose
+            .pipe(take(1))
+            .subscribe( (val: Product) => {
+              if(val) {
+                this.addToCart(val);
+              }
+            });
+        }
 
       } else {
-        console.error('<< UserCreateOrderView >> openProduct failed, product null');
+        console.error('<< UserCreateOrderView >> viewProduct failed, product null');
       }
     }
   }
 
+  /** attempts to add product to the cart */
   private addToCart(product): void {
-  	if(this.merchant && product) {
-  		// if the product is of a different merchant,
-		// we need to let the user know their previous order will have to be discarded
-  		if(this.cartService.canAddProductToOrder(product)) {
-			this.cartService.addToCart(this.merchant, product);
-		} else {
-  			console.warn('<< UserCreateOrderView >> addToCart failed, attempting to add new products from new store');
-			// todo add yesNo modal
-			const modalRef = this.modalService.open(ProductAddModalViewComponent);
-			const header: string = 'Discard all orders from previous merchant and start new order?';
-			modalRef.componentInstance.product = product; // change this to a header string instead
-			(modalRef.componentInstance as ProductAddModalViewComponent).onClose.subscribe( (val: Product) => {
-				if(val) {
-					this.cartService.addToCart(this.merchant, product);
-				}
-			});
-		}
-	}
+    if(this.merchant && product) {
+      // if the product is of a different merchant,
+      // we need to let the user know their previous order will have to be discarded
+      if(this.cartService.canAddProductToOrder(product, this.merchant)) {
+        this.cartService.addToCart(this.merchant, product);
+      } else {
+        console.warn('<< UserCreateOrderView >> addToCart interrupted, attempting to add new products from new store');
+        this.showModalOrderOverrideWarning(product);
+      }
+    }
+  }
+
+  private showModalOrderOverrideWarning(product: Product): void {
+    // set modal config to not allow keyboard esc or click on backdrop to close
+    const modalConfigs: NgbModalOptions = {backdrop: 'static', keyboard: false};
+    // dynamically create the modal
+    const modalRef = this.modalService.open(YesNoModalViewComponent, modalConfigs);
+    // cast the modal to the correct type for easier property accessing
+    if(modalRef.componentInstance instanceof YesNoModalViewComponent) {
+      const header: string = 'Warning'
+      const body: string = 'You have products from another merchant in the cart. ' +
+        'Proceed and start a new order from this merchant?';
+      modalRef.componentInstance.init(header, body);
+      modalRef.componentInstance.onClose
+        .pipe(take(1))
+        .subscribe( (val: boolean) => {
+        if(val) {
+          this.cartService.addToCart(this.merchant, product);
+        }
+      });
+    }
   }
 
   /** retrieves products and sets target merchant */

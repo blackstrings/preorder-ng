@@ -62,6 +62,7 @@ export class ProductService {
       const product: Product = this.availableProducts.filter(x => x.id === id)[0];
       return product.clone();
     }
+    return null;
   }
 
   /**

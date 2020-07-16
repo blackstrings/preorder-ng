@@ -29,12 +29,16 @@ export class ProductAddModalViewComponent implements OnInit {
    * On add to bag, it returns the product, so the caller must handle the returned product
    * Do not bring any other services in here other than the modal.
    */
-  constructor(public activeModal: NgbActiveModal) { }
+  constructor(public activeModal: NgbActiveModal) {
+
+  }
+
+  public init(product: Product): void {
+    this.product = product;
+    this.totalPrice = this.product.price;
+  }
 
   ngOnInit(): void {
-    if(this.product){
-      this.totalPrice = this.product.price;
-    }
   }
 
   /** up the qty - highest can go is 99 */
@@ -69,14 +73,14 @@ export class ProductAddModalViewComponent implements OnInit {
 
   /** publish the result then dismiss - order matters*/
   public dismiss(): void {
-  	this._onClose.next(null);
   	this.activeModal.dismiss();
+  	this._onClose.next(null);
   }
 
   /** publish the result then close - order matters*/
   public close(): void {
-  	this._onClose.next(this.product);
   	this.activeModal.close();
+  	this._onClose.next(this.product);
   }
 
 }

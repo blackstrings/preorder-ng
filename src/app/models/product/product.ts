@@ -15,7 +15,7 @@ export class Product {
   public updated_at: string;
 
   // how much qty of this product - used during purchase
-  public orderQTY: number;
+  public orderQTY: number = 1;
   // should there be a max qty limit for this product per order
   public maxQTY : number;
 

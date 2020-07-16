@@ -49,16 +49,20 @@ export class CartService {
 
 	}
 
-	public canAddProductToOrder(product: Product): boolean {
-		let result: boolean = true;
-		if(!this.doesProductBelongToCurrentOrder(product)) {
-			result = false;
-		}
+	public canAddProductToOrder(product: Product, merchant: Merchant): boolean {
+    let result: boolean = true;
+	  if(this.order && this.order.merchant) {
+      if(!this.doesProductMatchCurrentOrderMerchant(product)) {
+        result = false;
+      }
+    } else {
+	    this.startNewOrder(product, merchant);
+    }
 		return result;
 	}
 
 	/** quick validation for product before adding to cart */
-	private doesProductBelongToCurrentOrder(product: Product): boolean {
+	private doesProductMatchCurrentOrderMerchant(product: Product): boolean {
 		let result: boolean = false;
 		if(product) {
 			// check product can be added to current order base on having same merchant id
@@ -75,12 +79,22 @@ export class CartService {
 	 */
 	public addToCart(merchant: Merchant, product: Product): boolean {
 		if(merchant && product) {
-			if(!this.validateProductBelongsToMerchant(product, merchant)) {
+
+			if(!this.doesProductMatchCurrentOrderMerchant(product)) {
+			  console.debug('<< CartService >> addToCart, starting new order product does not belong to current merchant');
 				this.order = new Order();
 				this.order.merchant = merchant;
 			}
 
-			this.order.add(product);
+			if(this.validateProductBelongsToMerchant(product, merchant)) {
+        this.order.add(product);
+        console.debug('<< CartService >> product added');
+        console.dir(this.order);
+        return true;
+      } else {
+			  console.error('<< CartService >> addToCart failed, product not belong to merchant');
+			  return false;
+      }
 
 		} else {
 			console.error('<< CartService >> addToCart failed, merchantID or product null');
@@ -97,8 +111,9 @@ export class CartService {
 		}
 	}
 
-	private startNewOrder(): void {
+	private startNewOrder(product: Product, merchant: Merchant): void {
 		this.order = new Order();
+		this.order.setMerchant(merchant);
 	}
 
 	/** returns direct reference of the current order */

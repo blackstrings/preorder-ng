@@ -3,10 +3,11 @@ import {Merchant} from '../merchant/merchant';
 
 export class Order {
 	isSuccess: boolean;
-	products: Product[];
+	products: Product[] = [];
 	merchant: Merchant;
 	orderID: string;
 	submitTime: string;
+
 
 	public getMerchantId(): number {
 		if(this.merchant) {
@@ -21,6 +22,10 @@ export class Order {
 			this.products.push(product);
 		}
 	}
+
+	public setMerchant(merchant: Merchant): void {
+	  this.merchant = merchant;
+  }
 
 	public calculateTotalPrice(): number {
 		// if(this.products && this.products.length) {

@@ -20,7 +20,7 @@
 
       <!-- list all the top tier products of the merchant here -->
       <ng-container *ngFor="let p of products">
-        <div class="list-group-item list-group-item-action" (click)="viewProduct(p.id)">
+        <div class="list-group-item list-group-item-action" (click)="showModalProductView(p.id)">
           {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
           <span class="badge-pill float-right"> {{p.price | currency}} </span>
         </div>
