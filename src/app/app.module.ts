@@ -29,7 +29,7 @@ import { FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesom
 import { faBell as farBell, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faBell as fasBell } from '@fortawesome/free-regular-svg-icons';
 import { faFacebookSquare, faTwitterSquare } from '@fortawesome/free-brands-svg-icons';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faTimes, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -66,7 +66,7 @@ export class AppModule {
     // library.addIconPacks(fas, far);
     // individual icons - better approach - leave on for commit
     library.addIcons(
-      faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH
+      faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH, faTimes, faPlus, faMinus
     );
   }
 }

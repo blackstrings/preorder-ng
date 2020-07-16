@@ -13,14 +13,19 @@ import {map} from "rxjs/operators";
 })
 export class ProductService {
 
-  private currentProducts: Product[];
+  /** the products the merchant carries - populated each time on product fetch */
+  private availableProducts: Product[];
 
+  /**
+   * Handles products and cart.
+   * @param httpWrapper
+   */
   constructor(private httpWrapper: HttpWrapperService<Product[]>) {
 
   }
 
-  /** returns merchant products from http call and caches it */
-  public getProducts(token: string, merchantID: number): Observable<Product[] | HttpErrorContainer> {
+  /** returns merchant products from http call and caches it to available products */
+  public fetchProducts(token: string, merchantID: number): Observable<Product[] | HttpErrorContainer> {
     if(token && merchantID) {
       const uri: string = ApiEndPoints.MERCHANT + '/' + merchantID + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
       const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
@@ -28,14 +33,14 @@ export class ProductService {
         .pipe(
           // if you just want to return all the returned properties on merchant
           map( (resp: Product[]) => {
-            const temp: Product[] = [];
+            const fetchedProducts: Product[] = [];
             resp.forEach( x => {
               const m: Product = new Product();
               Object.assign(m, x); // copy the properties
-              temp.push(m);
+              fetchedProducts.push(m);
             });
-            this.currentProducts = temp;
-            return temp;
+            this.setAvailableProducts(fetchedProducts);
+            return fetchedProducts;
           })
         );
     }
@@ -43,14 +48,27 @@ export class ProductService {
 
   }
 
-  public getProductFromCache(id: number): Product {
-    if(this.currentProducts && this.currentProducts.length) {
-      return this.currentProducts.filter(x => x.id === id)[0];
+  private setAvailableProducts(products: Product[]): void {
+    if(products && products.length) {
+      this.availableProducts = products;
+    } else {
+      console.error('<< ProductServices >> setAvailableProducts failed, products null or empty');
     }
   }
 
-  /** returns shallow copies of all current cached products of the selected merchant */
+  /** returns a deep cloned product from available products - todo ensure it's always a deep clone */
+  public getProduct(id: number): Product {
+    if(this.availableProducts && this.availableProducts.length) {
+      const product: Product = this.availableProducts.filter(x => x.id === id)[0];
+      return product.clone();
+    }
+  }
+
+  /**
+   * returns shallow copies of all current cached products of the selected merchant
+   * Note: May not be needed
+   */
   public getCurrentProducts(): Product[] {
-    return this.currentProducts.slice();
+    return this.availableProducts.slice();
   }
 }
