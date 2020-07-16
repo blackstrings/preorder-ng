@@ -57,7 +57,7 @@ export class ProductService {
   }
 
   /** returns a deep cloned product from available products - todo ensure it's always a deep clone */
-  public getProduct(id: number): Product {
+  public getProductFromCache(id: number): Product {
     if(this.availableProducts && this.availableProducts.length) {
       const product: Product = this.availableProducts.filter(x => x.id === id)[0];
       return product.clone();

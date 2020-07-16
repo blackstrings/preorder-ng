@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Product} from "../../../models/product/product";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
+import {Observable, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-product-add-modal-view',
@@ -9,7 +10,14 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class ProductAddModalViewComponent implements OnInit {
 
+	/**
+	 * Should represent a new product not yet referenced in a state elsewhere.
+	 * As this product will get mutated through selections in the modal.
+	 */
   @Input() product: Product;
+
+  private _onClose: Subject<Product> = new Subject<Product>();
+  public onClose: Observable<Product> = this._onClose.asObservable();
 
   // default starting qty
   public qty: number = 1;
@@ -57,6 +65,18 @@ export class ProductAddModalViewComponent implements OnInit {
   /** exits the modal and returns the product to be further process */
   public addToBag(): void {
     this.activeModal.close(this.product);
+  }
+
+  /** publish the result then dismiss - order matters*/
+  public dismiss(): void {
+  	this._onClose.next(null);
+  	this.activeModal.dismiss();
+  }
+
+  /** publish the result then close - order matters*/
+  public close(): void {
+  	this._onClose.next(this.product);
+  	this.activeModal.close();
   }
 
 }

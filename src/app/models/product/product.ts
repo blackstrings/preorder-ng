@@ -13,7 +13,6 @@ export class Product {
   public price: number;
   public title: string;
   public updated_at: string;
-  public merchant: Merchant;
 
   // how much qty of this product - used during purchase
   public orderQTY: number;
