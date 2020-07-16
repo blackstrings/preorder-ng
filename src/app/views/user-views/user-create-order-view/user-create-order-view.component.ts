@@ -44,13 +44,21 @@ export class UserCreateOrderViewComponent implements OnInit {
     this.fetchMerchantProducts()
   }
 
+  /** opens the product in a separate modal for further modifying and changing qty */
   public openProduct(id: number): void {
     if(id) {
-      const product: Product = this.productService.getProductFromCache(id);
+      const product: Product = this.productService.getProduct(id);
       if(product) {
         const modalRef = this.modalService.open(ProductAddModalViewComponent);
         // pass in the product to the component modal
         modalRef.componentInstance.product = product;
+        modalRef.result.then( (modifiedProduct: Product) => {
+          if(modifiedProduct) {
+            // todo create add to cartService
+            console.error('<< UserCreateOrderView >> Add to cart service not yet implemented');
+            //this.productService.addToCart(modifiedProduct);
+          }
+        });
       } else {
         console.error('<< UserCreateOrderView >> openProduct failed, product null');
       }
@@ -69,7 +77,7 @@ export class UserCreateOrderViewComponent implements OnInit {
         if(!isNaN(merchantID) && token) {
 
           // async http call
-          this.productService.getProducts(token, merchantID)
+          this.productService.fetchProducts(token, merchantID)
             .subscribe( (data: Product[]) => {
               this.products = data;
               this.setMerchant(merchantID);

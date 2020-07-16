@@ -15,7 +15,39 @@ export class Product {
   public updated_at: string;
   public merchant: Merchant;
 
+  // how much qty of this product - used during purchase
+  public orderQTY: number;
+  // should there be a max qty limit for this product per order
+  public maxQTY : number;
+
+  // to have nested products such as ingredients etc
+  public products: Product[];
+
   constructor(){}
+
+  /** deep copy */
+  public clone(): Product {
+    const newProduct: Product = new Product();
+    return Object.assign(newProduct, JSON.parse(JSON.stringify(this)) );
+  }
+
+  /**
+   * returns the total price for the product
+   * NOTE: This algorithm and the server algorithm should match.
+   */
+  public calculateTotalPrice(): number {
+    let total: number = this.price; // starting price
+
+    // loop through nested products and accumulate all sub product prices
+    if(this.products && this.products.length) {
+      this.products.forEach( p => {
+        total += p.calculateTotalPrice();
+      });
+    }
+
+    total = total * this.orderQTY;
+    return total;
+  }
 
   /*
   public getId(): number {
