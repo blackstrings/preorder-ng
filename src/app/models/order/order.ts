@@ -1,5 +1,6 @@
 import {Product} from '../product/product';
 import {Merchant} from '../merchant/merchant';
+import {DeliveryType} from '../delivery/delivery-type';
 
 export class Order {
 	isSuccess: boolean;
@@ -7,6 +8,8 @@ export class Order {
 	merchant: Merchant;
 	orderID: string;
 	submitTime: string;
+	deliveryType: DeliveryType = DeliveryType.PICKUP;
+
 
 
 	public getMerchantId(): number {
@@ -28,12 +31,12 @@ export class Order {
   }
 
 	public calculateTotalPrice(): number {
-		// if(this.products && this.products.length) {
-		// 	let total: number = 0;
-		// 	this.products.forEach( p => {
-		// 		total +=
-		// 	});
-		// }
+		if(this.products && this.products.length) {
+			let total: number = 0;
+			this.products.forEach( p => {
+				total += p.calculateTotalPrice();
+			});
+		}
 		return 0;
 	}
 }

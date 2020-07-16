@@ -112,7 +112,7 @@ export class UserCreateOrderViewComponent implements OnInit {
     }
   }
 
-  /** retrieves products and sets target merchant */
+  /** retrieves products for the merchant in the url. It also sets target merchant. */
   private fetchMerchantProducts(): void {
     // pull merchant id from route
     this.activatedRoute.paramMap.subscribe( params => {
@@ -143,8 +143,8 @@ export class UserCreateOrderViewComponent implements OnInit {
   }
 
   /**
-   * Sets the merchant from the cache, it not avaiable
-   * makes http call to set the merchant.
+   * Sets the merchant from the cache,
+   * if merchant not found in cache, it goes to makes http call for the merchant and set it.
    */
   private setMerchant(id: number): void {
     if(id){
