@@ -89,8 +89,9 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
     if(this.isFormValid()) {
 
       // debug only for faster login test
-      // this.user.email = 'email@email.com';
-      // this.user.password = 'password';
+      // todo don't commit this
+      this.user.email = 'email@email.com';
+      this.user.password = 'password';
 
       this.userService.login(this.user.email, this.user.password)
         .pipe(
