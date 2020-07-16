@@ -11,6 +11,7 @@ import {ProductAddModalViewComponent} from "../../common-views/product-add-view/
 import {CartService} from '../../../services/cart-service/cart.service';
 import {take} from "rxjs/operators";
 import {YesNoModalViewComponent} from "../../common-views/yes-no-modal-view/yes-no-modal-view.component";
+import {AddToOrderValidatorContainer} from '../../../services/cart-service/validators/add-to-order-validator-container';
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -66,32 +67,39 @@ export class UserCreateOrderViewComponent implements OnInit {
             .pipe(take(1))
             .subscribe( (val: Product) => {
               if(val) {
-                this.addToCart(val);
+                this.addToOrder(val);
               }
             });
         }
 
       } else {
-        console.error('<< UserCreateOrderView >> viewProduct failed, product null');
+        console.error('<< UserCreateOrderView >> showModalProductView failed, product null');
       }
     }
   }
 
-  /** attempts to add product to the cart */
-  private addToCart(product): void {
+  /**
+   * encapsulate product and merchant into a validator to begin validating checks before
+   * attempts to add product to the order.
+   */
+  private addToOrder(product): void {
     if(this.merchant && product) {
+    	const container: AddToOrderValidatorContainer = new AddToOrderValidatorContainer(product, this.merchant);
       // if the product is of a different merchant,
       // we need to let the user know their previous order will have to be discarded
-      if(this.cartService.canAddProductToOrder(product, this.merchant)) {
-        this.cartService.addToCart(this.merchant, product);
+      if(this.cartService.addToOrderValidate(container)) {
+        this.cartService.addToOrder(container);
       } else {
         console.warn('<< UserCreateOrderView >> addToCart interrupted, attempting to add new products from new store');
-        this.showModalOrderOverrideWarning(product);
+        this.showModalOrderOverrideWarning(container);
       }
-    }
+    } else {
+    	console.error('<< UserCreateOrderView >> addToCart failed, product null or merchant was not set properly');
+	}
   }
 
-  private showModalOrderOverrideWarning(product: Product): void {
+  /** show warning confirmation if user wants to start a new order overwriting current order */
+  private showModalOrderOverrideWarning(container: AddToOrderValidatorContainer): void {
     // set modal config to not allow keyboard esc or click on backdrop to close
     const modalConfigs: NgbModalOptions = {backdrop: 'static', keyboard: false};
     // dynamically create the modal
@@ -104,9 +112,10 @@ export class UserCreateOrderViewComponent implements OnInit {
       modalRef.componentInstance.init(header, body);
       modalRef.componentInstance.onClose
         .pipe(take(1))
-        .subscribe( (val: boolean) => {
-        if(val) {
-          this.cartService.addToCart(this.merchant, product);
+        .subscribe( (yes: boolean) => {
+        if(yes) {
+        	this.cartService.startNewOrder(container);
+        	this.addToOrder(container.product);
         }
       });
     }

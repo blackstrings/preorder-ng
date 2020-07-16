@@ -1,7 +1,7 @@
-import {Order} from './order';
-import {Product} from '../product/product';
-import {Merchant} from '../merchant/merchant';
-import {DeliveryType} from '../delivery/delivery-type';
+import {Order} from '../../../models/order/order';
+import {Product} from '../../../models/product/product';
+import {Merchant} from '../../../models/merchant/merchant';
+import {DeliveryType} from '../../../models/delivery/delivery-type';
 
 /** front end soft validator for Order */
 export class OrderValidator {
@@ -42,7 +42,8 @@ export class OrderValidator {
 
 	public static hasValidPickupTime(order: Order): boolean {
 		if(order && order.deliveryType === DeliveryType.PICKUP) {
-
+			console.error('<< OrderValidator >> not yet implemented');
+			return false;
 		}
 	}
 }

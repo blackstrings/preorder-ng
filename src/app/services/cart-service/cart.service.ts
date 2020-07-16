@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
-import {Product} from "../../models/product/product";
 import {Observable, of} from "rxjs";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {map} from "rxjs/operators";
 import {Order} from '../../models/order/order';
-import { Merchant } from 'src/app/models/merchant/merchant';
-import {OrderValidator} from '../../models/order/order-validator';
+import {OrderValidator} from './validators/order-validator';
+import {AddToOrderValidatorContainer} from './validators/add-to-order-validator-container';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class CartService {
 
+	// the only order that can exist at any given time in the service
+	// multi orders not supported unless business decides to need it
 	private order: Order = new Order();
-
 
 	/**
 	 * Handles send order
@@ -58,7 +58,7 @@ export class CartService {
 	 * when user is ready to make payments - take their order to checkout
 	 * returns merchant products from http call and caches it
 	 */
-	public checkoutOrder(token): Observable<Order | HttpErrorContainer> {
+	public sendCartToCheckout(token): Observable<Order | HttpErrorContainer> {
 		throw new Error('<< CartServices >> not yet implemented');
 		if(token && this.order) {
 			if(OrderValidator.validate(this.order)) {
@@ -81,60 +81,79 @@ export class CartService {
 		return of(null);
 	}
 
-	public canAddProductToOrder(product: Product, merchant: Merchant): boolean {
+	public addToOrderValidate(container: AddToOrderValidatorContainer): boolean {
     	let result: boolean = true;
+
+    	if(!container) { result = false; }
+
 		if(this.order) {
-			if(!this.doesProductMatchCurrentOrderMerchant(product)) {
+			if(!this.doesProductMatchCurrentOrderMerchant(container)) {
 				result = false;
 			}
 		}
+
+		if(result && OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
+			result = false;
+		}
+
+		// put more checks here if needed
+		container.setValidationStatus(result);
 		return result;
 	}
 
-	/** quick validation for product before adding to cart */
-	private doesProductMatchCurrentOrderMerchant(product: Product): boolean {
+	/**
+	 * quick validation for product before adding to cart
+	 * @returns true if product has same merchant as order merchant, otherwise false
+	 */
+	private doesProductMatchCurrentOrderMerchant(container: AddToOrderValidatorContainer): boolean {
 		let result: boolean = false;
-		if(product) {
+		if(container.product) {
 			// check product can be added to current order base on having same merchant id
 			if(this.order && this.order.merchant) {
-				return this.order.getMerchantId() === product.merchant_id;
+				return this.order.getMerchantId() === container.product.merchant_id;
 			} else {
-				console.error('<< CartService >> doesProductMatchCurrentOderMaerchant filed, order or merchant null');
+				console.error('<< CartService >> doesProductMatchCurrentOderMerchant failed, order or merchant null');
 			}
 		}
 		return result;
 	}
 
 	/**
-	 * Validate product if can be added to cart before adding to cart.
+	 * Note: Validate product before adding to cart.
+	 * Adds product to the order.
 	 * If the product is of a different merchant, a new order will start overriding the existing order.
+	 * @see addToOrderValidate()
 	 */
-	public addToCart(merchant: Merchant, product: Product): boolean {
-		if(merchant && product) {
+	public addToOrder(container: AddToOrderValidatorContainer): boolean {
+		if(container) {
+			if(container.getValidationStatus()) {
+				if(this.doesProductMatchCurrentOrderMerchant(container)) {
 
-			if(!this.doesProductMatchCurrentOrderMerchant(product)) {
-				console.debug('<< CartService >> addToCart, starting new order product does not belong to current merchant');
-				this.order = new Order();
-				this.order.merchant = merchant;
-			}
+					this.order.addProduct(container.product);
+					console.debug('<< CartService >> product added');
+					console.dir(this.order);
+					return true;
 
-			if(OrderValidator.doesProductBelongToMerchant(product, merchant)) {
-				this.order.add(product);
-				console.debug('<< CartService >> product added');
-				console.dir(this.order);
-				return true;
+				} else {
+					console.debug('<< CartService >> addToCart failed, product merchant and order merchant mismatch');
+				}
 			} else {
-				console.error('<< CartService >> addToCart failed, product not belong to merchant');
+				console.error('<< CartService >> addToCart failed, validation unsuccessful or not yet validated');
 			}
 		} else {
-			console.error('<< CartService >> addToCart failed, merchantID or product null');
+			console.error('<< CartService >> addToCart failed, container null');
 		}
 		return false;
 	}
 
-	private startNewOrder(product: Product, merchant: Merchant): void {
-		this.order = new Order();
-		this.order.setMerchant(merchant);
+	/** called when the user wishes to start a new order overwriting existing order */
+	public startNewOrder(container: AddToOrderValidatorContainer): void {
+		if(container) {
+			this.order = new Order();
+			this.order.setMerchant(container.merchant);
+		} else {
+			throw new Error('<< CartServices >> startNewOrder failed, container null');
+		}
 	}
 
 	/** returns direct reference of the current order */
