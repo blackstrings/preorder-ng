@@ -1,3 +1,4 @@
+import { User } from './../../models/user/user';
 import { Injectable } from '@angular/core';
 import {TimerUtils} from "../../utils/timer-utils/timer-utils";
 import {Observable, of, ReplaySubject} from "rxjs";

@@ -96,13 +96,13 @@ export class UserCreateAccountView implements OnInit {
                     this.showServerError = true;
                   }
                 } else {
-                  console.log('<< UserLoginView >> Login success');
+                  console.log('<< UserCreateView >> Create success');
                   this.router.navigate([ViewRoutes.MERCHANT_LIST]);
                   this.showCreateAccountFailed = !response.isLoginSuccess;
                 }
   
               } else {
-                console.error('<< UserLoginView >> login failed, data returned is null');
+                console.error('<< UserCreateView >> Create failed, data returned is null');
                 this.showCreateAccountFailed = true;
               }
             },
