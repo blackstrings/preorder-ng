@@ -168,7 +168,7 @@ export class UserService {
 
   public createAccount(email: string, password: string): Observable<ResponseLogin | HttpErrorContainer> {
     // build the http params
-    const body = {'username': email, 'password': password};
+    const body = {'email': email, 'password': password};
 
     // by using the map, we can auto map the response json into our object ResponseLogin
     return this.httpWrapper.post(ApiEndPoints.USER_CREATE, body)
