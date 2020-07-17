@@ -82,17 +82,22 @@ export class CartService {
 	}
 
 	public addToOrderValidate(container: AddToOrderValidatorContainer): boolean {
-    	let result: boolean = true;
+    let result: boolean = true;
+    // container exist
+    if(!container) { result = false; }
 
-    	if(!container) { result = false; }
+    // order
+    if(this.order) {
+      // if first time running app, there is no merchant set to order so we set it here.
+      if(!this.order.merchant) {
+        this.order.setMerchant(container.merchant);
+      }
+      if(!this.doesProductMatchCurrentOrderMerchant(container)) {
+        result = false;
+      }
+    }
 
-		if(this.order) {
-			if(!this.doesProductMatchCurrentOrderMerchant(container)) {
-				result = false;
-			}
-		}
-
-		if(result && OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
+		if(result && !OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
 			result = false;
 		}
 

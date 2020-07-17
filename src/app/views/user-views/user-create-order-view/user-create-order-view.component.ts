@@ -107,8 +107,8 @@ export class UserCreateOrderViewComponent implements OnInit {
     // cast the modal to the correct type for easier property accessing
     if(modalRef.componentInstance instanceof YesNoModalViewComponent) {
       const header: string = 'Warning'
-      const body: string = 'You have products from another merchant in the cart. ' +
-        'Proceed and start a new order from this merchant?';
+      let body: string = 'You have pending items from a different merchant in the cart. ';
+      body += 'Discard all items in your cart and start a new order?';
       modalRef.componentInstance.init(header, body);
       modalRef.componentInstance.onClose
         .pipe(take(1))

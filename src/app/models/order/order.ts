@@ -21,6 +21,9 @@ export class Order {
 	// how the user wish to get the order
 	deliveryType: DeliveryType = DeliveryType.PICKUP;
 
+	constructor(){
+  }
+
 	public getMerchantId(): number {
 		if(this.merchant) {
 			return this.merchant.id;
@@ -30,12 +33,41 @@ export class Order {
 	}
 
 	public addProduct(product: Product): void {
-		if(product) {
-			this.products.push(product);
+		if(product && this.products) {
+		  // it is important we do not check for duplicate here, since a product may be the same but has variant
+      this.products.push(product);
+			this.rollUpSameProductsTogether();
 		} else {
 			console.error('<< Order >> addProduct failed, product null');
 		}
 	}
+
+	/**
+   * This is one is tricky, and have to be careful - maybe we dont' do roll ups at all.
+   * roll up the duplicates and accumulate the qty - only works when adding one at a time.
+   * If there are already multiple duplicates, need to use a new function
+   */
+	private rollUpSameProductsTogether(): void {
+	  if(this.products) {
+
+	    // use map to insert each item from array for faster lookup
+      // this.products = this.groupBy(this.products, 'id');
+
+      /*
+      this.products = Array.from(
+        this.products.reduce(
+          (entryMap, e) => {
+
+            return entryMap.set(
+              e.id, {...entryMap.get(e.id) || {}, ...e}
+            )
+          },
+          new Map()
+        ).values()
+      );
+      */
+    }
+  }
 
 	public setMerchant(merchant: Merchant): void {
 	  this.merchant = merchant;
