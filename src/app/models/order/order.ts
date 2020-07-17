@@ -21,6 +21,9 @@ export class Order {
 	// how the user wish to get the order
 	deliveryType: DeliveryType = DeliveryType.PICKUP;
 
+	// for pickup and possible future for when to receive delivery time
+	anticipatedPickupTime: string;
+
 	constructor(){
   }
 

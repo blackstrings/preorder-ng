@@ -1,1 +1,1 @@
-export enum DeliveryType {PICKUP, UBER, SHIP_TO_BUYER}
+export enum DeliveryType {NONE, PICKUP, UBER, SHIP_TO_BUYER}
