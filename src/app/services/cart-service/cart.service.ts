@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
-import {Product} from "../../models/product/product";
 import {Observable, of} from "rxjs";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {map} from "rxjs/operators";
 import {Order} from '../../models/order/order';
-import {MerchantTest} from '../../models/merchant/merchant.test';
-import { Merchant } from 'src/app/models/merchant/merchant';
+import {OrderValidator} from './validators/order-validator';
+import {AddToOrderValidatorContainer} from './validators/add-to-order-validator-container';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class CartService {
 
+	// the only order that can exist at any given time in the service
+	// multi orders not supported unless business decides to need it
 	private order: Order = new Order();
 
 	/**
@@ -27,93 +28,137 @@ export class CartService {
 	}
 
 	/**
+	 * validate order before allowing proceed to check and or submission of the order to merchant.
+	 * - check order date is valid against the merchant open times
+	 * - check order qty is legit against merchant's rules
+	 */
+	private preValidateOrder(token: string, order: Order): Observable<boolean | HttpErrorContainer> {
+
+		let result: boolean = OrderValidator.validate(order);
+
+		if(result) {
+			const uri: string = ApiEndPoints.USER_PRE_VALIDATE_ORDER;
+			const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+			// return this.httpWrapper.get(uri, options)
+			// 	.pipe(
+			// 		map( (resp: Order) => {
+			// 			// deserialize into order object
+			// 			const order: Order = new Order();
+			// 			Object.assign(order, resp); // copy the properties
+			// 			return order;
+			// 		})
+			// 	);
+		}
+		return of(false);
+
+	}
+
+	/**
+	 * Take user to checkout.
 	 * when user is ready to make payments - take their order to checkout
 	 * returns merchant products from http call and caches it
 	 */
-	public checkoutOrder(token): Observable<Order | HttpErrorContainer> {
+	public sendCartToCheckout(token): Observable<Order | HttpErrorContainer> {
 		throw new Error('<< CartServices >> not yet implemented');
 		if(token && this.order) {
-			const uri: string = ApiEndPoints.MERCHANT + '/' + this.order.getMerchantId() + '/' + ApiEndPoints.MERCHANT_PRODUCTS;
-			const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
-			return this.httpWrapper.get(uri, options)
-				.pipe(
-					map( (resp: Order) => {
-						// deserialize into order object
-						const order: Order = new Order();
-						Object.assign(order, resp); // copy the properties
-						return order;
-					})
-				);
+			if(OrderValidator.validate(this.order)) {
+				const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+				const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+				return this.httpWrapper.get(uri, options)
+					.pipe(
+						map( (resp: Order) => {
+							// deserialize into order object
+							const order: Order = new Order();
+							Object.assign(order, resp); // copy the properties
+							return order;
+						})
+					);
+			} else {
+				console.error('<< CartService >> checkoutOrder failed, order validation failed');
+			}
 		}
+		console.error('<< CartService >> checkoutOrder failed, token or order null');
 		return of(null);
-
 	}
 
-	public canAddProductToOrder(product: Product, merchant: Merchant): boolean {
+	public addToOrderValidate(container: AddToOrderValidatorContainer): boolean {
     let result: boolean = true;
-	  if(this.order && this.order.merchant) {
-      if(!this.doesProductMatchCurrentOrderMerchant(product)) {
+    // container exist
+    if(!container) { result = false; }
+
+    // order
+    if(this.order) {
+      // if first time running app, there is no merchant set to order so we set it here.
+      if(!this.order.merchant) {
+        this.order.setMerchant(container.merchant);
+      }
+      if(!this.doesProductMatchCurrentOrderMerchant(container)) {
         result = false;
       }
-    } else {
-	    this.startNewOrder(product, merchant);
     }
+
+		if(result && !OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
+			result = false;
+		}
+
+		// put more checks here if needed
+		container.setValidationStatus(result);
 		return result;
 	}
 
-	/** quick validation for product before adding to cart */
-	private doesProductMatchCurrentOrderMerchant(product: Product): boolean {
+	/**
+	 * quick validation for product before adding to cart
+	 * @returns true if product has same merchant as order merchant, otherwise false
+	 */
+	private doesProductMatchCurrentOrderMerchant(container: AddToOrderValidatorContainer): boolean {
 		let result: boolean = false;
-		if(product) {
+		if(container.product) {
 			// check product can be added to current order base on having same merchant id
-			if(this.order) {
-				return this.order.getMerchantId() === product.merchant_id;
+			if(this.order && this.order.merchant) {
+				return this.order.getMerchantId() === container.product.merchant_id;
+			} else {
+				console.error('<< CartService >> doesProductMatchCurrentOderMerchant failed, order or merchant null');
 			}
 		}
 		return result;
 	}
 
 	/**
-	 * Validate product if can be added to cart before adding to cart.
+	 * Note: Validate product before adding to cart.
+	 * Adds product to the order.
 	 * If the product is of a different merchant, a new order will start overriding the existing order.
+	 * @see addToOrderValidate()
 	 */
-	public addToCart(merchant: Merchant, product: Product): boolean {
-		if(merchant && product) {
+	public addToOrder(container: AddToOrderValidatorContainer): boolean {
+		if(container) {
+			if(container.getValidationStatus()) {
+				if(this.doesProductMatchCurrentOrderMerchant(container)) {
 
-			if(!this.doesProductMatchCurrentOrderMerchant(product)) {
-			  console.debug('<< CartService >> addToCart, starting new order product does not belong to current merchant');
-				this.order = new Order();
-				this.order.merchant = merchant;
+					this.order.addProduct(container.product);
+					console.debug('<< CartService >> product added');
+					console.dir(this.order);
+					return true;
+
+				} else {
+					console.debug('<< CartService >> addToCart failed, product merchant and order merchant mismatch');
+				}
+			} else {
+				console.error('<< CartService >> addToCart failed, validation unsuccessful or not yet validated');
 			}
-
-			if(this.validateProductBelongsToMerchant(product, merchant)) {
-        this.order.add(product);
-        console.debug('<< CartService >> product added');
-        console.dir(this.order);
-        return true;
-      } else {
-			  console.error('<< CartService >> addToCart failed, product not belong to merchant');
-			  return false;
-      }
-
 		} else {
-			console.error('<< CartService >> addToCart failed, merchantID or product null');
+			console.error('<< CartService >> addToCart failed, container null');
 		}
 		return false;
 	}
 
-	/** ensures the product being added belongs to correct merchant */
-	private validateProductBelongsToMerchant(product: Product, merchant: Merchant): boolean {
-		if(product && merchant) {
-			return product.merchant_id === merchant.id;
+	/** called when the user wishes to start a new order overwriting existing order */
+	public startNewOrder(container: AddToOrderValidatorContainer): void {
+		if(container) {
+			this.order = new Order();
+			this.order.setMerchant(container.merchant);
 		} else {
-			console.error('<< CartService >> productBelongsToMerchant failed, product or merchantID null');
+			throw new Error('<< CartServices >> startNewOrder failed, container null');
 		}
-	}
-
-	private startNewOrder(product: Product, merchant: Merchant): void {
-		this.order = new Order();
-		this.order.setMerchant(merchant);
 	}
 
 	/** returns direct reference of the current order */

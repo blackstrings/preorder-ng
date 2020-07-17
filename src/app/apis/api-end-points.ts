@@ -13,6 +13,8 @@ export class ApiEndPoints {
   public static readonly USER_CREATE: string = 'registrations';
   public static readonly USER_LOGIN: string = 'authenticate';
   public static readonly USER_LOGOUT: string = 'user/logout';
+  public static readonly USER_SUBMIT_ORDER: string = 'orders';
+  public static readonly USER_PRE_VALIDATE_ORDER: string = 'ordervalidate';
   public static readonly MERCHANT: string = 'merchants';
   public static readonly MERCHANT_CREATE: string = 'merchants';
   public static readonly MERCHANT_LIST: string = 'merchants';
