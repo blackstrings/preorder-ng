@@ -17,9 +17,9 @@ import {UserProfileViewComponent} from './views/user-views/user-profile-view/use
 import {UserCreateAccountView} from './views/user-views/user-create-account-view/user-create-account-view.component';
 import {UserCreateOrderViewComponent} from './views/user-views/user-create-order-view/user-create-order-view.component';
 import {NgbModalModule} from "@ng-bootstrap/ng-bootstrap";
-import {ProductAddModalViewComponent} from './views/common-views/product-add-view/product-add-modal-view.component';
+import {ProductAddModalViewComponent} from './views/common-views/modals/product-add-view/product-add-modal-view.component';
 import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
-import {YesNoModalViewComponent} from './views/common-views/yes-no-modal-view/yes-no-modal-view.component';
+import {YesNoModalViewComponent} from './views/common-views/modals/yes-no-modal-view/yes-no-modal-view.component';
 import {AppServicesOrderInitializer} from "./services/app-services-order-initializer/app-services-order-initializer.service";
 
 // https://fontawesome.com/icons?d=gallery&q=shop&m=free

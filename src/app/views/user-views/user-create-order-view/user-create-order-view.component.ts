@@ -7,10 +7,10 @@ import {ProductService} from "../../../services/product-service/product.service"
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
 import {ViewRoutes} from "../../view-routes";
 import {NgbModal, NgbModalOptions} from "@ng-bootstrap/ng-bootstrap";
-import {ProductAddModalViewComponent} from "../../common-views/product-add-view/product-add-modal-view.component";
+import {ProductAddModalViewComponent} from "../../common-views/modals/product-add-view/product-add-modal-view.component";
 import {CartService} from '../../../services/cart-service/cart.service';
 import {take} from "rxjs/operators";
-import {YesNoModalViewComponent} from "../../common-views/yes-no-modal-view/yes-no-modal-view.component";
+import {YesNoModalViewComponent} from "../../common-views/modals/yes-no-modal-view/yes-no-modal-view.component";
 import {AddToOrderValidatorContainer} from '../../../validators/add-to-order-validator-container';
 
 @Component({
