@@ -3,6 +3,9 @@ import {Product} from "../../../../models/product/product";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {Observable, Subject} from 'rxjs';
 
+/**
+ * Handles adding product
+ */
 @Component({
   selector: 'app-product-add-modal-view',
   templateUrl: './product-add-modal-view.component.html',
@@ -22,7 +25,8 @@ export class ProductAddModalViewComponent implements OnInit {
   // default starting qty
   public qty: number = 1;
 
-  // the product's totol price
+  // the product's total price * the current qty
+  // this value is only for display purposes and is not meant to be passed on elsewhere
   public totalPrice: number;
 
   /**
@@ -41,9 +45,8 @@ export class ProductAddModalViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  /** up the qty - highest can go is 99 */
+  /** increment the qty - highest can go is 99 */
   public add(): void {
-    // todo adding a product should be passing in the id and qty it wishes to add
     // public add(productID: number, qty): void {
     this.qty++;
     if(this.qty > 99) {
@@ -66,19 +69,20 @@ export class ProductAddModalViewComponent implements OnInit {
     this.totalPrice = this.product.calculateTotalPrice();
   }
 
-  /** exits the modal and returns the product to be further process */
-  public addToBag(): void {
-    this.activeModal.close(this.product);
-  }
-
-  /** publish the result then dismiss - order matters*/
+  /**
+   * Exit the modal without adding to order.
+   * publish the result then dismiss - order matters
+   */
   public dismiss(): void {
   	this.activeModal.dismiss();
   	this._onClose.next(null);
   }
 
-  /** publish the result then close - order matters*/
-  public close(): void {
+  /**
+   * add the product to the order
+   * this will publish the result then close the modal - order matters
+   */
+  public addToOrder(): void {
   	this.activeModal.close();
   	this._onClose.next(this.product);
   }
