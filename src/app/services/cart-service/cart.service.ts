@@ -1,19 +1,23 @@
 import { Injectable } from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
-import {Observable, of} from "rxjs";
+import {Observable, of, Subject} from "rxjs";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {map} from "rxjs/operators";
 import {Order} from '../../models/order/order';
-import {OrderValidator} from './validators/order-validator';
-import {AddToOrderValidatorContainer} from './validators/add-to-order-validator-container';
+import {OrderValidator} from '../../validators/order-validator';
+import {AddToOrderValidatorContainer} from '../../validators/add-to-order-validator-container';
+import {CartServiceSubscription} from "./cart-service-subscription";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class CartService {
+
+  // setup other classes to listen to CartServices using subscriptions
+  private _onAddToOrder: Subject<Order> = new Subject<Order>();
 
 	// the only order that can exist at any given time in the service
 	// multi orders not supported unless business decides to need it
@@ -23,8 +27,9 @@ export class CartService {
 	 * Handles send order
 	 * @param httpWrapper
 	 */
-	constructor(private httpWrapper: HttpWrapperService<Order>) {
-
+	constructor(private sub: CartServiceSubscription, private httpWrapper: HttpWrapperService<Order>) {
+	  console.debug('<< CartService >> Init');
+	  sub.onAddToOrder = this._onAddToOrder.asObservable();
 	}
 
 	/**
@@ -54,11 +59,9 @@ export class CartService {
 	}
 
 	/**
-	 * Take user to checkout.
-	 * when user is ready to make payments - take their order to checkout
-	 * returns merchant products from http call and caches it
+	 * When all payments are made.
 	 */
-	public sendCartToCheckout(token): Observable<Order | HttpErrorContainer> {
+	public finalizeOrder(token): Observable<Order | HttpErrorContainer> {
 		throw new Error('<< CartServices >> not yet implemented');
 		if(token && this.order) {
 			if(OrderValidator.validate(this.order)) {
@@ -88,7 +91,8 @@ export class CartService {
 
     // order
     if(this.order) {
-      // if first time running app, there is no merchant set to order so we set it here.
+      // if first time running app, there is no merchant set in the order,
+      // so we handle setting the initial merchant into order here.
       if(!this.order.merchant) {
         this.order.setMerchant(container.merchant);
       }
@@ -101,57 +105,59 @@ export class CartService {
 			result = false;
 		}
 
-		// put more checks here if needed
+		// after all validations, set the final result success on the container
 		container.setValidationStatus(result);
 		return result;
 	}
 
 	/**
-	 * quick validation for product before adding to cart
+	 * quick validation for product before adding to existing order
 	 * @returns true if product has same merchant as order merchant, otherwise false
 	 */
 	private doesProductMatchCurrentOrderMerchant(container: AddToOrderValidatorContainer): boolean {
 		let result: boolean = false;
-		if(container.product) {
+		if(container && container.product) {
 			// check product can be added to current order base on having same merchant id
 			if(this.order && this.order.merchant) {
 				return this.order.getMerchantId() === container.product.merchant_id;
 			} else {
 				console.error('<< CartService >> doesProductMatchCurrentOderMerchant failed, order or merchant null');
 			}
-		}
+		} else {
+      console.error('<< CartService >> doesProductMatchCurrentOderMerchant failed, container product null');
+    }
 		return result;
 	}
 
 	/**
-	 * Note: Validate product before adding to cart.
 	 * Adds product to the order.
-	 * If the product is of a different merchant, a new order will start overriding the existing order.
+	 * Must validate with AddToOrderValidatorContainer before passing container into here.
+   * If the product is of a different merchant, a new order will start overriding the existing order.
 	 * @see addToOrderValidate()
 	 */
 	public addToOrder(container: AddToOrderValidatorContainer): boolean {
 		if(container) {
 			if(container.getValidationStatus()) {
-				if(this.doesProductMatchCurrentOrderMerchant(container)) {
 
 					this.order.addProduct(container.product);
+					this._onAddToOrder.next(this.order);
 					console.debug('<< CartService >> product added');
 					console.dir(this.order);
 					return true;
 
-				} else {
-					console.debug('<< CartService >> addToCart failed, product merchant and order merchant mismatch');
-				}
 			} else {
-				console.error('<< CartService >> addToCart failed, validation unsuccessful or not yet validated');
+				console.error('<< CartService >> addToOrder failed, validation unsuccessful or not yet validated');
 			}
 		} else {
-			console.error('<< CartService >> addToCart failed, container null');
+			console.error('<< CartService >> addToOrder failed, container null');
 		}
 		return false;
 	}
 
-	/** called when the user wishes to start a new order overwriting existing order */
+	/**
+   * called when the user wishes to start a new order overwriting existing order.
+   * Currently user cannot have two orders, only one.
+   */
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {
 			this.order = new Order();

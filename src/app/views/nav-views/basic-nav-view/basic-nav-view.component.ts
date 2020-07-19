@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, SkipSelf} from '@angular/core';
 import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {UserService} from "../../../services/user-service/user.service";
 import {ResponseLogin} from "../../../apis/responses/response-login";
 import {UserServiceSubscription} from "../../../services/user-service/user-service-subscription";
+import {CartServiceSubscription} from "../../../services/cart-service/cart-service-subscription";
+import {Order} from "../../../models/order/order";
 
 @Component({
   selector: 'app-basic-nav-view',
@@ -20,13 +22,21 @@ export class BasicNavViewComponent {
 
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,
-              private userService: UserService)
+              private userService: UserService,
+              @SkipSelf() private cartServiceSub: CartServiceSubscription)
   {
-    // wire in subscription
-    userServiceSub.onLogin.subscribe( result => {
+    // login subscription
+    this.userServiceSub.onLogin.subscribe( result => {
       this.isLogin = result;
     });
+
+    // add product to order subscription
+    this.cartServiceSub.onAddToOrder.subscribe( (order: Order) => {
+      this.shoppingCartItemCount = order.getNumberOfProducts();
+    });
   }
+
+
 
   public logout(): void {
     this.userService.logout()

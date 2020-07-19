@@ -21,7 +21,7 @@ export class ProductService {
    * @param httpWrapper
    */
   constructor(private httpWrapper: HttpWrapperService<Product[]>) {
-
+    console.debug('<< ProductService >> Init');
   }
 
   /** returns merchant products from http call and caches it to available products */
@@ -32,15 +32,21 @@ export class ProductService {
       return this.httpWrapper.get(uri, options)
         .pipe(
           // if you just want to return all the returned properties on merchant
-          map( (resp: Product[]) => {
-            const fetchedProducts: Product[] = [];
-            resp.forEach( x => {
-              const m: Product = new Product();
-              Object.assign(m, x); // copy the properties
-              fetchedProducts.push(m);
-            });
-            this.setAvailableProducts(fetchedProducts);
-            return fetchedProducts;
+          map( (returnedProducts: Product[]) => {
+
+            if(returnedProducts && returnedProducts.length) {
+              const products: Product[] = [];
+              returnedProducts.forEach( x => {
+                const m: Product = new Product();
+                Object.assign(m, x); // copy the properties
+                products.push(m);
+              });
+              this.setAvailableProducts(products);
+            } else {
+              console.error('<< ProductService >> merchantID: ' + merchantID + ' returned no products');
+            }
+
+            return returnedProducts;
           })
         );
     }

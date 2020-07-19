@@ -11,7 +11,7 @@ import {ProductAddModalViewComponent} from "../../common-views/product-add-view/
 import {CartService} from '../../../services/cart-service/cart.service';
 import {take} from "rxjs/operators";
 import {YesNoModalViewComponent} from "../../common-views/yes-no-modal-view/yes-no-modal-view.component";
-import {AddToOrderValidatorContainer} from '../../../services/cart-service/validators/add-to-order-validator-container';
+import {AddToOrderValidatorContainer} from '../../../validators/add-to-order-validator-container';
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -107,17 +107,17 @@ export class UserCreateOrderViewComponent implements OnInit {
     // cast the modal to the correct type for easier property accessing
     if(modalRef.componentInstance instanceof YesNoModalViewComponent) {
       const header: string = 'Warning'
-      let body: string = 'You have pending items from a different merchant in the cart. ';
-      body += 'Discard all items in your cart and start a new order?';
+      let body: string = 'Your current order belongs to a different merchant. ';
+      body += 'Discard all items in current order and start a new order?';
       modalRef.componentInstance.init(header, body);
       modalRef.componentInstance.onClose
         .pipe(take(1))
-        .subscribe( (yes: boolean) => {
-        if(yes) {
-        	this.cartService.startNewOrder(container);
-        	this.addToOrder(container.product);
-        }
-      });
+        .subscribe( (userClickYes: boolean) => {
+          if(userClickYes) {
+            this.cartService.startNewOrder(container);
+            this.addToOrder(container.product);
+          }
+        });
     }
   }
 

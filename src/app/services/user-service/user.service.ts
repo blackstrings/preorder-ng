@@ -1,4 +1,3 @@
-import { User } from './../../models/user/user';
 import { Injectable } from '@angular/core';
 import {TimerUtils} from "../../utils/timer-utils/timer-utils";
 import {Observable, of, ReplaySubject} from "rxjs";
@@ -30,7 +29,7 @@ export class UserService {
   private authToken: string;
 
   constructor(private userServiceSub: UserServiceSubscription, private httpWrapper: HttpWrapperService<ResponseLogin>) {
-
+    console.debug('<< UserService >> Init');
     // setup the observable so others can listen to the subscription service
     userServiceSub.onLogin = this._onLogin.asObservable();
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Observable, of, throwError} from "rxjs";
+import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {Observable, throwError} from "rxjs";
 import {ApiEndPoints} from "../api-end-points";
 import {catchError, map, timeout} from "rxjs/operators";
 import {HttpOptions} from "./http-options";
@@ -26,7 +26,7 @@ export class HttpWrapperService<T> {
 
   // constructor
   constructor(private httpClient: HttpClient) {
-    console.log('<< HttpWrapper >> Instantiated');
+    console.debug('<< HttpWrapper >> Init');
   }
 
   /**

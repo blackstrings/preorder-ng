@@ -19,12 +19,35 @@ export class Order {
 	submitTime: string;
 
 	// how the user wish to get the order
-	deliveryType: DeliveryType = DeliveryType.PICKUP;
+	deliveryType: DeliveryType = DeliveryType.NONE;
 
 	// for pickup and possible future for when to receive delivery time
 	anticipatedPickupTime: string;
 
 	constructor(){
+  }
+
+  setAnticipatedPickupTime(date: Date): void {
+	  this.anticipatedPickupTime = date.toDateString();
+  }
+
+  getAnticipatedPickupTime(asString: boolean = false): string | Date {
+	  if(this.deliveryType === DeliveryType.PICKUP){
+
+	    if(this.anticipatedPickupTime){
+
+        if(asString) {
+          return this.anticipatedPickupTime;
+        } else {
+          return new Date(this.anticipatedPickupTime);
+        }
+      } else {
+	      console.warn('<< Order >> getAnticipatedPickupTime failed, no time set');
+      }
+    } else {
+      console.warn('<< Order >> getAnticipatedPickupTime failed, order not set to pickup');
+    }
+	  return null;
   }
 
 	public getMerchantId(): number {
@@ -35,6 +58,7 @@ export class Order {
 		return 0;
 	}
 
+	/** add a product into the order. Validations should be done prior to adding */
 	public addProduct(product: Product): void {
 		if(product && this.products) {
 		  // it is important we do not check for duplicate here, since a product may be the same but has variant
@@ -94,8 +118,10 @@ export class Order {
 	 * does not count sub items in product.
 	 */
 	public getNumberOfProducts(): number {
-		if(this.products) {
-			return this.products.length;
+		if(this.products && this.products.length) {
+		  return this.products.reduce( (a,x) => { return a + x.orderQTY; }, 0 );
+			//return this.products.length;
 		}
+		return 0;
 	}
 }

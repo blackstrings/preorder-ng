@@ -10,6 +10,6 @@ export class UserServiceSubscription {
   public onLogin: Observable<boolean>;
 
   constructor(){
-
+    console.debug('<< UserServiceSubscription >> Init');
   }
 }

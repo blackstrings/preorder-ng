@@ -19,12 +19,7 @@ export class MerchantService {
   /** the current merchant the user has selected */
   private selectedMerchantID: number;
 
-  /**
-   * This is a front end expire timer to no longer pull from the cache.
-   * 1 hour expire time on front end - convert accordingly depending on the method that intakes the param.
-   */
-  private readonly cacheTimeLimit: number = 1;
-  private cacheTimeStamp: Date;
+  /** should be flag to true after pulls in serach results. But on each new search it should be flagged off */
   private useCache: boolean = false;
 
   /**
@@ -52,10 +47,12 @@ export class MerchantService {
   private merchantsCached: Merchant[] = [];
 
   /** handles merchant related services */
-  constructor(private httpWrapper: HttpWrapperService<Merchant[]>) { }
+  constructor(private httpWrapper: HttpWrapperService<Merchant[]>) {
+    console.debug('<< MerchantService >> Init');
+  }
 
   /** adds incoming merchants into the cache preventing duplicates */
-  public addToCache(incomingMerchants: Merchant[]): void {
+  private addToCache(incomingMerchants: Merchant[]): void {
     if(incomingMerchants && this.merchantsCached) {
       const newMerchants = incomingMerchants.filter( x => !(this.merchantsCached.some(y => y.id === x.id)) );
       // const newMerchants = merchants.filter( x => !(this.merchantsCached.includes(x)) );
@@ -156,6 +153,13 @@ export class MerchantService {
           map( (resp: Merchant[]) => {
             const temp: Merchant[] = [];
 
+            // validate keys from data still match model on just one model
+            if(resp && resp.length) {
+              if(!this.verifyKeys(resp[0])) {
+                console.error('<< MerchantService >> modelToMerchant conversion failed, mis-match keys - model has changed');
+              }
+            }
+
             resp.forEach( x => {
               // if you want to control what properties get carried on
               const m: Merchant = this.modelToMerchant(x);
@@ -189,6 +193,16 @@ export class MerchantService {
       m.name = model.name;
       return m;
     }
+  }
+
+  private verifyKeys(model: any): boolean {
+    let result: boolean = true;
+    // todo match all keys
+    // Object.keys(Merchant).some( (i,k) => {
+    //
+    //
+    // });
+    return result;
   }
 
 }

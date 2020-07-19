@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -20,6 +20,7 @@ import {NgbModalModule} from "@ng-bootstrap/ng-bootstrap";
 import {ProductAddModalViewComponent} from './views/common-views/product-add-view/product-add-modal-view.component';
 import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
 import {YesNoModalViewComponent} from './views/common-views/yes-no-modal-view/yes-no-modal-view.component';
+import {AppServicesOrderInitializer} from "./services/app-services-order-initializer/app-services-order-initializer.service";
 
 // https://fontawesome.com/icons?d=gallery&q=shop&m=free
 // only use these for testing till you find the right icon
@@ -33,6 +34,11 @@ import {faFacebookSquare, faTwitterSquare} from '@fortawesome/free-brands-svg-ic
 import {faShoppingCart, faTimes, faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
 
 //HttpClientModule required for http calls - httpClient
+
+// ensures some services and their subscriptions are up before any components are
+export function appCustomInit(cartService: AppServicesOrderInitializer) {
+  return () => {}
+}
 
 @NgModule({
   declarations: [
@@ -60,7 +66,16 @@ import {faShoppingCart, faTimes, faPlus, faMinus} from '@fortawesome/free-solid-
     NgbModalModule,
     FontAwesomeModule
   ],
-  providers: [BasicViewGuard],
+  providers: [
+    BasicViewGuard,
+    [AppServicesOrderInitializer,
+      {
+        provide: APP_INITIALIZER,
+        useFactory: appCustomInit,
+        multi: true,
+        deps: [AppServicesOrderInitializer]
+      }],
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,3 +1,5 @@
+import { Address } from '../address/address';
+
 export class User {
 
   public email: string;
@@ -7,6 +9,7 @@ export class User {
   public lastName: string;
   public id: number;
   public points: number;
+  public addresses: Address[];
 
   constructor(){
     // empty as of now

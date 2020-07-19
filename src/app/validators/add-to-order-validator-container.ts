@@ -1,7 +1,11 @@
-import {Merchant} from '../../../models/merchant/merchant';
-import {Product} from '../../../models/product/product';
+import {Merchant} from '../models/merchant/merchant';
+import {Product} from '../models/product/product';
 
-/** used to validate product and merchant before adding to cart */
+/**
+ * used in conjunction with validation, when when adding a product to an order
+ * main purpose is to have product and merchant in a container for easier passing the two objects
+ * around to get validated.
+ */
 export class AddToOrderValidatorContainer {
 
 	/** if set to true, it means all validations checks have been successfully ran against this container */

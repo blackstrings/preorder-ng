@@ -1,7 +1,7 @@
-import {Order} from '../../../models/order/order';
-import {Product} from '../../../models/product/product';
-import {Merchant} from '../../../models/merchant/merchant';
-import {DeliveryType} from '../../../models/delivery/delivery-type';
+import {Order} from '../models/order/order';
+import {Product} from '../models/product/product';
+import {Merchant} from '../models/merchant/merchant';
+import {DeliveryType} from '../models/delivery/delivery-type';
 
 /** front end soft validator for an Order. Run the order through the validate() to pass a soft validation */
 export class OrderValidator {
@@ -30,7 +30,7 @@ export class OrderValidator {
 		return false;
 	}
 
-	/** checks all items in order belongs to merchatnt */
+	/** checks all items if they are compatible with the order's merchant */
 	public static allProductsBelongToMerchant(order: Order): boolean {
 		if(order && order.products){
 			order.products.some( (p: Product) => !OrderValidator.doesProductBelongToMerchant(p, order.merchant));
@@ -38,7 +38,7 @@ export class OrderValidator {
 		return false;
 	}
 
-	/** checks if the product and merchant are compatible base on merchant id matching */
+	/** checks if a single product and merchant are compatible base on merchant id matching */
 	public static doesProductBelongToMerchant(product: Product, merchant: Merchant): boolean {
 		if(product && merchant) {
 			return product.merchant_id === merchant.id;
@@ -59,6 +59,8 @@ export class OrderValidator {
 	public static hasValidPickupTime(order: Order): boolean {
 		if(order && order.deliveryType === DeliveryType.PICKUP && order.anticipatedPickupTime) {
 			console.error('<< OrderValidator >> not yet implemented');
+			const currentDate: Date = new Date();
+
 			return false;
 		}
 	}

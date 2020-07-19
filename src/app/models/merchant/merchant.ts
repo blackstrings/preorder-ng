@@ -1,7 +1,10 @@
+import {Address} from "../address/address";
+
 export class Merchant {
 
   public id: number;
   public name: string;
+  public address: Address;
 
   /** leave constructor empty */
   constructor() {}
