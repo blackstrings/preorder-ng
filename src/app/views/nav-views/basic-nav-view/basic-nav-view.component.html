@@ -24,8 +24,8 @@
       <fa-icon [icon]="['fas', 'bell']" size="lg"></fa-icon>
     </li>
     <li class="nav-item">
-      <fa-icon [icon]="['fas', 'shopping-cart']" size="lg"></fa-icon>
-      <span class="btn btn-sm btn-dark" style="margin-right: 10px">{{shoppingCartItemCount}}</span>
+      <fa-icon [routerLink]="ViewRoutes.USER_CHECKOUT" [icon]="['fas', 'shopping-cart']" size="lg"></fa-icon>
+      <span [routerLink]="ViewRoutes.USER_CHECKOUT" class="btn btn-sm btn-dark" style="margin-right: 10px">{{shoppingCartItemCount}}</span>
     </li>
   </ul>
 
