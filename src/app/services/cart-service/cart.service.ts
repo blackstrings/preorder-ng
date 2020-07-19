@@ -32,6 +32,33 @@ export class CartService {
 	  sub.onAddToOrder = this._onAddToOrder.asObservable();
 	}
 
+  /**
+   * When all orders and payments are validated then we send it to the backend to get process.
+   * todo incomplete
+   */
+  public finalizeOrder(token): Observable<Order | HttpErrorContainer> {
+    throw new Error('<< CartServices >> not yet implemented');
+    if(token && this.order) {
+      if(OrderValidator.validate(this.order)) {
+        const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+        return this.httpWrapper.get(uri, options)
+          .pipe(
+            map( (resp: Order) => {
+              // deserialize into order object
+              const order: Order = new Order();
+              Object.assign(order, resp); // copy the properties
+              return order;
+            })
+          );
+      } else {
+        console.error('<< CartService >> checkoutOrder failed, order validation failed');
+      }
+    }
+    console.error('<< CartService >> checkoutOrder failed, token or order null');
+    return of(null);
+  }
+
 	/**
 	 * validate order before allowing proceed to check and or submission of the order to merchant.
 	 * - check order date is valid against the merchant open times
@@ -59,58 +86,6 @@ export class CartService {
 	}
 
 	/**
-	 * When all payments are made.
-	 */
-	public finalizeOrder(token): Observable<Order | HttpErrorContainer> {
-		throw new Error('<< CartServices >> not yet implemented');
-		if(token && this.order) {
-			if(OrderValidator.validate(this.order)) {
-				const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
-				const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
-				return this.httpWrapper.get(uri, options)
-					.pipe(
-						map( (resp: Order) => {
-							// deserialize into order object
-							const order: Order = new Order();
-							Object.assign(order, resp); // copy the properties
-							return order;
-						})
-					);
-			} else {
-				console.error('<< CartService >> checkoutOrder failed, order validation failed');
-			}
-		}
-		console.error('<< CartService >> checkoutOrder failed, token or order null');
-		return of(null);
-	}
-
-	public addToOrderValidate(container: AddToOrderValidatorContainer): boolean {
-    let result: boolean = true;
-    // container exist
-    if(!container) { result = false; }
-
-    // order
-    if(this.order) {
-      // if first time running app, there is no merchant set in the order,
-      // so we handle setting the initial merchant into order here.
-      if(!this.order.merchant) {
-        this.order.setMerchant(container.merchant);
-      }
-      if(!this.doesProductMatchCurrentOrderMerchant(container)) {
-        result = false;
-      }
-    }
-
-		if(result && !OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
-			result = false;
-		}
-
-		// after all validations, set the final result success on the container
-		container.setValidationStatus(result);
-		return result;
-	}
-
-	/**
 	 * quick validation for product before adding to existing order
 	 * @returns true if product has same merchant as order merchant, otherwise false
 	 */
@@ -128,6 +103,35 @@ export class CartService {
     }
 		return result;
 	}
+
+	/** Validates product before adding to order */
+  public addToOrderValidate(container: AddToOrderValidatorContainer): boolean {
+    let result: boolean = true;
+    // container exist
+    if(!container) { result = false; }
+
+    // order is not null and the product being add matches the current order's merchant
+    if(this.order) {
+      // if first time running app, there is no merchant set in the order,
+      // so we handle setting the initial merchant into order here.
+      if(!this.order.merchant) {
+        this.order.setMerchant(container.merchant);
+      }
+      if(!this.doesProductMatchCurrentOrderMerchant(container)) {
+        result = false;
+      }
+    }
+
+    // checks the product and the target merchant belongs to each other
+    if(result && !OrderValidator.doesProductBelongToMerchant(container.product, container.merchant)){
+      result = false;
+    }
+
+    // after all validations, set the final result success on the container
+    // one false validation will trigger a false validation status
+    container.setValidationStatus(result);
+    return result;
+  }
 
 	/**
 	 * Adds product to the order.
@@ -156,7 +160,7 @@ export class CartService {
 
 	/**
    * called when the user wishes to start a new order overwriting existing order.
-   * Currently user cannot have two orders, only one.
+   * Currently user cannot have two orders, only one. So we discard current for new orders.
    */
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {

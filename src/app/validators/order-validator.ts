@@ -3,7 +3,10 @@ import {Product} from '../models/product/product';
 import {Merchant} from '../models/merchant/merchant';
 import {DeliveryType} from '../models/delivery/delivery-type';
 
-/** front end soft validator for an Order. Run the order through the validate() to pass a soft validation */
+/**
+ * front end soft validator for an Order. Run the order through the validate() to pass a soft validation
+ * Contains all the soft logic to run the order against.
+ */
 export class OrderValidator {
 
 	/** calls all the validator method, if one fails, returns false */

@@ -84,7 +84,7 @@ export class UserCreateOrderViewComponent implements OnInit {
    */
   private addToOrder(product): void {
     if(this.merchant && product) {
-    	const container: AddToOrderValidatorContainer = new AddToOrderValidatorContainer(product, this.merchant);
+      const container: AddToOrderValidatorContainer = new AddToOrderValidatorContainer(product, this.merchant);
       // if the product is of a different merchant,
       // we need to let the user know their previous order will have to be discarded
       if(this.cartService.addToOrderValidate(container)) {
@@ -94,8 +94,8 @@ export class UserCreateOrderViewComponent implements OnInit {
         this.showModalOrderOverrideWarning(container);
       }
     } else {
-    	console.error('<< UserCreateOrderView >> addToCart failed, product null or merchant was not set properly');
-	}
+      console.error('<< UserCreateOrderView >> addToCart failed, product null or merchant was not set properly');
+    }
   }
 
   /** show warning confirmation if user wants to start a new order overwriting current order */
