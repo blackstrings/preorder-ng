@@ -1,28 +1,31 @@
 import {Product} from '../product/product';
 import {Merchant} from '../merchant/merchant';
 import {DeliveryType} from '../delivery/delivery-type';
+import {User} from "../user/user";
 
 export class Order {
 	// turns to true when you run it against the OrderValidator.validate() and succeeds
 	isValidateSuccess: boolean;
 
+	public user: User;
+
 	// the product this order carries
-	products: Product[] = [];
+	public products: Product[] = [];
 
 	// the merchant this product is from
-	merchant: Merchant;
+	public merchant: Merchant;
 
 	// represents a successful order created in the backend
-	orderID: string;
+	public orderID: string;
 
 	// timestamp of order submission from front end
-	submitTime: string;
+	public submitTime: string;
 
 	// how the user wish to get the order
-	deliveryType: DeliveryType = DeliveryType.NONE;
+	public deliveryType: DeliveryType = DeliveryType.NONE;
 
 	// for pickup and possible future for when to receive delivery time
-	anticipatedPickupTime: string;
+	public anticipatedPickupTime: string;
 
 	constructor(){
   }
@@ -124,4 +127,8 @@ export class Order {
 		}
 		return 0;
 	}
+
+	public getProducts(): Product[] {
+	  return this.products;
+  }
 }

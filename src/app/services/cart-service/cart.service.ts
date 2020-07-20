@@ -10,6 +10,7 @@ import {Order} from '../../models/order/order';
 import {OrderValidator} from '../../validators/order-validator';
 import {AddToOrderValidatorContainer} from '../../validators/add-to-order-validator-container';
 import {CartServiceSubscription} from "./cart-service-subscription";
+import {Product} from "../../models/product/product";
 
 @Injectable({
 	providedIn: 'root'
@@ -41,14 +42,20 @@ export class CartService {
     if(token && this.order) {
       if(OrderValidator.validate(this.order)) {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+        const products: Product[] = this.order.getProducts();
+        const body: {product_ids: number, quantity_ids: number}[] = products.map(p => {
+          return {product_ids: p.id, quantity_ids: p.orderQTY}
+        });
+
         const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
-        return this.httpWrapper.get(uri, options)
+        return this.httpWrapper.post(uri, body)
           .pipe(
-            map( (resp: Order) => {
+            map( (resp: any) => {
+              console.warn('<< CarServices >> finalizeOrder response not yet implemented, returning resp as any');
               // deserialize into order object
-              const order: Order = new Order();
-              Object.assign(order, resp); // copy the properties
-              return order;
+              // const order: Order = new Order();
+              // Object.assign(order, resp); // copy the properties
+              return resp;
             })
           );
       } else {
@@ -175,5 +182,6 @@ export class CartService {
 	public getCurrentOrder(): Order {
 		return this.order;
 	}
+
 
 }

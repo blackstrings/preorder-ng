@@ -18,7 +18,6 @@ export class UserProfileViewComponent implements OnInit {
     this.user.firstName = 'tom';
     this.user.lastName = 'mcHon';
     this.user.id = 1;
-    this.user.points = 99;
   }
 
 }

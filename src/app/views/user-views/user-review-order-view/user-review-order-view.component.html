@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-sm">
+
+    <ng-container *ngIf="order && order.products; else orderIncomplete">
+      <h3>Review and place your order</h3>
+    </ng-container>
+
+    <!--display incomplete -->
+    <ng-template #orderIncomplete>
+      <h3 *ngIf="!order || !order.products">Order incomplete</h3>
+    </ng-template>
+
+    <!-- valid order -->
+    <ng-container *ngIf="order && order.products; else displayNoOrderAvailable">
+
+      <div>
+        {{order.merchant.name}}
+<!--        {{user.firstName}} {{user.lastName}}-->
+      </div>
+
+      <ng-container *ngFor="let p of order.products">
+        <div class="list-group-item list-group-item-action">
+          {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
+          <span class="badge-pill float-right"> {{p.price | currency}} </span>
+        </div>
+      </ng-container>
+
+
+
+    </ng-container>
+
+    <ng-template #displayNoOrderAvailable>
+      <div>No order available</div>
+    </ng-template>
+
+  </div>
+</div>

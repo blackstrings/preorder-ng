@@ -20,14 +20,20 @@ export class BasicNavViewComponent {
   public isLogin: boolean = false;
   public shoppingCartItemCount: number = 0;
 
+  // to display at top header
+  public userFirstName: string;
+
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,
               private userService: UserService,
-              @SkipSelf() private cartServiceSub: CartServiceSubscription)
+              private cartServiceSub: CartServiceSubscription)
   {
     // login subscription
     this.userServiceSub.onLogin.subscribe( result => {
       this.isLogin = result;
+      if(this.isLogin){
+        this.userFirstName = this.userService.getUserFirstName();
+      }
     });
 
     // add product to order subscription
@@ -36,8 +42,7 @@ export class BasicNavViewComponent {
     });
   }
 
-
-
+  /** log out the user */
   public logout(): void {
     this.userService.logout()
       .subscribe( (resp: ResponseLogin) => {
@@ -50,7 +55,4 @@ export class BasicNavViewComponent {
       );
   }
 
-  public test(): void {
-    this.shoppingCartItemCount++;
-  }
 }

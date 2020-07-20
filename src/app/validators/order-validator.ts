@@ -22,6 +22,10 @@ export class OrderValidator {
 		if(result && !OrderValidator.hasDeliveryType(order)) {
 			console.error(prefix + 'hasDeliveryType'); result = false;
 		}
+		// todo wire pickup time
+		// if(result && !OrderValidator.hasValidPickupTime(order)) {
+		// 	console.error(prefix + 'hasDeliveryType'); result = false;
+		// }
 		return result;
 	}
 

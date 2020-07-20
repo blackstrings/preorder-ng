@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserCheckoutViewComponent } from './user-checkout-view.component';
+import { UserReviewOrderViewComponent } from './user-review-order-view.component';
 
 describe('UserCheckoutViewComponent', () => {
-  let component: UserCheckoutViewComponent;
-  let fixture: ComponentFixture<UserCheckoutViewComponent>;
+  let component: UserReviewOrderViewComponent;
+  let fixture: ComponentFixture<UserReviewOrderViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserCheckoutViewComponent ]
+      declarations: [ UserReviewOrderViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserCheckoutViewComponent);
+    fixture = TestBed.createComponent(UserReviewOrderViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

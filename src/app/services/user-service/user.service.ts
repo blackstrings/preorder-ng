@@ -7,6 +7,7 @@ import {ResponseLogin} from "../../apis/responses/response-login";
 import {catchError, map} from "rxjs/operators";
 import {ApiEndPoints} from "../../apis/api-end-points";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
+import {User} from "../../models/user/user";
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class UserService {
   private loginFailedAttempts: number = 0;
 
   private authToken: string;
+  private user: User;
 
   constructor(private userServiceSub: UserServiceSubscription, private httpWrapper: HttpWrapperService<ResponseLogin>) {
     console.debug('<< UserService >> Init');
@@ -95,6 +97,12 @@ export class UserService {
         // null the token and only send the flag back for security reason
         resp.auth_token = null;
         resp.isLoginSuccess = true;
+
+        // user basic info setup
+        console.warn('<< UserService >> todo setup user first last, hard coding tester  name');
+        this.user = new User();
+        this.user.firstName = 'TesterFirstName';
+        this.user.firstName = 'TesterLastName';
       } else {
         throw new Error('<< UserService >> processLogin failed, response or token null');
       }
@@ -114,7 +122,7 @@ export class UserService {
     // if no token, we just do frontend logout no need do perform http call
     if(!this.getAuthToken()) {
       this.processLogout();
-      const resp: ResponseLogin = {auth_token: null, isLoginSuccess: false};
+      const resp: ResponseLogin = {auth_token: null, isLoginSuccess: false, firstName: null, lastName: null};
       return of(resp);
     } else {
       // make http call
@@ -183,5 +191,11 @@ export class UserService {
           return of(e);
         })
       );
+  }
+
+  public getUserFirstName(): string {
+    if(this.user){
+      return this.user.firstName;
+    }
   }
 }

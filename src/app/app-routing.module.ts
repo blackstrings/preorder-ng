@@ -8,7 +8,7 @@ import {BasicViewGuard} from "./views/view-guards/basic-view-guard";
 import {UserProfileViewComponent} from "./views/user-views/user-profile-view/user-profile-view.component";
 import {UserCreateAccountView} from "./views/user-views/user-create-account-view/user-create-account-view.component";
 import {UserCreateOrderViewComponent} from "./views/user-views/user-create-order-view/user-create-order-view.component";
-import {UserCheckoutViewComponent} from "./views/user-views/user-checkout-view/user-checkout-view.component";
+import {UserReviewOrderViewComponent} from "./views/user-views/user-review-order-view/user-review-order-view.component";
 
 // configure your SPA routing for AppComponent routing here
 const routes: Routes = [
@@ -19,7 +19,7 @@ const routes: Routes = [
   {path: ViewRoutes.USER_CREATE_ORDER + '/:id', component: UserCreateOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
-  {path: ViewRoutes.USER_CHECKOUT, component: UserCheckoutViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.USER_CHECKOUT, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: '**', component: UserLoginViewComponent },  // Wildcard route for a 404 page
   //{path: '', redirectTo: ViewRoutes.LOGIN, pathMatch: 'full'},
 ];
