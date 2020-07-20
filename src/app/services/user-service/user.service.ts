@@ -90,10 +90,6 @@ export class UserService {
       if(resp && resp.auth_token) {
         this.setAuthToken(resp.auth_token);
 
-        // publish user has logged in successfully
-        this._onLogin.next(true);
-        this.loginFailedAttempts = 0;
-
         // null the token and only send the flag back for security reason
         resp.auth_token = null;
         resp.isLoginSuccess = true;
@@ -101,8 +97,13 @@ export class UserService {
         // user basic info setup
         console.warn('<< UserService >> todo setup user first last, hard coding tester  name');
         this.user = new User();
-        this.user.firstName = 'TesterFirstName';
-        this.user.firstName = 'TesterLastName';
+        this.user.firstName = 'TesterFirstNameWithSuperLongName';
+        this.user.lastName = 'TesterLastName';
+
+        // publish user has logged in successfully
+        this.loginFailedAttempts = 0;
+        this._onLogin.next(true);
+
       } else {
         throw new Error('<< UserService >> processLogin failed, response or token null');
       }

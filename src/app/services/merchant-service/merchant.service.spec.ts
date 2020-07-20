@@ -36,21 +36,21 @@ describe('MerchantService', () => {
 
     it('should prevent duplicates', () => {
       service['merchantsCached'] = merchantsCached;
-      service.addToCache(merchantsCached);
+      service['addToCache'](merchantsCached);
       expect(service['merchantsCached'].length).toBe(2);
     });
 
     it('should prevent duplicates with same ID but different instances', () => {
       service['merchantsCached'] = merchantsCached;
       const newMerchants: MerchantTest[] = [MerchantTest.create(1), MerchantTest.create(3)];
-      service.addToCache(newMerchants);
+      service['addToCache'](newMerchants);
       expect(service['merchantsCached'].length).toBe(3);
     });
 
     it('should cache new merchants', () => {
       service['merchantsCached'] = merchantsCached;
       const newMerchants: MerchantTest[] = [MerchantTest.create(3), MerchantTest.create(4)];
-      service.addToCache(newMerchants);
+      service['addToCache'](newMerchants);
       expect(service['merchantsCached'].length).toBe(4);
     });
 

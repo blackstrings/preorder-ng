@@ -1,4 +1,4 @@
-import {Component, SkipSelf} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {UserService} from "../../../services/user-service/user.service";
@@ -22,6 +22,7 @@ export class BasicNavViewComponent {
 
   // to display at top header
   public userFirstName: string;
+  public firstNameMaxChar: number = 15;
 
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,
@@ -31,9 +32,7 @@ export class BasicNavViewComponent {
     // login subscription
     this.userServiceSub.onLogin.subscribe( result => {
       this.isLogin = result;
-      if(this.isLogin){
-        this.userFirstName = this.userService.getUserFirstName();
-      }
+      this.userFirstName = this.userService.getUserFirstName();
     });
 
     // add product to order subscription

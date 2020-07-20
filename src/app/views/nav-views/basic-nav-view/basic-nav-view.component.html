@@ -19,17 +19,22 @@
     </div>
   </div>
 
-  <div>Hi {{userFirstName ? userFirstName : 'noName'}}</div>
+  <!-- greet user -->
+  <div class="greeting" [hidden]="!isLogin">
+    Hi
+    {{ (userFirstName && userFirstName.length>firstNameMaxChar) ? (userFirstName | titlecase | slice:0:firstNameMaxChar)+'...' : (userFirstName | titlecase) }}
+  </div>
 
-  <ul [hidden]="!isLogin" class="nav">
-    <li class="nav-item">
-      <fa-icon [icon]="['fas', 'bell']" size="lg"></fa-icon>
-    </li>
-    <li class="nav-item">
-      <fa-icon [routerLink]="ViewRoutes.USER_CHECKOUT" [icon]="['fas', 'shopping-cart']" size="lg"></fa-icon>
-      <span [routerLink]="ViewRoutes.USER_CHECKOUT" class="btn btn-sm btn-dark" style="margin-right: 10px">{{shoppingCartItemCount}}</span>
-    </li>
-  </ul>
+  <!-- shopping cart -->
+   <ul [hidden]="!isLogin" class="nav">
+     <li class="nav-item">
+       <fa-icon [icon]="['fas', 'bell']" size="lg"></fa-icon>
+     </li>
+     <li class="nav-item">
+       <fa-icon [routerLink]="ViewRoutes.USER_CHECKOUT" [icon]="['fas', 'shopping-cart']" size="lg"></fa-icon>
+       <span [routerLink]="ViewRoutes.USER_CHECKOUT" class="btn btn-sm btn-dark" style="margin-right: 10px">{{shoppingCartItemCount}}</span>
+     </li>
+   </ul>
 
 <!--  <button  class="navbar-toggler"  type="button"  data-toggle="collapse"  data-target="#navbarSupportedContent"  aria-controls="navbarSupportedContent"  aria-expanded="false"  aria-label="Toggle navigation">-->
 <!--    <span  class="navbar-toggler-icon"></span>-->

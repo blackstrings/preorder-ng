@@ -4,7 +4,7 @@ import {Merchant} from "../../../models/merchant/merchant";
 import {Order} from "../../../models/order/order";
 import {User} from "../../../models/user/user";
 import {UserService} from "../../../services/user-service/user.service";
-import {OrderValidator} from "../../../validators/order-validator";
+import {OrderValidator} from "../../../validators/order-validator/order-validator";
 
 @Component({
   selector: 'app-user-review-order-view',
@@ -22,12 +22,12 @@ export class UserReviewOrderViewComponent implements OnInit {
   constructor(private cartService: CartService, private userService: UserService) { }
 
   ngOnInit(): void {
-    this.setupOrderOnLoad();
+    this.setupViewData();
   }
 
-  public submitOrder(): void {
-    if(this.validateOrderReview()){
-      this.cartService.finalizeOrder(this.userService.getAuthToken())
+  public placeOrder(): void {
+    if(this.validateFinalOrder()){
+      this.cartService.placeOrder(this.userService.getAuthToken())
         .subscribe( (resp: any) => {
             console.debug('<< UserReviewOrderView >> response returned');
             console.debug(resp);
@@ -36,6 +36,8 @@ export class UserReviewOrderViewComponent implements OnInit {
             console.error(e);
           }
         );
+    } else {
+      console.debug('<< UserReviewOrderView >> placeOrder failed, validation failed');
     }
   }
 
@@ -46,20 +48,20 @@ export class UserReviewOrderViewComponent implements OnInit {
    * - payment
    * - pickup times
    */
-  private validateOrderReview(): boolean {
+  private validateFinalOrder(): boolean {
     let result: boolean = true;
-    if(this.order) {result = false; }
     // order req
-    if(result && this.order) {result = false; }
+    if(result && !this.order) {result = false; }
     // products req
-    if(result && this.order.products) {result = false; }
+    if(result && !this.order.products) {result = false; }
     if(result && !OrderValidator.validate(this.order)) {result = false; }
-    // payment required
+    // todo payment required
     // if(result && this.order) {result = false; }
     return result;
   }
 
-  private setupOrderOnLoad(): void {
+  /** required data that should be available on page init */
+  private setupViewData(): void {
     this.order = this.order = this.cartService.getCurrentOrder();
     if(this.order && this.order.products) {
       this.merchant = this.order.merchant;

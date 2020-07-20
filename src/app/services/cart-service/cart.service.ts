@@ -7,7 +7,7 @@ import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {map} from "rxjs/operators";
 import {Order} from '../../models/order/order';
-import {OrderValidator} from '../../validators/order-validator';
+import {OrderValidator} from '../../validators/order-validator/order-validator';
 import {AddToOrderValidatorContainer} from '../../validators/add-to-order-validator-container';
 import {CartServiceSubscription} from "./cart-service-subscription";
 import {Product} from "../../models/product/product";
@@ -37,7 +37,7 @@ export class CartService {
    * When all orders and payments are validated then we send it to the backend to get process.
    * todo incomplete
    */
-  public finalizeOrder(token): Observable<Order | HttpErrorContainer> {
+  public placeOrder(token): Observable<Order | HttpErrorContainer> {
     throw new Error('<< CartServices >> not yet implemented');
     if(token && this.order) {
       if(OrderValidator.validate(this.order)) {

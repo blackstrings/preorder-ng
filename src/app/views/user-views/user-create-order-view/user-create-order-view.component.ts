@@ -132,7 +132,7 @@ export class UserCreateOrderViewComponent implements OnInit {
         const token: string = this.userService.getAuthToken();
         if(!isNaN(merchantID) && token) {
 
-          // async http call
+          // async http call - map all products and merchant to their models
           this.productService.fetchProducts(token, merchantID)
             .subscribe( (data: Product[]) => {
               this.products = data;

@@ -2,19 +2,19 @@
   <div class="col-sm">
 
     <ng-container *ngIf="order && order.products; else orderIncomplete">
-      <h3>Review and place your order</h3>
+      <h5>Review and place your order</h5>
     </ng-container>
 
-    <!--display incomplete -->
+    <!--display incomplete order -->
     <ng-template #orderIncomplete>
-      <h3 *ngIf="!order || !order.products">Order incomplete</h3>
+      <h4 *ngIf="!order || !order.products">Order incomplete</h4>
     </ng-template>
 
-    <!-- valid order -->
+    <!-- display this when order is valid -->
     <ng-container *ngIf="order && order.products; else displayNoOrderAvailable">
 
       <div>
-        {{order.merchant.name}}
+        <h3>{{order.merchant.name}}</h3>
 <!--        {{user.firstName}} {{user.lastName}}-->
       </div>
 
@@ -25,8 +25,8 @@
         </div>
       </ng-container>
 
-
-
+      <!-- submit -->
+      <button class="btn-dark btn" (click)="placeOrder()">Place Order</button>
     </ng-container>
 
     <ng-template #displayNoOrderAvailable>

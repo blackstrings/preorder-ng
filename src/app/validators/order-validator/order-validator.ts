@@ -1,7 +1,7 @@
-import {Order} from '../models/order/order';
-import {Product} from '../models/product/product';
-import {Merchant} from '../models/merchant/merchant';
-import {DeliveryType} from '../models/delivery/delivery-type';
+import {Order} from '../../models/order/order';
+import {Product} from '../../models/product/product';
+import {Merchant} from '../../models/merchant/merchant';
+import {DeliveryType} from '../../models/delivery/delivery-type';
 
 /**
  * front end soft validator for an Order. Run the order through the validate() to pass a soft validation
@@ -40,7 +40,8 @@ export class OrderValidator {
 	/** checks all items if they are compatible with the order's merchant */
 	public static allProductsBelongToMerchant(order: Order): boolean {
 		if(order && order.products){
-			order.products.some( (p: Product) => !OrderValidator.doesProductBelongToMerchant(p, order.merchant));
+		  const value: boolean = order.products.some( (p: Product) => OrderValidator.doesProductBelongToMerchant(p, order.merchant));
+		  return value;
 		}
 		return false;
 	}
