@@ -13,20 +13,69 @@
     <!-- display this when order is valid -->
     <ng-container *ngIf="order && order.products; else displayNoOrderAvailable">
 
+      <!-- merchant address -->
       <div>
         <h3>{{order.merchant.name}}</h3>
 <!--        {{user.firstName}} {{user.lastName}}-->
+        <div>533 Rondal St</div>
+        <div>Eau Claire, WI, 54703</div>
+      </div>
+
+      <!-- pickup times / delivery info -->
+      <hr>
+      <div>
+        <span>Pickup Time |</span> <span class="small">Today at 6:55 PM</span> | <button class="btn btn-sm btn-primary">Change</button>
+      </div>
+
+      <!-- order products list -->
+      <div class="text-align-right">
+        <a [routerLink]="'/' + ViewRoutes.USER_CREATE_ORDER + '/' + merchant.id">[Edit Menu]</a>
       </div>
 
       <ng-container *ngFor="let p of order.products">
         <div class="list-group-item list-group-item-action">
+          <span class="badge badge-dark">{{p.orderQTY}}</span>
           {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
-          <span class="badge-pill float-right"> {{p.price | currency}} </span>
+          <span class="badge-pill float-right"> {{p.calculateTotalPrice() | currency}} </span>
         </div>
       </ng-container>
 
+      <!-- subtotal and tax -->
+      <div class="row">
+        <div class="col-sm text-align-right">
+          <div>
+            <span>Subtotal: </span>{{subTotal | currency:'USD':'symbol':'1.2-2'}}
+          </div>
+          <div>
+            <span>Tax: </span>{{taxAmount | currency:'USD':'symbol':'1.2-2'}}
+          </div>
+          <div class="total-font">
+            <strong>Total: {{orderTotal | currency:'USD':'symbol':'1.2-2'}}</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment info -->
+      <hr>
+      <div>
+        <h3>Payment</h3>
+        <div class="btn-group btn-group-*">
+          <button class="btn btn-primary">Change Card</button>
+          <button class="btn btn-primary">Add New Card</button>
+          <button class="btn btn-primary">PAYPAL</button>
+        </div>
+        <div>CardType: Mastercard</div>
+        <div>Ending in: ...7272</div>
+      </div>
+
       <!-- submit -->
+      <hr>
+      <div class="row">
+        <div class="col-sm text-align-right">
       <button class="btn-dark btn" (click)="placeOrder()">Place Order</button>
+        </div>
+      </div>
+
     </ng-container>
 
     <ng-template #displayNoOrderAvailable>

@@ -14,12 +14,12 @@ import {UserReviewOrderViewComponent} from "./views/user-views/user-review-order
 const routes: Routes = [
   //{path: 'poki', loadChildren: () => import('./features/poki/poki.module').then(m => m.PokiModule)},
   {path: ViewRoutes.LOGIN, component: UserLoginViewComponent},
-  {path: ViewRoutes.USER_PROFILE, component: UserProfileViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_CREATE_PROFILE, component: UserCreateAccountView},
+  {path: ViewRoutes.USER_PROFILE, component: UserProfileViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_CREATE_ORDER + '/:id', component: UserCreateOrderViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.USER_CHECKOUT, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
-  {path: ViewRoutes.USER_CHECKOUT, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: '**', component: UserLoginViewComponent },  // Wildcard route for a 404 page
   //{path: '', redirectTo: ViewRoutes.LOGIN, pathMatch: 'full'},
 ];

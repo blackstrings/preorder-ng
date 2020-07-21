@@ -31,7 +31,7 @@ import {AppServicesOrderInitializer} from "./services/app-services-order-initial
 import {faBell as farBell, faSlidersH} from '@fortawesome/free-solid-svg-icons';
 import {faBell as fasBell } from '@fortawesome/free-regular-svg-icons';
 import {faFacebookSquare, faTwitterSquare} from '@fortawesome/free-brands-svg-icons';
-import {faShoppingCart, faTimes, faPlus, faMinus} from '@fortawesome/free-solid-svg-icons';
+import {faShoppingCart, faTimes, faPlus, faMinus, faSearch} from '@fortawesome/free-solid-svg-icons';
 import { UserReviewOrderViewComponent } from './views/user-views/user-review-order-view/user-review-order-view.component';
 
 //HttpClientModule required for http calls - httpClient
@@ -86,7 +86,8 @@ export class AppModule {
     // library.addIconPacks(fas, far);
     // individual icons - better approach - leave on for commit
     library.addIcons(
-      faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH, faTimes, faPlus, faMinus
+      faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH, faTimes, faPlus, faMinus,
+      faSearch
     );
   }
 }

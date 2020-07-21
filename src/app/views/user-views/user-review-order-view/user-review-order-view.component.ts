@@ -5,6 +5,7 @@ import {Order} from "../../../models/order/order";
 import {User} from "../../../models/user/user";
 import {UserService} from "../../../services/user-service/user.service";
 import {OrderValidator} from "../../../validators/order-validator/order-validator";
+import {ViewRoutes} from "../../view-routes";
 
 @Component({
   selector: 'app-user-review-order-view',
@@ -13,9 +14,14 @@ import {OrderValidator} from "../../../validators/order-validator/order-validato
 })
 export class UserReviewOrderViewComponent implements OnInit {
 
+  ViewRoutes = ViewRoutes;
   public order: Order;
   public merchant: Merchant;
   public user: User;
+
+  public subTotal: number;
+  public taxAmount: number;
+  public orderTotal: number;
 
   public productNameMaxCharacter: number = 30;
 
@@ -26,7 +32,7 @@ export class UserReviewOrderViewComponent implements OnInit {
   }
 
   public placeOrder(): void {
-    if(this.validateFinalOrder()){
+    if(this.validatePlacingOrder()){
       this.cartService.placeOrder(this.userService.getAuthToken())
         .subscribe( (resp: any) => {
             console.debug('<< UserReviewOrderView >> response returned');
@@ -48,7 +54,7 @@ export class UserReviewOrderViewComponent implements OnInit {
    * - payment
    * - pickup times
    */
-  private validateFinalOrder(): boolean {
+  private validatePlacingOrder(): boolean {
     let result: boolean = true;
     // order req
     if(result && !this.order) {result = false; }
@@ -66,9 +72,23 @@ export class UserReviewOrderViewComponent implements OnInit {
     if(this.order && this.order.products) {
       this.merchant = this.order.merchant;
       this.user = this.order.user;
+
+      this.displayPricing();
+
     } else {
       console.error('<< UserReviewOrderView >> setOrder failed, order null');
     }
+  }
+
+  /**
+   * Shoudl send products to backend to get calculated.
+   * We do not handle tax and total price calculation in front end.
+   */
+  private displayPricing(): void {
+    // todo make fetch to get pricing from backend
+    this.subTotal = this.order.getTotalPrice();
+    this.taxAmount = this.subTotal * 0.055; // hard coded tax
+    this.orderTotal = this.subTotal + this.taxAmount;
   }
 
 }
