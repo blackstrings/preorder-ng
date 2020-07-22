@@ -59,6 +59,7 @@ export class OrderValidator {
 		if(order && order.deliveryType === DeliveryType.NONE) {
 			return false;
 		}
+		return true;
 	}
 
 	/**

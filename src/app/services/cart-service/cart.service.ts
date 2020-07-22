@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
 import {Observable, of, Subject} from "rxjs";
@@ -11,6 +11,7 @@ import {OrderValidator} from '../../validators/order-validator/order-validator';
 import {AddToOrderValidatorContainer} from '../../validators/add-to-order-validator-container';
 import {CartServiceSubscription} from "./cart-service-subscription";
 import {Product} from "../../models/product/product";
+import {DeliveryType} from "../../models/delivery/delivery-type";
 
 @Injectable({
 	providedIn: 'root'
@@ -31,6 +32,11 @@ export class CartService {
 	constructor(private sub: CartServiceSubscription, private httpWrapper: HttpWrapperService<Order>) {
 	  console.debug('<< CartService >> Init');
 	  sub.onAddToOrder = this._onAddToOrder.asObservable();
+
+	  // make this first order by default pickup
+	  if(this.order){
+	    this.order.deliveryType = DeliveryType.PICKUP;
+    }
 	}
 
   /**
@@ -38,7 +44,6 @@ export class CartService {
    * todo incomplete
    */
   public placeOrder(token): Observable<Order | HttpErrorContainer> {
-    throw new Error('<< CartServices >> not yet implemented');
     if(token && this.order) {
       if(OrderValidator.validate(this.order)) {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
@@ -172,6 +177,7 @@ export class CartService {
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {
 			this.order = new Order();
+      this.order.deliveryType = DeliveryType.PICKUP;
 			this.order.setMerchant(container.merchant);
 		} else {
 			throw new Error('<< CartServices >> startNewOrder failed, container null');
