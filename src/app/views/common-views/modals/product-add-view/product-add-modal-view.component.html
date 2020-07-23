@@ -22,13 +22,13 @@
 <!-- footer -->
 <div class="modal-footer">
 
-  <div class="btn-group mr-8 border" role="group">
+  <div class="btn-group mr-0 border" role="group">
     <button type="button" class="btn" (click)="remove()"> <fa-icon [icon]="['fas', 'minus']" size="1x"></fa-icon> </button>
     <div class="text-center font-qty">{{qty}}</div>
     <button type="button" class="btn" (click)="add()"> <fa-icon [icon]="['fas', 'plus']" size="1x"></fa-icon> </button>
   </div>
   <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="addToOrder()">
-    Add To Order <span>{{totalPrice | currency}}</span>
+    <span class="add-to-order-label">Add To Order</span> <span>{{totalPrice | currency}}</span>
   </button>
 
 </div>
