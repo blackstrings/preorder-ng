@@ -48,9 +48,12 @@ export class CartService {
       if(OrderValidator.validate(this.order)) {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
         const products: Product[] = this.order.getProducts();
-        const body: {product_ids: number, quantity_ids: number}[] = products.map(p => {
+        let body: any = products.map(p => {
           return {product_ids: p.id, quantity_ids: p.orderQTY}
         });
+
+        // for encapsulating the array into another order_items object if needed
+        body = {order_items: body};
 
         const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
         return this.httpWrapper.post(uri, body)
