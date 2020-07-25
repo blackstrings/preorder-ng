@@ -1,10 +1,59 @@
-<h1>Merchant Registration</h1>
-<div>
-  <p>Name: <input type="text"></p>
+<div class="row">
+  <div class="col-sm">
 
-  <h2>Location</h2>
-  <p>address: <input type="text"></p>
-  <p>city: <input type="text"></p>
-  <p>state: <input type="text"></p>
-  <button>Create</button>
+    <!-- ngOnSubmit will handle pressing enter and when the form is done -->
+    <form [formGroup]="mainForm" (ngSubmit)="createAccount()">
+
+      <div *ngIf="showFormIncomplete" class="alert alert-danger" role="alert">
+        Please fill in incompleted fields
+      </div>
+      <div *ngIf="showServerError" class="alert alert-danger" role="alert">
+        Server Error - Try again later
+      </div>
+
+      <!-- first name -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="firstName_fc" name="firstName_fc" placeholder="First Name" type="text" class="form-control" [formControl]="firstNameFC">
+            <div class="input-group-append" *ngIf="(firstNameFC.dirty || firstNameFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="firstNameFC.invalid && firstNameFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- last name -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="lastName_fc" name="lastName_fc" placeholder="Last Name" type="text" class="form-control" [formControl]="lastNameFC">
+            <div class="input-group-append" *ngIf="(lastNameFC.dirty || lastNameFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="lastNameFC.invalid && lastNameFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- agree to terms -->
+      <div class="form-group row">
+        <div class="col">
+          <input id="agree-terms-fc" class="form-check-input" type="checkbox" value="" [formControl]="agreedToTermsFC">
+          <label class="form-check-label">
+            Agree to terms and conditions
+          </label>
+        </div>
+      </div>
+
+
+      <button type="submit" class="btn btn-block btn-primary" [disabled]="!mainForm.valid">Login</button>
+    </form>
+
+  </div>
 </div>
+
+<ng-template #greenCheck><fa-icon style="color: green" icon="check"></fa-icon></ng-template>

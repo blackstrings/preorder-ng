@@ -1,9 +1,13 @@
 import {Address} from "../address/address";
+import {User} from "../user/user";
 
 export class Merchant {
 
   public id: number;
   public name: string;
+  public agreedToTerms: boolean;
+
+  public user: User;
   public address: Address;
 
   /** leave constructor empty */
