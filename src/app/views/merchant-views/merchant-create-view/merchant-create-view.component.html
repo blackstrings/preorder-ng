@@ -2,7 +2,7 @@
   <div class="col-sm">
 
     <!-- ngOnSubmit will handle pressing enter and when the form is done -->
-    <form [formGroup]="mainForm" (ngSubmit)="createAccount()">
+    <form [formGroup]="mainForm" (ngSubmit)="registerAccount()">
 
       <div *ngIf="showFormIncomplete" class="alert alert-danger" role="alert">
         Please fill in incompleted fields
@@ -39,18 +39,34 @@
         </div>
       </div>
 
+      <h1>Address</h1>
+
+      <!-- street name -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="address1FC" name="lastName_fc" placeholder="street" type="text" class="form-control" [formControl]="address1FC">
+            <div class="input-group-append" *ngIf="(address1FC.dirty || address1FC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="address1FC.invalid && address1FC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- agree to terms -->
       <div class="form-group row">
         <div class="col">
           <input id="agree-terms-fc" class="form-check-input" type="checkbox" value="" [formControl]="agreedToTermsFC">
           <label class="form-check-label">
-            Agree to terms and conditions
+            Agree to <a (click)="openTermsAndConditionModal()" class="text-primary">terms and conditions</a>
           </label>
         </div>
       </div>
 
 
-      <button type="submit" class="btn btn-block btn-primary" [disabled]="!mainForm.valid">Login</button>
+      <button type="submit" class="btn btn-block btn-primary" [disabled]="!mainForm.valid">Register</button>
     </form>
 
   </div>

@@ -3,6 +3,7 @@
   <!-- ngOnSubmit will handle pressing enter and when the form is done -->
   <form [formGroup]="formLogin" (ngSubmit)="login()">
 
+    <!-- invalid submit feedback -->
     <div *ngIf="showLoginFailed" class="alert alert-danger" role="alert">
       Invalid password or email
     </div>
@@ -10,20 +11,15 @@
       Server Error - Try again later
     </div>
 
+    <!-- email -->
     <div class="form-group">
+      <label for="email_id" [hidden]="!emailFC.dirty || !emailFC.touched">Email</label>
       <input type="email" class="form-control" id="email_id" placeholder="email" [formControl]="emailFC">
-      <div *ngIf="emailFC.invalid && (emailFC.dirty || emailFC.touched)" class="alert alert-danger form-field-invalid">
-        <div *ngIf="emailFC.errors.required">email is required. </div>
-        <div *ngIf="emailFC.errors.email">enter valid email. </div>
-      </div>
     </div>
 
+    <!-- passwords -->
     <div class="form-group">
       <input type="password" class="form-control" id="password_id" placeholder="password" [formControl]="passwordFC">
-      <div *ngIf="passwordFC.invalid && (passwordFC.dirty || passwordFC.touched)" class="alert alert-danger form-field-invalid">
-        <div *ngIf="passwordFC.errors.required">password is required. </div>
-        <div *ngIf="passwordFC.errors.minlength">password must be at least 4 characters long.</div>
-      </div>
     </div>
 
     <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>

@@ -12,6 +12,7 @@ import {CartService} from '../../../services/cart-service/cart.service';
 import {take} from "rxjs/operators";
 import {YesNoModalViewComponent} from "../../common-views/modals/yes-no-modal-view/yes-no-modal-view.component";
 import {AddToOrderValidatorContainer} from '../../../validators/add-to-order-validator-container';
+import {ModalConfig} from "../../common-views/modals/modal-config";
 
 @Component({
   selector: 'app-user-create-order-view',
@@ -59,8 +60,7 @@ export class UserCreateOrderViewComponent implements OnInit {
       if(product) {
 
         // set config to not allow keyboard esc or click on backdrop to close
-        const modalConfigs: NgbModalOptions = {backdrop: 'static', keyboard: false, scrollable: true};
-        const modalRef = this.modalService.open(ProductAddModalViewComponent, modalConfigs);
+        const modalRef = this.modalService.open(ProductAddModalViewComponent, ModalConfig.getClickOnlyScrollable());
         if(modalRef.componentInstance instanceof ProductAddModalViewComponent) {
           modalRef.componentInstance.init(product);
           modalRef.componentInstance.onClose
