@@ -1,5 +1,5 @@
 import { User } from './../../../models/user/user';
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, Validators, FormGroup} from '@angular/forms';
 import {takeUntil, catchError, take} from 'rxjs/operators';
 import {Observable, Subject, throwError} from 'rxjs';
@@ -32,7 +32,8 @@ export class UserCreateAccountView implements OnInit {
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
   private unSub: Observable<boolean> = this._unSub.asObservable();
 
-  // form inputs wired to form control for live feedbacks
+  // the first param is just the initial value, should we populate user before loading, we can autocomplete fields
+  // the first param has no connection whatsoever with one-way binding or two-way binding, just an initial value
   public emailFC = new FormControl(
     this.user.email, [
       Validators.required, Validators.email
@@ -74,11 +75,11 @@ export class UserCreateAccountView implements OnInit {
   public create(): void {
 
       if(this.isFormValid()) {
-  
+
         // debug only for faster login test
         // this.user.email = 'email@email.com';
         // this.user.password = 'password';
-  
+
         this.userService.createAccount(this.user.email, this.user.password)
           .pipe(
             take(1),
@@ -100,7 +101,7 @@ export class UserCreateAccountView implements OnInit {
                   this.router.navigate([ViewRoutes.MERCHANT_LIST]);
                   this.showCreateAccountFailed = !response.isLoginSuccess;
                 }
-  
+
               } else {
                 console.error('<< UserCreateView >> Create failed, data returned is null');
                 this.showCreateAccountFailed = true;
@@ -111,7 +112,7 @@ export class UserCreateAccountView implements OnInit {
               this.showCreateAccountFailed = true;
             }
           );
-  
+
       } else {
         console.warn('<< UserCreateView >> create new account failed, form is invalid');
       }

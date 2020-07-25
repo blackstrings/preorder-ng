@@ -34,6 +34,7 @@ import {faFacebookSquare, faTwitterSquare} from '@fortawesome/free-brands-svg-ic
 import {faShoppingCart, faTimes, faPlus, faMinus, faSearch, faCheck} from '@fortawesome/free-solid-svg-icons';
 import { UserReviewOrderViewComponent } from './views/user-views/user-review-order-view/user-review-order-view.component';
 import {OkayModalViewComponent} from "./views/common-views/modals/okay-modal-view/okay-modal-view.component";
+import { TermsAndConditionViewComponent } from './views/common-views/forms/terms-and-condition-view/terms-and-condition-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -60,7 +61,8 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     YesNoModalViewComponent,
     YesNoModalViewComponent,
     OkayModalViewComponent,
-    UserReviewOrderViewComponent
+    UserReviewOrderViewComponent,
+    TermsAndConditionViewComponent
   ],
   imports: [
     BrowserModule,
