@@ -1,6 +1,11 @@
+@import "src/styles.scss";
 .text-align-right {
   text-align: right;
 }
 .total-font {
   font-size: medium;
+  background-color: $color-primary;
+  padding: 5px;
+  border-top: thin solid #ccc;
+  margin-top: 5px;
 }

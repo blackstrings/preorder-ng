@@ -1,38 +1,55 @@
 <div id="user-login-container">
 
-  <!-- ngOnSubmit will handle pressing enter and when the form is done -->
-  <form [formGroup]="formLogin" (ngSubmit)="login()">
 
-    <!-- invalid submit feedback -->
-    <div *ngIf="showLoginFailed" class="alert alert-danger" role="alert">
-      Invalid password or email
+    <!-- ngOnSubmit will handle pressing enter and when the form is done -->
+    <form [formGroup]="formLogin" (ngSubmit)="login()">
+
+      <!-- invalid submit feedback -->
+      <div *ngIf="showLoginFailed" class="row alert alert-danger" role="alert">
+        <div class="col">Invalid password or email</div>
+      </div>
+      <div *ngIf="showServerError" class="row alert alert-danger" role="alert">
+        <div class="col">Server Error - Try again later</div>
+      </div>
+
+      <!-- email -->
+      <div class="form-group mb-2">
+        <div class="col-sm">
+          <label for="emailFC_id">Email</label>
+          <div class="input-group">
+            <input id="emailFC_id" name="lastName_fc" placeholder="" type="text" class="form-control" [formControl]="emailFC">
+            <div class="input-group-append" *ngIf="(emailFC.dirty || emailFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="emailFC.invalid && (emailFC.errors.email || emailFC.errors.required); else greenCheck" icon="times">
+                </fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- passwords -->
+      <div class="form-group">
+        <div class="col-sm">
+          <label for="passwordFC_id">Password</label>
+          <input type="password" class="form-control" id="passwordFC_id" placeholder="" [formControl]="passwordFC">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>
+    </form>
+
+    <hr>
+
+
+    <div class="row text-center">
+      <div class="col-12">
+        <a class="text-primary" [routerLink]="'/' + ViewRoutes.USER_CREATE_PROFILE">Sign up</a><br>
+        <a class="text-dark" [routerLink]="'/' + ViewRoutes.USER_RESET_LOGIN">Forgot Password</a>
+      </div>
     </div>
-    <div *ngIf="showServerError" class="alert alert-danger" role="alert">
-      Server Error - Try again later
-    </div>
-
-    <!-- email -->
-    <div class="form-group">
-      <label for="email_id" [hidden]="!emailFC.dirty || !emailFC.touched">Email</label>
-      <input type="email" class="form-control" id="email_id" placeholder="email" [formControl]="emailFC">
-    </div>
-
-    <!-- passwords -->
-    <div class="form-group">
-      <input type="password" class="form-control" id="password_id" placeholder="password" [formControl]="passwordFC">
-    </div>
-
-    <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>
-  </form>
-
-  <hr>
-
-  <button class="btn btn-primary btn-block" [routerLink]="'/' + ViewRoutes.USER_CREATE_PROFILE">Sign up</button>
-
-  <div class="row text-center">
-    <div class="col-12">
-      <a class="text-dark" [routerLink]="'/' + ViewRoutes.USER_RESET_LOGIN">Forgot Password</a>
-    </div>
-  </div>
 
 </div>
+
+<!-- templates -->
+<ng-template #greenCheck><fa-icon style="color: green" icon="check"></fa-icon></ng-template>
