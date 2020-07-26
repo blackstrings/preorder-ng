@@ -6,7 +6,7 @@
           <div class="col-8">
             <h1 class="display-4">Step 1</h1>
           </div>
-          <ng-container *ngIf="true then loadCheck"></ng-container>
+          <ng-container *ngTemplateOutlet="checkMarkTemplate"></ng-container>
         </div>
         <p class="lead">Create a user account</p>
       </div>
@@ -20,7 +20,7 @@
           <div class="col-8">
             <h1 class="display-4">Step 2</h1>
           </div>
-          <ng-container *ngIf="true then loadCheck"></ng-container>
+          <ng-container *ngTemplateOutlet="checkMarkTemplate"></ng-container>
         </div>
         <p class="lead">Register a merchant account</p>
       </div>
@@ -34,7 +34,7 @@
           <div class="col-8">
             <h1 class="display-4">Step 3</h1>
           </div>
-          <ng-container *ngIf="true then loadCheck"></ng-container>
+          <ng-container *ngTemplateOutlet="checkMarkTemplate"></ng-container>
         </div>
         <p class="lead">Register your bank</p>
       </div>
@@ -48,7 +48,7 @@
           <div class="col-8">
             <h1 class="display-4">Step 4</h1>
           </div>
-          <ng-container *ngIf="true then loadCheck"></ng-container>
+          <ng-container *ngTemplateOutlet="checkMarkTemplate"></ng-container>
         </div>
         <p class="lead">Add your products to go live</p>
       </div>
@@ -56,7 +56,7 @@
   </div>
 </div>
 
-<ng-template #loadCheck>
+<ng-template #checkMarkTemplate>
   <div class="col">
     <div class="p-2 text-center check-mark-custom">
       <fa-icon icon="check" size="3x" transform="grow-9 right-4"></fa-icon>
