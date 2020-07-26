@@ -26,7 +26,7 @@ export class TermsAndConditionViewComponent implements OnInit {
 
   public openTermsAndConditionModal(): void {
     // set config to not allow keyboard esc or click on backdrop to close
-    const modalRef = this.modalService.open(OkayModalViewComponent, ModalConfig.getCloseByAnyKeyScrollable());
+    const modalRef = this.modalService.open(OkayModalViewComponent, ModalConfig.anyKeyToCloseAndScrollable());
     if(modalRef.componentInstance instanceof OkayModalViewComponent) {
       modalRef.componentInstance.init('Terms and Conditions', TermsAndCondition);
       modalRef.componentInstance.onClose.pipe(take(1));

@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm">
+  <div class="col-xl">
 
     <!-- ngOnSubmit will handle pressing enter and when the form is done -->
     <form [formGroup]="mainForm" (ngSubmit)="registerAccount()">
@@ -45,7 +45,7 @@
       <div class="form-group row">
         <div class="col">
           <div class="input-group">
-            
+
             <input id="address1FC" name="lastName_fc" placeholder="street" type="text" class="form-control" [formControl]="address1FC">
             <div class="input-group-append" *ngIf="(address1FC.dirty || address1FC.touched)" >
               <div class="input-group-text">
@@ -57,12 +57,20 @@
       </div>
 
       <!-- agree to terms -->
+      <hr>
+      <div class="form-row">
+        <div class="col text-center">
+          <a class="btn btn-sm btn-secondary btn-block text-light" (click)="openTermsAndConditionModal()">Read terms and conditions</a>
+        </div>
+      </div>
       <div class="form-group row">
         <div class="col">
-          <input id="agree-terms-fc" class="form-check-input" type="checkbox" value="" [formControl]="agreedToTermsFC">
-          <label class="form-check-label">
-            Agree to <a (click)="openTermsAndConditionModal()" class="text-primary">terms and conditions</a>
-          </label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="agree-terms-fc" [formControl]="agreedToTermsFC" required>
+            <label class="form-check-label" for="agree-terms-fc">
+              Agree to terms and conditions
+            </label>
+          </div>
         </div>
       </div>
 

@@ -43,12 +43,23 @@ export class MerchantCreateViewComponent implements OnInit {
   ngOnInit(): void {
 
     // create the form group
+    // you can access the formControl by using formControlName in the html
     this.mainForm = new FormGroup({
       firstName: this.firstNameFC,
       lastName: this.lastNameFC,
+      address1: this.address1FC,
       agreedToTerms: this.agreedToTermsFC
     });
+
   }
+
+  /** add more control to the form */
+  public addFormControl(name: string, control: FormControl): void {
+    if(this.mainForm && name && control) {
+      this.mainForm.addControl(name, control);
+    }
+  }
+
 
   public firstNameFC = new FormControl(
     this.merchant.user.firstName, [
@@ -77,7 +88,7 @@ export class MerchantCreateViewComponent implements OnInit {
 
   public openTermsAndConditionModal(): void {
     // set config to not allow keyboard esc or click on backdrop to close
-    const modalRef = this.modalService.open(OkayModalViewComponent, ModalConfig.getCloseByAnyKeyScrollable());
+    const modalRef = this.modalService.open(OkayModalViewComponent, ModalConfig.anyKeyToCloseAndScrollable());
     if(modalRef.componentInstance instanceof OkayModalViewComponent) {
       modalRef.componentInstance.init('Terms and Conditions', TermsAndCondition);
       modalRef.componentInstance.onClose.pipe(take(1));

@@ -60,7 +60,7 @@ export class UserCreateOrderViewComponent implements OnInit {
       if(product) {
 
         // set config to not allow keyboard esc or click on backdrop to close
-        const modalRef = this.modalService.open(ProductAddModalViewComponent, ModalConfig.getClickOnlyScrollable());
+        const modalRef = this.modalService.open(ProductAddModalViewComponent, ModalConfig.requiresClickAndScrollable());
         if(modalRef.componentInstance instanceof ProductAddModalViewComponent) {
           modalRef.componentInstance.init(product);
           modalRef.componentInstance.onClose

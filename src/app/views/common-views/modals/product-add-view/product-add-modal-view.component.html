@@ -16,19 +16,37 @@
   <!-- for sub items and nested product addon and selections we need to dynamically generate it from the product -->
   <!-- so buttons to control qty for sub items needs to get populated here -->
   <div id="sub-items-and-forms"></div>
-
 </div>
 
 <!-- footer -->
+
 <div class="modal-footer">
+  <div class="row">
 
-  <div class="btn-group mr-0 border" role="group">
-    <button type="button" class="btn" (click)="remove()"> <fa-icon [icon]="['fas', 'minus']" size="1x"></fa-icon> </button>
-    <div class="text-center font-qty">{{qty}}</div>
-    <button type="button" class="btn" (click)="add()"> <fa-icon [icon]="['fas', 'plus']" size="1x"></fa-icon> </button>
+
+    <!-- plus / minus -->
+    <div class="col">
+      <div class="btn-group mr-0 border" role="group">
+        <button type="button" class="btn" (click)="remove()"> <fa-icon [icon]="['fas', 'minus']" size="1x"></fa-icon> </button>
+        <div class="text-center font-qty">{{qty}}</div>
+        <button type="button" class="btn" (click)="add()"> <fa-icon [icon]="['fas', 'plus']" size="1x"></fa-icon> </button>
+      </div>
+    </div>
+
+    <!-- add to order -->
+    <div class="col-8">
+      <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="addToOrder()">
+        <div class="row">
+          <div class="col-lg-6">
+            <span>Add To Order</span>
+          </div>
+          <div class="col-lg text-center" style="width: 160px">
+            {{totalPrice | currency:'USD':'symbol':'1.2-2'}}
+          </div>
+        </div>
+      </button>
+    </div>
+
   </div>
-  <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="addToOrder()">
-    <span class="add-to-order-label">Add To Order</span> <span>{{totalPrice | currency}}</span>
-  </button>
-
 </div>
+

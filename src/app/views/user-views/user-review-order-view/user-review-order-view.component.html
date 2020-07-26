@@ -36,7 +36,7 @@
         <div class="list-group-item list-group-item-action">
           <span class="badge badge-dark">{{p.orderQTY}}</span>
           {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
-          <span class="badge-pill float-right"> {{p.calculateTotalPrice() | currency}} </span>
+          <span class="badge-pill float-right"> {{p.calculateTotalPrice() | currency:'USD':'symbol':'1.2-2'}} </span>
         </div>
       </ng-container>
 
