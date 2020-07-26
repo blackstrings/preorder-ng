@@ -35,6 +35,7 @@ import {faShoppingCart, faTimes, faPlus, faMinus, faSearch, faCheck} from '@fort
 import { UserReviewOrderViewComponent } from './views/user-views/user-review-order-view/user-review-order-view.component';
 import {OkayModalViewComponent} from "./views/common-views/modals/okay-modal-view/okay-modal-view.component";
 import { TermsAndConditionViewComponent } from './views/common-views/forms/terms-and-condition-view/terms-and-condition-view.component';
+import { MerchantHowItWorksViewComponent } from './views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -59,10 +60,10 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     UserCreateOrderViewComponent,
     ProductAddModalViewComponent,
     YesNoModalViewComponent,
-    YesNoModalViewComponent,
     OkayModalViewComponent,
     UserReviewOrderViewComponent,
-    TermsAndConditionViewComponent
+    TermsAndConditionViewComponent,
+    MerchantHowItWorksViewComponent
   ],
   imports: [
     BrowserModule,

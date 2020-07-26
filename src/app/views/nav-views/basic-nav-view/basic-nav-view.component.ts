@@ -22,7 +22,7 @@ export class BasicNavViewComponent {
 
   // to display at top header
   public userFirstName: string;
-  public firstNameMaxChar: number = 15;
+  public firstNameMaxChar: number = 5;
 
   constructor(private router: Router,
               private userServiceSub: UserServiceSubscription,

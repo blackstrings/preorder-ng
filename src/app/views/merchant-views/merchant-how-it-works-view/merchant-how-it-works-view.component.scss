@@ -1,0 +1,12 @@
+.check-mark-custom {
+  $size: 60px;
+  background-color: #4edaf1;
+  height: $size;
+  width: $size;
+  border: thin solid grey;
+  border-radius: 50%;
+}
+
+.c-drop-shadow {
+  box-shadow: -1px 1px 3px 0px #cacaca;
+}

@@ -46,14 +46,16 @@ export class CartService {
   public placeOrder(token): Observable<Order | HttpErrorContainer> {
     if(token && this.order) {
       if(OrderValidator.validate(this.order)) {
-        const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+        // const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+        const uri: string = 'merchants/' + this.order.merchant.id + '/products/' + this.order.products[0].id;
+
         const products: Product[] = this.order.getProducts();
-        let body: any = products.map(p => {
+        let orderItemsArray: any = products.map(p => {
           return {product_ids: p.id, quantity_ids: p.orderQTY}
         });
 
         // for encapsulating the array into another order_items object if needed
-        body = {order_items: body};
+        const body = {order_items: orderItemsArray};
 
         const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
         return this.httpWrapper.post(uri, body)

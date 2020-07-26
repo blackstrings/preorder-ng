@@ -11,7 +11,10 @@
 
       <a class="dropdown-item" [hidden]="!isLogin">Account Settings</a>
       <a class="dropdown-item" [hidden]="!isLogin">Orders</a>
-      <a class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a Partner</a>
+
+      <div class="dropdown-divider" [hidden]="!isLogin" ></div>
+      <a class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_HOW_IT_WORKS">How to become partners</a>
+      <a class="dropdown-item" [hidden]="!isLogin" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a partner</a>
 
       <div class="dropdown-divider" [hidden]="!isLogin" ></div>
       <a class="dropdown-item" [hidden]="!isLogin" (click)="logout()">Logout</a>
