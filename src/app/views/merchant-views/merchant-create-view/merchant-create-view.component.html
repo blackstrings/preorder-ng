@@ -11,6 +11,21 @@
         Server Error - Try again later
       </div>
 
+      <!-- Business name -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="businessName_fc" name="businessName_fc" placeholder="Business Name" type="text" class="form-control" [formControl]="businessNameFC">
+            <div class="input-group-append" *ngIf="(businessNameFC.dirty || businessNameFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="businessNameFC.invalid && businessNameFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <!-- first name -->
       <div class="form-group row">
         <div class="col">
@@ -46,10 +61,24 @@
         <div class="col">
           <div class="input-group">
 
-            <input id="address1FC" name="lastName_fc" placeholder="street" type="text" class="form-control" [formControl]="address1FC">
+            <input id="address1FC" name="address1FC_fc" placeholder="street" type="text" class="form-control" [formControl]="address1FC">
             <div class="input-group-append" *ngIf="(address1FC.dirty || address1FC.touched)" >
               <div class="input-group-text">
                 <fa-icon class="invalid-color" *ngIf="address1FC.invalid && address1FC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="description_fc" name="description_fc" placeholder="Description" type="text" class="form-control" [formControl]="descriptionFC">
+            <div class="input-group-append" *ngIf="(descriptionFC.dirty || descriptionFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="descriptionFC.invalid && descriptionFC.errors.required; else greenCheck" icon="times"></fa-icon>
               </div>
             </div>
           </div>
