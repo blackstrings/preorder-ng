@@ -36,6 +36,7 @@ import { UserReviewOrderViewComponent } from './views/user-views/user-review-ord
 import {OkayModalViewComponent} from "./views/common-views/modals/okay-modal-view/okay-modal-view.component";
 import { TermsAndConditionViewComponent } from './views/common-views/forms/terms-and-condition-view/terms-and-condition-view.component';
 import { MerchantHowItWorksViewComponent } from './views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component';
+import { MerchantAddProductViewComponent } from './views/merchant-views/merchant-add-product-view/merchant-add-product-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -63,7 +64,8 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     OkayModalViewComponent,
     UserReviewOrderViewComponent,
     TermsAndConditionViewComponent,
-    MerchantHowItWorksViewComponent
+    MerchantHowItWorksViewComponent,
+    MerchantAddProductViewComponent
   ],
   imports: [
     BrowserModule,

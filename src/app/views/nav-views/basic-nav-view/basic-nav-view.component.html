@@ -15,6 +15,7 @@
       <div class="dropdown-divider" [hidden]="!isLogin" ></div>
       <a class="dropdown-item" [routerLink]="ViewRoutes.MERCHANT_HOW_IT_WORKS">How to become partners</a>
       <a class="dropdown-item" [hidden]="!isLogin" [routerLink]="ViewRoutes.MERCHANT_CREATE">Become a partner</a>
+      <a class="dropdown-item" [hidden]="!isLogin" [routerLink]="ViewRoutes.MERCHANT_CREATE_PRODUCT">Manage products</a>
 
       <div class="dropdown-divider" [hidden]="!isLogin" ></div>
       <a class="dropdown-item" [hidden]="!isLogin" (click)="logout()">Logout</a>

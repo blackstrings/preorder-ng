@@ -106,6 +106,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
                   this.showLoginFailed = true;
                   this.showServerError = false;
                 } else {
+                  console.error('<< UserLoginView >> login failed, server issue: Is server up and Database up?');
                   this.showLoginFailed = false;
                   this.showServerError = true;
                 }

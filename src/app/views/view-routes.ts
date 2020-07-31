@@ -9,7 +9,8 @@ export class ViewRoutes {
   public static readonly USER_RESET_LOGIN = 'user-reset-login';
   public static readonly USER_CHECKOUT = 'user-review-order';
   public static readonly MERCHANT_LIST = 'merchant-list';
-  public static readonly MERCHANT_CREATE = 'merchant-create';
+  public static readonly MERCHANT_CREATE = 'merchant-create-account';
+  public static readonly MERCHANT_CREATE_PRODUCT = 'merchant-create-product';
   public static readonly MERCHANT_HOW_IT_WORKS = 'merchant-how-it-works';
 
   // sub views

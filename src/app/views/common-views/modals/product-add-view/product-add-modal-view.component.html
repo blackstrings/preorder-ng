@@ -37,10 +37,10 @@
     <div class="col-8">
       <button id="add-to-bag" type="button" class="btn btn-outline-dark" (click)="addToOrder()">
         <div class="row">
-          <div class="col-lg-6">
+          <div class="col-sm-6 text-center">
             <span>Add To Order</span>
           </div>
-          <div class="col-lg text-center" style="width: 160px">
+          <div class="col-sm text-center" style="width: 160px">
             {{totalPrice | currency:'USD':'symbol':'1.2-2'}}
           </div>
         </div>
