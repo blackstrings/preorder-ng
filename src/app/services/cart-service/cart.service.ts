@@ -46,8 +46,8 @@ export class CartService {
   public placeOrder(token): Observable<Order | HttpErrorContainer> {
     if(token && this.order) {
       if(OrderValidator.validate(this.order)) {
-        // const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
-        const uri: string = 'merchants/' + this.order.merchant.id + '/products/';
+        const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
+        // const uri: string = 'merchants/' + this.order.merchant.id + '/products/';
 
         const products: Product[] = this.order.getProducts();
         let orderItemsArray: any = products.map(p => {
@@ -63,8 +63,8 @@ export class CartService {
             }
           };
 
-        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
-        return this.httpWrapper.post(uri, body)
+        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders2(token);
+        return this.httpWrapper.post(uri, body, options)
           .pipe(
             map( (resp: any) => {
               console.warn('<< CarServices >> finalizeOrder response not yet implemented, returning resp as any');

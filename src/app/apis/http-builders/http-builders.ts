@@ -11,9 +11,25 @@ export class HttpBuilders {
     return null;
   }
 
+  public static getAuthorizationHeaders2(token: string): HttpHeaders {
+    if(token) {
+      return new HttpHeaders({'Authorization': token, 'content-type': 'application/json' });  //works
+    }
+    console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
+    return null;
+  }
+
   public static getHttpOptionsWithAuthHeaders(token: string): HttpOptions {
     if(token) {
       return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders(token));
+    }
+    console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
+    return null;
+  }
+
+  public static getHttpOptionsWithAuthHeaders2(token: string): HttpOptions {
+    if(token) {
+      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders2(token));
     }
     console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
     return null;
