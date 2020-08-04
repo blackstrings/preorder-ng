@@ -1,5 +1,6 @@
+import { MerchantBusiness } from '../../models/merchantBusiness/merchant-business';
+import { Merchant } from '../../models/merchant/merchant';
 import { Injectable } from '@angular/core';
-import {Merchant} from "../../models/merchant/merchant";
 import {Observable, of, throwError} from "rxjs";
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {ApiEndPoints} from "../../apis/api-end-points";
@@ -7,7 +8,6 @@ import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
 import {map} from 'rxjs/operators';
-
 /**
  * Handles querying merchants and caching.
  */
@@ -81,6 +81,20 @@ export class MerchantService {
       console.error('<< MerchantService >> getMerchantFromCache failed, one or more params invalid');
     }
     return merchant;
+  }
+
+  public createMerchant(token: string, merchantBusiness: MerchantBusiness): Observable<Merchant[] | HttpErrorContainer> {
+    const uri: string = ApiEndPoints.MERCHANT_CREATE;
+    const body = {'name': merchantBusiness.businessName, 'description': merchantBusiness.description};
+    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders3(token);
+
+    // Swap from Merchant to BusinessMerchant -> Double check!
+    return this.httpWrapper.post(uri, body, options).pipe(
+      map( (resp: Merchant[]) => {
+        //return this.modelToMerchant(resp);
+        return resp;
+      })
+    );
   }
 
   /**

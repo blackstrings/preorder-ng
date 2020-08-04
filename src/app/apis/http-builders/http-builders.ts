@@ -13,11 +13,19 @@ export class HttpBuilders {
 
   public static getAuthorizationHeaders2(token: string): HttpHeaders {
     if(token) {
-      return new HttpHeaders({'Authorization': token, 'content-type': 'application/json' });  //works
+      return new HttpHeaders({'authenticity_token': token});
     }
     console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
     return null;
   }
+
+	public static getAuthorizationHeaders3(token: string): HttpHeaders {
+		if(token) {
+			return new HttpHeaders({'Authorization': token, 'content-type': 'application/json'});
+		}
+		console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
+		return null;
+	}
 
   public static getHttpOptionsWithAuthHeaders(token: string): HttpOptions {
     if(token) {
@@ -27,6 +35,7 @@ export class HttpBuilders {
     return null;
   }
 
+  // replicated using header2
   public static getHttpOptionsWithAuthHeaders2(token: string): HttpOptions {
     if(token) {
       return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders2(token));
@@ -34,6 +43,15 @@ export class HttpBuilders {
     console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
     return null;
   }
+
+	// replicated using header2
+	public static getHttpOptionsWithAuthHeaders3(token: string): HttpOptions {
+		if(token) {
+			return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders3(token));
+		}
+		console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
+		return null;
+	}
 
   public static getHttpOptionsJSON(): HttpOptions {
     return new HttpOptions(new HttpParams(), HttpBuilders.getHttpHeadersJSON());
