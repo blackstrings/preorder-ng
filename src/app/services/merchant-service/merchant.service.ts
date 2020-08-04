@@ -1,3 +1,4 @@
+import { MerchantBusiness } from '../../models/merchantBusiness/merchant-business';
 import { Merchant } from '../../models/merchant/merchant';
 import { Injectable } from '@angular/core';
 import {Observable, of, throwError} from "rxjs";
@@ -82,11 +83,12 @@ export class MerchantService {
     return merchant;
   }
 
-  public createMerchant(token: string, merchant: Merchant): Observable<Merchant[] | HttpErrorContainer> {
+  public createMerchant(token: string, merchantBusiness: MerchantBusiness): Observable<Merchant[] | HttpErrorContainer> {
     const uri: string = ApiEndPoints.MERCHANT_CREATE;
-    const body = {'name': merchant.businessName, 'description': merchant.description};
-    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders2(token);
+    const body = {'name': merchantBusiness.businessName, 'description': merchantBusiness.description};
+    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders3(token);
 
+    // Swap from Merchant to BusinessMerchant -> Double check!
     return this.httpWrapper.post(uri, body, options).pipe(
       map( (resp: Merchant[]) => {
         //return this.modelToMerchant(resp);
