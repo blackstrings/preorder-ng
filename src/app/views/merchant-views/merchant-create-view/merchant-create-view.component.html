@@ -11,6 +11,9 @@
         Server Error - Try again later
       </div>
 
+
+      <h1>Business Information</h1>
+
       <!-- Business name -->
       <div class="form-group row">
         <div class="col">
@@ -25,6 +28,52 @@
         </div>
       </div>
 
+      <!-- Business tax ID/EIN-->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="businessTaxFC" name="businessTaxFC_fc" placeholder="Business tax: 27-0000000" type="string" class="form-control" [formControl]="businessTaxFC">
+            <div class="input-group-append" *ngIf="(businessTaxFC.dirty || businessTaxFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="businessTaxFC.invalid && businessTaxFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business type -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="businessTypeFC" name="businessTypeFC_fc" placeholder="Business type: individual" type="string" class="form-control" [formControl]="businessTypeFC">
+            <div class="input-group-append" *ngIf="(businessTypeFC.dirty || businessTypeFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="businessTaxFC.invalid && businessTaxFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merchant Category -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="merchantCategoryFC" name="merchantCategoryFC_fc" placeholder="merchant Category: 5812" type="number" class="form-control" [formControl]="merchantCategoryFC">
+            <div class="input-group-append" *ngIf="(merchantCategoryFC.dirty || merchantCategoryFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="merchantCategoryFC.invalid && merchantCategoryFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+
+      <h1>Applicant Information</h1>
 
       <!-- first name -->
       <div class="form-group row">
@@ -54,14 +103,71 @@
         </div>
       </div>
 
-      <h1>Address</h1>
-
-      <!-- street name -->
+      <!-- DOB Month-->
       <div class="form-group row">
         <div class="col">
           <div class="input-group">
+            <input id="dateOfBirthM_fc" name="dateOfBirthM_fc" placeholder="DOB: Month" type="number" class="form-control" [formControl]="dateOfBirthMFC">
+            <div class="input-group-append" *ngIf="(dateOfBirthMFC.dirty || dateOfBirthMFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="dateOfBirthMFC.invalid && dateOfBirthMFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <input id="address1FC" name="address1FC_fc" placeholder="street" type="text" class="form-control" [formControl]="address1FC">
+      <!-- DOB Day-->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="dateOfBirthD_fc" name="dateOfBirthD_fc" placeholder="DOB: Day" type="number" class="form-control" [formControl]="dateOfBirthDFC">
+            <div class="input-group-append" *ngIf="(dateOfBirthDFC.dirty || dateOfBirthDFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="dateOfBirthDFC.invalid && dateOfBirthDFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOB Year-->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="dateOfBirthY_fc" name="dateOfBirthY_fc" placeholder="DOB: Year" type="number" class="form-control" [formControl]="dateOfBirthYFC">
+            <div class="input-group-append" *ngIf="(dateOfBirthYFC.dirty || dateOfBirthYFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="dateOfBirthYFC.invalid && dateOfBirthYFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Last 4 digits of SSN-->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="last4ssn_fc" name="last4ssn_fc" placeholder="Last 4 digits of ssn" type="number" class="form-control" [formControl]="last4ssnFC">
+            <div class="input-group-append" *ngIf="(last4ssnFC.dirty || last4ssnFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="last4ssnFC.invalid && last4ssnFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <h1>Addresses</h1>
+
+      <!-- Address 1 -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="address1FC" name="address1FC_fc" placeholder="Addresss 1" type="text" class="form-control" [formControl]="address1FC">
             <div class="input-group-append" *ngIf="(address1FC.dirty || address1FC.touched)" >
               <div class="input-group-text">
                 <fa-icon class="invalid-color" *ngIf="address1FC.invalid && address1FC.errors.required; else greenCheck" icon="times"></fa-icon>
@@ -71,6 +177,82 @@
         </div>
       </div>
 
+      <!-- Address 2 -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="address2FC" name="address2FC_fc" placeholder="Address 2" type="text" class="form-control" [formControl]="address2FC">
+            <div class="input-group-append" *ngIf="(address2FC.dirty || address2FC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="address2FC.invalid && address1FC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <h1>Contact Information</h1>
+      <!-- Business Phone -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="businessPhoneFC" name="businessPhoneFC_fc" placeholder="Business Phone" type="text" class="form-control" [formControl]="businessPhoneFC">
+            <div class="input-group-append" *ngIf="(businessPhoneFC.dirty || businessPhoneFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="businessPhoneFC.invalid && businessPhoneFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Phone -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="personalPhoneFC" name="personalPhoneFC_fc" placeholder="Personal Phone" type="text" class="form-control" [formControl]="personalPhoneFC">
+            <div class="input-group-append" *ngIf="(personalPhoneFC.dirty || personalPhoneFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="personalPhoneFC.invalid && personalPhoneFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Email -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="businessEmailFC" name="businessEmailFC_fc" placeholder="Business Email" type="text" class="form-control" [formControl]="businessEmailFC">
+            <div class="input-group-append" *ngIf="(businessEmailFC.dirty || businessEmailFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="businessEmailFC.invalid && businessEmailFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Email -->
+      <div class="form-group row">
+        <div class="col">
+          <div class="input-group">
+            <input id="personalEmailFC" name="personalEmailFC_fc" placeholder="Personal Email" type="text" class="form-control" [formControl]="personalEmailFC">
+            <div class="input-group-append" *ngIf="(personalEmailFC.dirty || personalEmailFC.touched)" >
+              <div class="input-group-text">
+                <fa-icon class="invalid-color" *ngIf="personalEmailFC.invalid && personalEmailFC.errors.required; else greenCheck" icon="times"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <hr />
+      <h1>Merchant Description</h1>
       <!-- Description -->
       <div class="form-group row">
         <div class="col">

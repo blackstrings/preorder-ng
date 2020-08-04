@@ -11,9 +11,9 @@ export class HttpBuilders {
     return null;
   }
 
-  public static getAuthorizationHeaders2(token: string): HttpHeaders {
+  public static getAuthorizationHeaders3(token: string): HttpHeaders {
     if(token) {
-      return new HttpHeaders({'authenticity_token': token});
+      return new HttpHeaders({'Authorization': token, 'content-type': 'application/json'});
     }
     console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
     return null;
@@ -28,9 +28,9 @@ export class HttpBuilders {
   }
 
   // replicated using header2
-  public static getHttpOptionsWithAuthHeaders2(token: string): HttpOptions {
+  public static getHttpOptionsWithAuthHeaders3(token: string): HttpOptions {
     if(token) {
-      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders2(token));
+      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders3(token));
     }
     console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
     return null;

@@ -9,9 +9,8 @@ export class Merchant {
 
   public user: User;
   public address: Address;
-  
-  public businessName: String;
-  public description: String;
+  public address2: Address;
+
 
   /** leave constructor empty */
   constructor() {}
