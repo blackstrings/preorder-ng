@@ -63,7 +63,7 @@ export class CartService {
             }
           };
 
-        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders2(token);
+        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
         return this.httpWrapper.post(uri, body, options)
           .pipe(
             map( (resp: any) => {

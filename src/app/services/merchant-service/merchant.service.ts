@@ -86,7 +86,7 @@ export class MerchantService {
   public createMerchant(token: string, merchantBusiness: MerchantBusiness): Observable<Merchant[] | HttpErrorContainer> {
     const uri: string = ApiEndPoints.MERCHANT_CREATE;
     const body = {'name': merchantBusiness.businessName, 'description': merchantBusiness.description};
-    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders3(token);
+    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
 
     // Swap from Merchant to BusinessMerchant -> Double check!
     return this.httpWrapper.post(uri, body, options).pipe(

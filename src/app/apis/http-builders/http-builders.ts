@@ -3,62 +3,31 @@ import {HttpOptions} from "../http-wrapper/http-options";
 
 export class HttpBuilders {
 
-  public static getAuthorizationHeaders(token: string): HttpHeaders {
+  public static getAuthorizationHeaders(token: string, asJson: boolean): HttpHeaders {
     if(token) {
-      return new HttpHeaders({'Authorization': token});  //works
+      const http: HttpHeaders = new HttpHeaders({'Authorization': token});  //works
+
+      if(asJson) {
+        http.append('content-type', 'application/json');
+      }
+      return http;
     }
     console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
     return null;
   }
 
-  public static getAuthorizationHeaders2(token: string): HttpHeaders {
+  /**
+   *  Returns HttpOptions with default settings and token as authorization in header
+   * @param token to use as authorization
+   * @param asJson true by default, will set content-type as application/json
+   */
+  public static getHttpOptionsWithAuthHeaders(token: string, asJson: boolean = true): HttpOptions {
     if(token) {
-      return new HttpHeaders({'authenticity_token': token});
-    }
-    console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
-    return null;
-  }
-
-	public static getAuthorizationHeaders3(token: string): HttpHeaders {
-		if(token) {
-			return new HttpHeaders({'Authorization': token, 'content-type': 'application/json'});
-		}
-		console.error('<< HttpBuilders >> getAuthorizationHeaders failed, token null');
-		return null;
-	}
-
-  public static getHttpOptionsWithAuthHeaders(token: string): HttpOptions {
-    if(token) {
-      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders(token));
+      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders(token, asJson));
     }
     console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
     return null;
   }
 
-  // replicated using header2
-  public static getHttpOptionsWithAuthHeaders2(token: string): HttpOptions {
-    if(token) {
-      return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders2(token));
-    }
-    console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
-    return null;
-  }
-
-	// replicated using header2
-	public static getHttpOptionsWithAuthHeaders3(token: string): HttpOptions {
-		if(token) {
-			return new HttpOptions(new HttpParams(), HttpBuilders.getAuthorizationHeaders3(token));
-		}
-		console.error('<< HttpBuilders >> getHttOptionsWithAuthHeaders failed, token null');
-		return null;
-	}
-
-  public static getHttpOptionsJSON(): HttpOptions {
-    return new HttpOptions(new HttpParams(), HttpBuilders.getHttpHeadersJSON());
-  }
-
-  public static getHttpHeadersJSON(): HttpHeaders {
-    return new HttpHeaders({'Content-Type': 'application/json'});
-  }
 
 }
