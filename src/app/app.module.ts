@@ -31,12 +31,13 @@ import {AppServicesOrderInitializer} from "./services/app-services-order-initial
 import {faBell as farBell, faSlidersH} from '@fortawesome/free-solid-svg-icons';
 import {faBell as fasBell } from '@fortawesome/free-regular-svg-icons';
 import {faFacebookSquare, faTwitterSquare} from '@fortawesome/free-brands-svg-icons';
-import {faShoppingCart, faTimes, faPlus, faMinus, faSearch, faCheck} from '@fortawesome/free-solid-svg-icons';
+import {faShoppingCart, faTimes, faPlus, faMinus, faSearch, faCheck, faExclamationCircle} from '@fortawesome/free-solid-svg-icons';
 import { UserReviewOrderViewComponent } from './views/user-views/user-review-order-view/user-review-order-view.component';
 import {OkayModalViewComponent} from "./views/common-views/modals/okay-modal-view/okay-modal-view.component";
 import { TermsAndConditionViewComponent } from './views/common-views/forms/terms-and-condition-view/terms-and-condition-view.component';
 import { MerchantHowItWorksViewComponent } from './views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component';
 import { MerchantAddProductViewComponent } from './views/merchant-views/merchant-add-product-view/merchant-add-product-view.component';
+import { UserOrderCheckoutViewComponent } from './views/user-views/user-order-checkout-view/user-order-checkout-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -65,7 +66,8 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     UserReviewOrderViewComponent,
     TermsAndConditionViewComponent,
     MerchantHowItWorksViewComponent,
-    MerchantAddProductViewComponent
+    MerchantAddProductViewComponent,
+    UserOrderCheckoutViewComponent
   ],
   imports: [
     BrowserModule,
@@ -94,7 +96,7 @@ export class AppModule {
     // individual icons - better approach - leave on for commit
     library.addIcons(
       faShoppingCart, farBell, fasBell, faFacebookSquare, faTwitterSquare, faSlidersH, faTimes, faPlus, faMinus,
-      faSearch, faCheck
+      faSearch, faCheck, faExclamationCircle
     );
   }
 }

@@ -1,32 +1,36 @@
-<div>
+<div class="row">
+  <div class="col-12">
 
-  <div>
-    <a class="btn btn-dark btn-sm" [routerLink]="'/' + ViewRoutes.MERCHANT_LIST">Back</a>
-  </div>
-
-  <div>
-    <div id="merchant-info" class="merchant-address">
-      <h3 *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
-      <ng-template #noMerchant>no merchant found</ng-template>
-      <hr>
-      <p>Open/Close - 7am - 9pm</p>
-      <p>3533 N Clairmont, Eau Claire, WI</p>
+    <div class="mb-2">
+      <a class="btn btn-dark btn-sm" [routerLink]="'/' + ViewRoutes.MERCHANT_LIST">Back</a>
     </div>
-  </div>
-  <hr>
-  <h2>Menu</h2>
-  <div class="row">
-    <div class="col-12 list-group no-padding-right">
 
-      <!-- list all the top tier products of the merchant here -->
-      <ng-container *ngFor="let p of products">
-        <div class="list-group-item list-group-item-action" (click)="showModalProductView(p.id)">
-          {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
-          <span class="badge-pill float-right"> {{p.price | currency}} </span>
-        </div>
-      </ng-container>
-
+    <div class="card mb-3">
+      <div class="card-header">
+        <h3 class="card-title" *ngIf="merchant else noMerchant">{{merchant.name | titlecase}}</h3>
+      </div>
+      <div id="merchant-info" class="card-body">
+        <ng-template #noMerchant>no merchant found</ng-template>
+        <p>Open/Close - 7am - 9pm<br>
+        3533 N Clairmont, Eau Claire, WI</p>
+      </div>
     </div>
-  </div>
 
+    <h4 class="text-center">Menu</h4>
+
+    <div>
+      <div class="list-group no-padding-right">
+
+        <!-- list all the top tier products of the merchant here -->
+        <ng-container *ngFor="let p of products">
+          <div class="list-group-item list-group-item-action" (click)="showModalProductView(p.id)">
+            {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
+            <span class="badge-pill float-right"> {{p.price | currency}} </span>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+
+  </div>
 </div>

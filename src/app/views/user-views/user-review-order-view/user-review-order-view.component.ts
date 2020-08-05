@@ -6,6 +6,7 @@ import {User} from "../../../models/user/user";
 import {UserService} from "../../../services/user-service/user.service";
 import {OrderValidator} from "../../../validators/order-validator/order-validator";
 import {ViewRoutes} from "../../view-routes";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-user-review-order-view',
@@ -17,6 +18,8 @@ export class UserReviewOrderViewComponent implements OnInit {
   ViewRoutes = ViewRoutes;
   public order: Order;
   public merchant: Merchant;
+  public merchantName: string;
+  public merchantID: number;
   public user: User;
 
   public subTotal: number;
@@ -25,18 +28,19 @@ export class UserReviewOrderViewComponent implements OnInit {
 
   public productNameMaxCharacter: number = 30;
 
-  constructor(private cartService: CartService, private userService: UserService) { }
+  constructor(private cartService: CartService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
     this.setupViewData();
   }
 
-  public placeOrder(): void {
+  public checkout(): void {
     if(this.validatePlacingOrder()){
       this.cartService.placeOrder(this.userService.getAuthToken())
         .subscribe( (resp: any) => {
             console.debug('<< UserReviewOrderView >> response returned');
             console.debug(resp);
+            this.router.navigate([ViewRoutes.USER_ORDER_CHECKOUT]);
           },
           e => {
             console.error(e);
@@ -66,11 +70,17 @@ export class UserReviewOrderViewComponent implements OnInit {
     return result;
   }
 
+  public orderHasItems(): boolean {
+    return this.order && this.order.products && this.order.products.length > 0;
+  }
+
   /** required data that should be available on page init */
   private setupViewData(): void {
     this.order = this.order = this.cartService.getCurrentOrder();
     if(this.order && this.order.products) {
       this.merchant = this.order.merchant;
+      this.merchantName = this.merchant && this.merchant.name ? this.merchant.name : '';
+      this.merchantID = this.merchant && this.merchant.id ? this.merchant.id : 0;
       this.user = this.order.user;
 
       this.displayPricing();

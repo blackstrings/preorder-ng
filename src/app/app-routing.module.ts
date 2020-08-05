@@ -11,16 +11,18 @@ import {UserCreateOrderViewComponent} from "./views/user-views/user-create-order
 import {UserReviewOrderViewComponent} from "./views/user-views/user-review-order-view/user-review-order-view.component";
 import {MerchantHowItWorksViewComponent} from "./views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component";
 import {MerchantAddProductViewComponent} from "./views/merchant-views/merchant-add-product-view/merchant-add-product-view.component";
+import {UserOrderCheckoutViewComponent} from "./views/user-views/user-order-checkout-view/user-order-checkout-view.component";
 
 // configure your SPA routing for AppComponent routing here
 const routes: Routes = [
   //{path: 'poki', loadChildren: () => import('./features/poki/poki.module').then(m => m.PokiModule)},
   {path: ViewRoutes.LOGIN, component: UserLoginViewComponent},
   {path: ViewRoutes.USER_CREATE_PROFILE, component: UserCreateAccountView},
-  {path: ViewRoutes.MERCHANT_HOW_IT_WORKS, component: MerchantHowItWorksViewComponent},
   {path: ViewRoutes.USER_PROFILE, component: UserProfileViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_CREATE_ORDER + '/:id', component: UserCreateOrderViewComponent, canActivate: [BasicViewGuard]},
-  {path: ViewRoutes.USER_CHECKOUT, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.USER_ORDER_REVIEW, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.USER_ORDER_CHECKOUT, component: UserOrderCheckoutViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.MERCHANT_HOW_IT_WORKS, component: MerchantHowItWorksViewComponent},
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE_PRODUCT, component: MerchantAddProductViewComponent, canActivate: [BasicViewGuard]},

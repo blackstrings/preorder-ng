@@ -1,12 +1,21 @@
-.check-mark-custom {
+.cricle-bg-custom {
   $size: 60px;
-  background-color: #4edaf1;
+  background-color: #4cc22a;
   height: $size;
   width: $size;
   border: thin solid grey;
   border-radius: 50%;
 }
 
+.circle-bg-custom--warn {
+  @extend .cricle-bg-custom;
+  background-color: yellow;
+}
+
 .c-drop-shadow {
   box-shadow: -1px 1px 3px 0px #cacaca;
+}
+
+.bg-completed-color {
+  background-color: #ffe04a;
 }

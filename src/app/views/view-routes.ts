@@ -7,7 +7,8 @@ export class ViewRoutes {
   public static readonly USER_CREATE_PROFILE = 'user-profile-create';
   public static readonly USER_CREATE_ORDER = 'user-create-order';
   public static readonly USER_RESET_LOGIN = 'user-reset-login';
-  public static readonly USER_CHECKOUT = 'user-review-order';
+  public static readonly USER_ORDER_REVIEW = 'user-order-review';
+  public static readonly USER_ORDER_CHECKOUT = 'user-order-checkout';
   public static readonly MERCHANT_LIST = 'merchant-list';
   public static readonly MERCHANT_CREATE = 'merchant-create-account';
   public static readonly MERCHANT_CREATE_PRODUCT = 'merchant-create-product';
