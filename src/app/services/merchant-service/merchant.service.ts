@@ -182,7 +182,9 @@ export class MerchantService {
 
             this.addToCache(temp);
 
-            this.useCache = true;
+            // for now it's better to just always fetch new data, so turning cache off
+            // this.useCache = true;
+
             return this.getMerchantsFromCache();
           }),
           // if you just want to return all the returned properties on merchant
