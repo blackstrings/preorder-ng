@@ -175,8 +175,12 @@ export class MerchantService {
             }
 
             resp.forEach( x => {
-              // if you want to control what properties get carried on
+              // if you want to control what properties get carried onto merchant
               const m: Merchant = this.modelToMerchant(x);
+
+              // if you want all the returned properties from basckend onto merchant
+              // const m: Merchant = new Merchant();
+              // Object.assign(m, x); // copy the properties
               temp.push(m);
             });
 
@@ -186,16 +190,7 @@ export class MerchantService {
             // this.useCache = true;
 
             return this.getMerchantsFromCache();
-          }),
-          // if you just want to return all the returned properties on merchant
-          // map( (resp: Merchant[]) => {
-          //   resp.forEach( x => {
-          //     const m: Merchant = new Merchant();
-          //     Object.assign(m, x); // copy the properties
-          //     this.addToCache([m]);
-          //   });
-          //   return this.getMerchantListCached();
-          // })
+          })
         );
     } else {
       return of(null);
