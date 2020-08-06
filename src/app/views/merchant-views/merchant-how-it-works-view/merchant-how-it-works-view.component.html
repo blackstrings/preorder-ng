@@ -9,6 +9,7 @@
           <ng-container *ngTemplateOutlet="checkMarkTemplate"></ng-container>
         </div>
         <p class="lead">Create a user account</p>
+        <ng-container *ngTemplateOutlet="progressBar100"></ng-container>
       </div>
     </div>
   </div>
@@ -23,6 +24,7 @@
           <ng-container *ngTemplateOutlet="checkMarkRedTemplate"></ng-container>
         </div>
         <p class="lead">Register a merchant account</p>
+        <ng-container *ngTemplateOutlet="progressBar1"></ng-container>
       </div>
     </div>
   </div>
@@ -37,6 +39,7 @@
           <ng-container *ngTemplateOutlet="checkMarkRedTemplate"></ng-container>
         </div>
         <p class="lead">Register your bank</p>
+        <ng-container *ngTemplateOutlet="progressBar1"></ng-container>
       </div>
     </div>
   </div>
@@ -50,7 +53,8 @@
           </div>
           <ng-container *ngTemplateOutlet="checkMarkRedTemplate"></ng-container>
         </div>
-        <p class="lead">Add your products to go live</p>
+        <p class="lead">Add products to go live</p>
+        <ng-container *ngTemplateOutlet="progressBar1"></ng-container>
       </div>
     </div>
   </div>
@@ -69,5 +73,16 @@
     <div class="p-2 text-center circle-bg-custom--warn">
       <fa-icon icon="exclamation-circle" size="3x" transform="grow-9"></fa-icon>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #progressBar100>
+  <div class="progress" style="height: 20px">
+    <div class="progress-bar" style="width:100%; height: 20px"></div>
+  </div>
+</ng-template>
+<ng-template #progressBar1>
+  <div class="progress" style="height: 20px">
+    <div class="progress-bar" style="width:1%; height: 20px"></div>
   </div>
 </ng-template>
