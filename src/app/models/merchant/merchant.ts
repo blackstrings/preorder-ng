@@ -5,9 +5,7 @@ export class Merchant {
 
   public id: number;
   public name: string;
-  public agreedToTerms: boolean;
 
-  public user: User;
   public address: Address;
   public address2: Address;
 

@@ -1,18 +1,15 @@
 import { MerchantBusiness } from './../../../models/merchantBusiness/merchant-business';
-import { Address } from './../../../models/address/address';
 import { UserService } from './../../../services/user-service/user.service';
 import { MerchantService } from './../../../services/merchant-service/merchant.service';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {User} from "../../../models/user/user";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {take, takeUntil} from "rxjs/operators";
 import {ModalConfig} from "../../common-views/modals/modal-config";
 import { OkayModalViewComponent } from '../../common-views/modals/okay-modal-view/okay-modal-view.component';
 import {TermsAndCondition} from "./TermsAndCondition";
-import { Merchant } from '../../../models/merchant/merchant';
 
 @Component({
   selector: 'app-create-merchant-view',
@@ -26,7 +23,7 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
 
   // instantiate the merchant right away
   //public merchant: Merchant = MerchantCreateViewComponent.populateMerchant();
-  public merchantBusiness: MerchantBusiness = MerchantCreateViewComponent.populateMerchantBusiness();
+  public merchantBusiness: MerchantBusiness = new MerchantBusiness();
 
   // the form on this page
   public mainForm: FormGroup;
@@ -39,16 +36,6 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
 
   constructor(private modalService: NgbModal, private merchantService: MerchantService, private userService: UserService) {
 
-  }
-
-  /** creates a merchant object */
-  public static populateMerchantBusiness(): MerchantBusiness {
-    const merchantBusiness: MerchantBusiness = new MerchantBusiness();
-    merchantBusiness.merchant = new Merchant();
-    merchantBusiness.merchant.user = new User();
-    merchantBusiness.merchant.address = new Address();
-    merchantBusiness.merchant.address2 = new Address();
-    return merchantBusiness;
   }
 
   ngOnInit(): void {
@@ -78,75 +65,75 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
 
     // wire the form inputs so on every change it will update the values in the model
     this.businessNameFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.businessName = val;
+      this.merchantBusiness.setBusinessName(val);
     });
 
     this.businessTaxFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.businessTax = val;
+      this.merchantBusiness.setBusinessTax(val);
     });
 
     this.businessTypeFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.businessType = val;
+      this.merchantBusiness.setBusinessType(val);
     });
 
     this.merchantCategoryFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
-      this.merchantBusiness.merchantCategory = val;
+      this.merchantBusiness.setMerchantCategory(val);
     });
 
     this.firstNameFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.user.firstName = val;
+      this.merchantBusiness.setFirstName(val);
     });
 
     this.lastNameFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.user.lastName = val;
+      this.merchantBusiness.setLastName(val);
     });
 
     this.dateOfBirthMFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
-      this.merchantBusiness.merchant.user.dateOfBirthM = val;
+      this.merchantBusiness.setDOBMonth(val);
     });
 
     this.dateOfBirthDFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
-      this.merchantBusiness.merchant.user.dateOfBirthD = val;
+      this.merchantBusiness.setDOBDay(val);
     });
 
     this.dateOfBirthYFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
-      this.merchantBusiness.merchant.user.dateOfBirthY = val;
+      this.merchantBusiness.setDOBYear(val);
     });
 
     this.last4ssnFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
-      this.merchantBusiness.merchant.user.last4ssn = val;
+      this.merchantBusiness.setLast4SSN(val);
     });
 
     this.address1FC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.address.address1 = val;
+      this.merchantBusiness.setAddress1(val);
     });
 
     this.address2FC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.address2.address2 = val;
+      this.merchantBusiness.setAddress2(val);
     });
 
     this.businessPhoneFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.businessPhone = val;
+      this.merchantBusiness.setBusinessPhone(val);
     });
 
     this.personalPhoneFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.user.personalPhone = val;
+      this.merchantBusiness.setPersonalPhone(val);
     });
 
     this.businessEmailFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.businessEmail = val;
+      this.merchantBusiness.setBusinessEmail(val);
     });
 
     this.personalEmailFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.merchant.user.personalEmail = val;
+      this.merchantBusiness.setPersonalEmail(val);
     });
 
     this.descriptionFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: string) => {
-      this.merchantBusiness.description = val;
+      this.merchantBusiness.setBusinessDescription(val);
     });
 
     this.agreedToTermsFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: boolean) => {
-      this.merchantBusiness.merchant.agreedToTerms = val;
+      this.merchantBusiness.setAgreedToTerms(val);
     });
 
   }
@@ -159,92 +146,92 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
   }
 
   public businessNameFC = new FormControl(
-    this.merchantBusiness.businessName, [
+    this.merchantBusiness.getBusinessName(), [
       Validators.required
     ]);
 
   public businessTaxFC = new FormControl(
-    this.merchantBusiness.businessTax, [
+    this.merchantBusiness.getBusinessTax(), [
       Validators.required
     ]);
 
   public businessTypeFC = new FormControl(
-    this.merchantBusiness.businessType, [
+    this.merchantBusiness.getBusinessType(), [
       Validators.required
     ]);
 
   public merchantCategoryFC = new FormControl(
-    this.merchantBusiness.merchantCategory, [
+    this.merchantBusiness.getMerchantCategory(), [
       Validators.required
     ]);
 
   public firstNameFC = new FormControl(
-    this.merchantBusiness.merchant.user.firstName, [
+    this.merchantBusiness.getFirstName(), [
       Validators.required
     ]);
 
   public lastNameFC = new FormControl(
-    this.merchantBusiness.merchant.user.lastName, [
+    this.merchantBusiness.getLastName(), [
       Validators.required
     ]);
 
   public dateOfBirthMFC = new FormControl(
-    this.merchantBusiness.merchant.user.dateOfBirthM, [
+    this.merchantBusiness.getDOBMonth(), [
       Validators.required
     ]);
 
   public dateOfBirthDFC = new FormControl(
-    this.merchantBusiness.merchant.user.dateOfBirthM, [
+    this.merchantBusiness.getDOBDay(), [
       Validators.required
     ]);
 
   public dateOfBirthYFC = new FormControl(
-    this.merchantBusiness.merchant.user.dateOfBirthM, [
+    this.merchantBusiness.getDOBYear(), [
       Validators.required
     ]);
 
   public last4ssnFC = new FormControl(
-    this.merchantBusiness.merchant.user.last4ssn, [
+    this.merchantBusiness.getLast4SSN(), [
       Validators.required
     ]);
 
   public address1FC = new FormControl(
-    this.merchantBusiness.merchant.address.address1, [
+    this.merchantBusiness.getAddress1(), [
       Validators.required
     ]);
 
   public address2FC = new FormControl(
-    this.merchantBusiness.merchant.address2.address2, [
+    this.merchantBusiness.getAddress2(), [
       Validators.required
     ]);
 
   public businessPhoneFC = new FormControl(
-    this.merchantBusiness.businessPhone, [
+    this.merchantBusiness.getBusinessPhone(), [
       Validators.required
     ]);
-  
+
   public personalPhoneFC = new FormControl(
-    this.merchantBusiness.merchant.user.personalPhone, [
+    this.merchantBusiness.getPersonalPhone(), [
       Validators.required
     ]);
 
   public businessEmailFC = new FormControl(
-    this.merchantBusiness.businessEmail, [
+    this.merchantBusiness.getBusinessEmail(), [
       Validators.required
     ]);
 
   public personalEmailFC = new FormControl(
-    this.merchantBusiness.merchant.user.personalEmail, [
+    this.merchantBusiness.getPersonalEmail(), [
       Validators.required
     ]);
 
   public descriptionFC = new FormControl(
-    this.merchantBusiness.description, [
+    this.merchantBusiness.getBusinessDescription(), [
       Validators.required
     ]);
 
   public agreedToTermsFC = new FormControl(
-    this.merchantBusiness.merchant.agreedToTerms, [
+    this.merchantBusiness.getAgreedToTerms(), [
       Validators.required, Validators.requiredTrue
     ]);
 
@@ -273,24 +260,25 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
     // check if merchant object exists
     if(this.merchantBusiness){
       // check to make sure all fields are not empty
-      if(this.merchantBusiness.businessName &&
-        this.merchantBusiness.businessTax &&
-        this.merchantBusiness.businessType &&
-        this.merchantBusiness.merchantCategory &&
-        this.merchantBusiness.description &&
-        this.merchantBusiness.merchant.user.firstName &&
-        this.merchantBusiness.merchant.user.lastName &&
-        this.merchantBusiness.merchant.user.dateOfBirthM &&
-        this.merchantBusiness.merchant.user.dateOfBirthD &&
-        this.merchantBusiness.merchant.user.dateOfBirthY &&
-        this.merchantBusiness.merchant.user.last4ssn &&
-        this.merchantBusiness.merchant.address.address1 &&
-        this.merchantBusiness.merchant.address2.address2 &&
-        this.merchantBusiness.businessPhone &&
-        this.merchantBusiness.merchant.user.personalPhone &&
-        this.merchantBusiness.businessEmail &&
-        this.merchantBusiness.merchant.user.personalEmail &&
-        this.merchantBusiness.merchant.agreedToTerms){
+      if(this.merchantBusiness.getBusinessName() &&
+        this.merchantBusiness.getBusinessTax() &&
+        this.merchantBusiness.getBusinessType() &&
+        this.merchantBusiness.getMerchantCategory() &&
+        this.merchantBusiness.getBusinessDescription() &&
+        this.merchantBusiness.getFirstName() &&
+        this.merchantBusiness.getLastName() &&
+        this.merchantBusiness.getDOBYear() &&
+        this.merchantBusiness.getDOBMonth() &&
+        this.merchantBusiness.getDOBDay() &&
+        this.merchantBusiness.getLast4SSN() &&
+        this.merchantBusiness.getAddress1() &&
+        this.merchantBusiness.getAddress2() &&
+        this.merchantBusiness.getBusinessPhone() &&
+        this.merchantBusiness.getPersonalPhone() &&
+        this.merchantBusiness.getPersonalEmail() &&
+        this.merchantBusiness.getBusinessEmail()&&
+        this.merchantBusiness.getAgreedToTerms())
+      {
           console.log("Merchant field valid");
           return true;
         }
