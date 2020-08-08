@@ -48,6 +48,56 @@ export class Product {
     return total;
   }
 
+
+  // SETTERS
+  public setName(val: string): void{
+    this.title = val;
+  }
+
+  public setDescription(val: string): void{
+    this.description = val;
+  }
+
+  public setPrice(val: number): void{
+    this.price = val;
+  }
+
+  public setAdditionalTime(val: string): void{
+    this.additional_time = val;
+  }
+
+  public setAvailableStart(val: string): void{
+    this.available_start = val;
+  }
+
+  public setAvailableEnd(val: string): void{
+    this.available_end = val;
+  }
+
+  // GETTERS
+  public getName(): string{
+    return this.title;
+  }
+
+  public getDescription(): string{
+    return this.description;
+  }
+
+  public getPrice(): number{
+    return this.price;
+  }
+
+  public getAdditionalTime(): string{
+    return this.additional_time;
+  }
+
+  public getAvailableStart(): string{
+    return this.available_start;
+  }
+
+  public getAvailableEnd(): string{
+    return this.available_end;
+  }
   /*
   public getId(): number {
     return this.id;

@@ -2,23 +2,66 @@
   <div class="col">
 
     <h1>Add a product</h1>
-    <form [formGroup]="formAddProduct" (ngSubmit)="registerProduct()">
+    <form [formGroup]="form" (ngSubmit)="registerProduct()">
 
+      <!--Product-->
       <div class="form-group row">
-        <label for="product-name" class="col-4 col-form-label">Name</label>
+        <label for="product-name" class="col-4 col-form-label">Product Name</label>
         <div class="col-12">
-          <input id="product-name" name="text" type="text" class="form-control">
+          <input id="product-name" name="text" type="text" class="form-control" [formControl]="productNameFC">
         </div>
       </div>
 
+      <!--Description-->
       <div class="form-group row">
         <label for="product-description" class="col-4 col-form-label">Description</label>
         <div class="col-12">
-          <input id="product-description" name="text" type="text" class="form-control">
+          <input id="product-description" name="text" type="text" class="form-control" [formControl]="productDescriptionFC">
         </div>
       </div>
+
+      <!--Price-->
+      <div class="form-group row">
+        <label for="product-price" class="col-4 col-form-label">Price</label>
+        <div class="col-12">
+          <input id="product-price" name="text" type="text" class="form-control" [formControl]="productPriceFC">
+        </div>
+      </div>
+
+      <!--Additional time-->
+      <div class="form-group row">
+        <label for="product-additional-time" class="col-4 col-form-label">Additional Time</label>
+        <div class="col-12">
+          <input id="product-additional-time" name="text" type="text" class="form-control" [formControl]="productAdditionalTimeFC">
+        </div>
+      </div>
+
+      <!--Available Start -->
+      <div class="form-group row">
+        <label for="product-available-start" class="col-4 col-form-label">Additional Time</label>
+        <div class="col-12">
+          <input id="product-available-start" name="text" type="text" class="form-control" [formControl]="productAvailableStartFC">
+        </div>
+      </div>
+
+      <!--Available End -->
+      <div class="form-group row">
+        <label for="product-available-end" class="col-4 col-form-label">Additional Time</label>
+        <div class="col-12">
+          <input id="product-available-end" name="text" type="text" class="form-control" [formControl]="productAvailableEndFC">
+        </div>
+      </div>
+
+       <!--Submit Button-->
+       <div>
+        <button type="submit" class="btn btn-block btn-primary" [disabled]="!form.valid">Register</button>
+       </div>
+
 
     </form>
 
   </div>
+
 </div>
+
+
