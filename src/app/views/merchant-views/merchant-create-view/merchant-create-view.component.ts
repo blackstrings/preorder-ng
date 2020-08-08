@@ -3,7 +3,7 @@ import { UserService } from './../../../services/user-service/user.service';
 import { MerchantService } from './../../../services/merchant-service/merchant.service';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {take, takeUntil} from "rxjs/operators";
@@ -16,7 +16,7 @@ import {TermsAndCondition} from "./TermsAndCondition";
   templateUrl: './merchant-create-view.component.html',
   styleUrls: ['./merchant-create-view.component.scss']
 })
-export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
+export class MerchantCreateViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showFormIncomplete: boolean = false;
   public showServerError: boolean = false;
@@ -61,6 +61,11 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
 
   }
 
+  ngOnDestroy(): void {
+    // unsubscribe all form fields from listening to value changes when this component dies
+    this._unSub.next();
+  }
+
   ngAfterViewInit(): void {
 
     // wire the form inputs so on every change it will update the values in the model
@@ -101,6 +106,11 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
     });
 
     this.last4ssnFC.valueChanges.pipe(takeUntil(this.unSub)).subscribe((val: number) => {
+      const temp: string = val.toString();
+      if(temp.length > 4) {
+        val = parseInt(temp.slice(0,3));
+        this.last4ssnFC.setValue(val,{onlySelf: true});
+      }
       this.merchantBusiness.setLast4SSN(val);
     });
 
@@ -192,7 +202,7 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
 
   public last4ssnFC = new FormControl(
     this.merchantBusiness.getLast4SSN(), [
-      Validators.required
+      Validators.required, Validators.maxLength(4), Validators.maxLength(4)
     ]);
 
   public address1FC = new FormControl(
@@ -235,7 +245,7 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit {
       Validators.required, Validators.requiredTrue
     ]);
 
-  /** send the form to backend */
+  /** create the merchant account - send the form to backend */
   public registerAccount(): void {
 
     if(this.validateForm()){
