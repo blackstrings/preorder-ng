@@ -1,6 +1,5 @@
 import { MerchantBusiness } from './../../../models/merchantBusiness/merchant-business';
 import { UserService } from './../../../services/user-service/user.service';
-import { MerchantService } from './../../../services/merchant-service/merchant.service';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
 import {Component, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
@@ -10,6 +9,9 @@ import {take, takeUntil} from "rxjs/operators";
 import {ModalConfig} from "../../common-views/modals/modal-config";
 import { OkayModalViewComponent } from '../../common-views/modals/okay-modal-view/okay-modal-view.component';
 import {TermsAndCondition} from "./TermsAndCondition";
+import {RegisterMerchantService} from "../../../services/register-merchant-service/register-merchant.service";
+import {Router} from "@angular/router";
+import {ViewRoutes} from "../../view-routes";
 
 @Component({
   selector: 'app-create-merchant-view',
@@ -34,7 +36,10 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit, OnDes
   private _unSub: Subject<boolean> = new Subject();  // subjects vs replay won't replay when reinitialize
   private unSub: Observable<boolean> = this._unSub.asObservable();
 
-  constructor(private modalService: NgbModal, private merchantService: MerchantService, private userService: UserService) {
+  constructor(private modalService: NgbModal,
+              private merchantService: RegisterMerchantService,
+              private userService: UserService,
+              private router: Router) {
 
   }
 
@@ -249,9 +254,13 @@ export class MerchantCreateViewComponent implements OnInit, AfterViewInit, OnDes
   public registerAccount(): void {
 
     if(this.validateForm()){
-      // do something
-      this.merchantService.createMerchant(this.userService.getAuthToken(), this.merchantBusiness).subscribe((resp) => {
-        console.log(resp);
+      this.merchantService.registerAccount(this.userService.getAuthToken(), this.merchantBusiness).subscribe((resp: boolean) => {
+        if(resp){
+          this.showServerError = false;
+          this.router.navigate([ViewRoutes.MERCHANT_HOW_IT_WORKS]);
+        } else {
+          this.showServerError = true;
+        }
       });
     }
   }

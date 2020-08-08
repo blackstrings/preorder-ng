@@ -83,20 +83,6 @@ export class MerchantService {
     return merchant;
   }
 
-  public createMerchant(token: string, merchantBusiness: MerchantBusiness): Observable<Merchant[] | HttpErrorContainer> {
-    const uri: string = ApiEndPoints.MERCHANT_CREATE;
-    const body = {'name': merchantBusiness.businessName, 'description': merchantBusiness.description};
-    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
-
-    // Swap from Merchant to BusinessMerchant -> Double check!
-    return this.httpWrapper.post(uri, body, options).pipe(
-      map( (resp: Merchant[]) => {
-        //return this.modelToMerchant(resp);
-        return resp;
-      })
-    );
-  }
-
   /**
    * Use this when not available in the cache.
    * http call to get the merchant.
