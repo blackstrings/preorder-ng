@@ -18,6 +18,7 @@ export class ApiEndPoints {
   public static readonly MERCHANT: string = 'merchants';
   public static readonly MERCHANT_CREATE: string = 'merchants';
   public static readonly MERCHANT_LIST: string = 'merchants';
+  public static readonly MERCHANT_LIST_BY_USER: string = 'get_all_merchants_for_user';
 
   // get,
   public static readonly MERCHANT_PRODUCTS: string = 'products';

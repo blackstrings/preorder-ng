@@ -110,6 +110,26 @@ export class MerchantService {
     }
   }
 
+  public getAllMerchantsForUser(token: string): Observable<Merchant[] | HttpErrorContainer> {
+    if(token){
+      const uri: string = ApiEndPoints.MERCHANT_LIST_BY_USER;
+      const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+      return this.httpWrapper.get(uri, options)
+        .pipe(
+          // it's an array to follow the interface but only one should return
+          map( (resp: Merchant[]) => {
+            const mercs: Merchant[] = [];
+            resp.forEach(m => {
+              mercs.push(this.modelToMerchant(m));
+            });
+            return mercs;
+          })
+        );
+    } else {
+      return throwError('<< MerchantService >> getMerchant failed, token null');
+    }
+  }
+
   /** returns selected merchant from cache if set and available */
   public getMerchantSelected(): Merchant {
     if(this.selectedMerchantID) {

@@ -6,6 +6,16 @@ export class ProductTest extends Product {
     return ProductTest.create(1);
   }
 
+  public static createMocks(): ProductTest[] {
+    const data: ProductTest[] = [];
+    for(let i=0; i<7; i++) {
+      const product: ProductTest = ProductTest.create(i, 1, 1, 'mock product', 9.99, 'test description');
+      data.push(product);
+    }
+    return data;
+  }
+
+
   public static create(
     id: number,
     orderQTY: number = 1,

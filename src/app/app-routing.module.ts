@@ -28,6 +28,7 @@ const routes: Routes = [
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE_PRODUCT, component: MerchantAddProductViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.MERCHANT_STORE_EDITOR + '/:id', component: MerchantAddProductViewComponent, canActivate: [BasicViewGuard]},
   {path: '**', component: UserLoginViewComponent },  // Wildcard route for a 404 page
   //{path: '', redirectTo: ViewRoutes.LOGIN, pathMatch: 'full'},
 ];
