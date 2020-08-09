@@ -38,6 +38,7 @@ import { TermsAndConditionViewComponent } from './views/common-views/forms/terms
 import { MerchantHowItWorksViewComponent } from './views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component';
 import { MerchantAddProductViewComponent } from './views/merchant-views/merchant-add-product-view/merchant-add-product-view.component';
 import { UserOrderCheckoutViewComponent } from './views/user-views/user-order-checkout-view/user-order-checkout-view.component';
+import { MerchantHomeViewComponent } from './views/merchant-views/merchant-home-view/merchant-home-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -67,7 +68,8 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     TermsAndConditionViewComponent,
     MerchantHowItWorksViewComponent,
     MerchantAddProductViewComponent,
-    UserOrderCheckoutViewComponent
+    UserOrderCheckoutViewComponent,
+    MerchantHomeViewComponent
   ],
   imports: [
     BrowserModule,

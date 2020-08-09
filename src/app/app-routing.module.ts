@@ -12,6 +12,7 @@ import {UserReviewOrderViewComponent} from "./views/user-views/user-review-order
 import {MerchantHowItWorksViewComponent} from "./views/merchant-views/merchant-how-it-works-view/merchant-how-it-works-view.component";
 import {MerchantAddProductViewComponent} from "./views/merchant-views/merchant-add-product-view/merchant-add-product-view.component";
 import {UserOrderCheckoutViewComponent} from "./views/user-views/user-order-checkout-view/user-order-checkout-view.component";
+import {MerchantHomeViewComponent} from "./views/merchant-views/merchant-home-view/merchant-home-view.component";
 
 // configure your SPA routing for AppComponent routing here
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
   {path: ViewRoutes.USER_CREATE_ORDER + '/:id', component: UserCreateOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_ORDER_REVIEW, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_ORDER_CHECKOUT, component: UserOrderCheckoutViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.MERCHANT_HOME, component: MerchantHomeViewComponent},
   {path: ViewRoutes.MERCHANT_HOW_IT_WORKS, component: MerchantHowItWorksViewComponent},
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},

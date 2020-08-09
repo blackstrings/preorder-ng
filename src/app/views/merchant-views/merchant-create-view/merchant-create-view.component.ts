@@ -13,6 +13,9 @@ import {RegisterMerchantService} from "../../../services/register-merchant-servi
 import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 
+/**
+ * A form page for merchant to register their store
+ */
 @Component({
   selector: 'app-create-merchant-view',
   templateUrl: './merchant-create-view.component.html',

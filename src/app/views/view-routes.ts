@@ -13,6 +13,7 @@ export class ViewRoutes {
   public static readonly MERCHANT_CREATE = 'merchant-create-account';
   public static readonly MERCHANT_CREATE_PRODUCT = 'merchant-create-product';
   public static readonly MERCHANT_HOW_IT_WORKS = 'merchant-how-it-works';
+  public static readonly MERCHANT_HOME = 'merchant-home';
 
   // sub views
 

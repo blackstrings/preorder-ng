@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col">
+
+    <h1>My Store Manager</h1>
+
+
+    <div class="card">
+      <div class="card-header">
+        My Stores
+      </div>
+
+      <div class="list-group list-group-flush">
+          <div *ngFor="let m of testMerchants" class="list-group-item">
+            <div class="d-flex">
+              <div class="mr-auto">{{m.name}}</div>
+              <div>
+                <button class="btn btn-secondary">Manage</button>
+              </div>
+            </div>
+          </div>
+      </div>
+
+    </div>
+
+    <button class="btn btn-primary btn-block mt-3" (click)="goToRegisterStore()">Add a new store</button>
+
+  </div>
+</div>
