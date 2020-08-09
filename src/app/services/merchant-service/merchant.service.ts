@@ -8,6 +8,7 @@ import {HttpOptions} from "../../apis/http-wrapper/http-options";
 import {HttpBuilders} from "../../apis/http-builders/http-builders";
 import {HttpErrorContainer} from "../../apis/http-wrapper/http-error-container";
 import {map} from 'rxjs/operators';
+import { User } from '../../models/user/user';
 /**
  * Handles querying merchants and caching.
  */
@@ -127,6 +128,23 @@ export class MerchantService {
         );
     } else {
       return throwError('<< MerchantService >> getMerchant failed, token null');
+    }
+  }
+
+  public getMerchantForUser(userToken: string): Observable<Merchant[] | HttpErrorContainer> {
+    if(userToken){
+
+        const uri: string = ApiEndPoints.MERCHANT_GET_ID;
+        const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(userToken);
+        this.httpWrapper.get(uri, options)
+          .pipe(
+            // it's an array to follow the interface but only one should return
+            map( (resp: Merchant[]) => {
+              return this.modelToMerchant(resp);
+            })
+          )
+    } else {
+      return throwError('<< MerchantService >> getMerchant failed, id null');
     }
   }
 

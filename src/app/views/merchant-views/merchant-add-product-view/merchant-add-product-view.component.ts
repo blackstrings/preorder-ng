@@ -1,8 +1,10 @@
+import { Merchant } from './../../../models/merchant/merchant';
+import { RegisterMerchantService } from './../../../services/register-merchant-service/register-merchant.service';
 import { MerchantService } from './../../../services/merchant-service/merchant.service';
 import { UserService } from './../../../services/user-service/user.service';
 import { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {FormGroup, FormControl, Validators} from "@angular/forms";
 import { Product } from '../../../models/product/product';
@@ -16,8 +18,10 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
 
   public form: FormGroup;
   public product: Product = new Product();
+  public merchant: Merchant;
 
-  constructor(private userService: UserService, private merchantService: MerchantService) { }
+  constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService,
+    private merchantService: MerchantService) { }
 
   public productNameFC: FormControl = new FormControl(
     this.product.getName(), [
@@ -59,6 +63,16 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public unsub: Observable<boolean> = this._unsub.asObservable();
 
   ngOnInit(): void {
+    this.merchantService.getMerchantForUser(this.userService.getAuthToken())
+    .pipe(take(1))
+    .subscribe((val) => {
+      if(val && val[0]){
+        this.merchant = val[0];
+      }else{
+        console.error("<< MerchantAddProduct >> No merchant or merchant id")
+      }
+    });
+
     this.form = new FormGroup({
       productName: this.productNameFC,
       productDescription: this.productDescriptionFC,
@@ -95,11 +109,9 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
 
   public registerProduct(): void {
     if(this.validateForm()){
-      /*
-      this.merchantService.createMerchant(this.userService.getAuthToken(), this.merchantBusiness).subscribe((resp) => {
+      /*this.registerMerchantService.registerProduct(this.userService.getAuthToken(), this.product, this.merchantService.getMerchant()).subscribe((resp) => {
         console.log(resp);
-      });
-      */
+      });*/
     }
   }
 

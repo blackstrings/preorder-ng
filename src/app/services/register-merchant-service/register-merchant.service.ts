@@ -1,3 +1,5 @@
+import { Merchant } from './../../models/merchant/merchant';
+import { Product } from './../../models/product/product';
 import { Injectable } from '@angular/core';
 import {HttpWrapperService} from "../../apis/http-wrapper/http-wrapper.service";
 import {MerchantBusiness} from "../../models/merchantBusiness/merchant-business";
@@ -23,6 +25,19 @@ export class RegisterMerchantService {
   public registerAccount(token: string, merchantBusiness: MerchantBusiness): Observable<boolean | HttpErrorContainer> {
     const uri: string = ApiEndPoints.MERCHANT_CREATE;
     const body = {'name': merchantBusiness.businessName, 'description': merchantBusiness.description};
+    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+
+    // Swap from Merchant to BusinessMerchant -> Double check!
+    return this.httpWrapper.post(uri, body, options).pipe(
+      map((resp: boolean) => {
+        return resp;
+      })
+    );
+  }
+
+  public registerProduct(token: string, product: Product, merchant: Merchant): Observable<boolean | HttpErrorContainer> {
+    const uri: string = ApiEndPoints.MERCHANT + "/" + merchant.id + "/" + ApiEndPoints.MERCHANT_ADD_PRODUCT;
+    const body = product;
     const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
 
     // Swap from Merchant to BusinessMerchant -> Double check!
