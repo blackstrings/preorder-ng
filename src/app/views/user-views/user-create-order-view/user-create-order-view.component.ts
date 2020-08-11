@@ -45,7 +45,7 @@ export class UserCreateOrderViewComponent implements OnInit {
 
   /** on init it will fetch all products for the user to choose from */
   ngOnInit(): void {
-    this.fetchMerchantProducts()
+    this.fetchMerchantProducts();
   }
 
   /**

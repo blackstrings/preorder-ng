@@ -2,12 +2,75 @@
 <div class="row">
   <div class="col">
 
-    <div class="card">
-      <div class="card-header">Products</div>
+    <div *ngIf="invalidMerchantID" class="card">
+      <div class="card-header bg-dark text-warning">
+        Error
+      </div>
+      <div class="card-body">
+        <p>There was an error loading the merchant</p>
+      </div>
+    </div>
+
+    <!-- store status -->
+    <div *ngIf="!invalidMerchantID" class="card mb-4">
+      <div class="card-header bg-dark text-white">{{merchantName}}</div>
+
+      <div class="list-group-flush">
+
+        <div class="list-group-item d-flex">
+          <h5 class="mr-auto">Enrollment Status</h5>
+          <span class="btn btn-success disabled">Complete</span>
+        </div>
+
+        <div class="list-group-item d-flex">
+          <h5 class="mr-auto">Online Status</h5>
+          <span class="btn btn-success disabled">Active</span>
+        </div>
+
+        <div class="list-group-item">
+          <h5>Open Hours</h5>
+          <div>
+            7:00AM-9:30AM
+          </div>
+        </div>
+
+        <div class="list-group-item">
+          <h5>Address</h5>
+          <div>
+            3432 South St<br>
+            Eau Claire, WI 54703
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <!-- store products -->
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-primary">Add New Product</button>
+    </div>
+
+    <div *ngIf="!invalidMerchantID" class="card">
+      <div class="card-header bg-dark text-white">Products</div>
+
+      <div class="btn-group mb-2">
+        <button class="btn btn-secondary active" (click)="sortProductsAZ()">Sort {{isSortOrderAZ ? 'A-z' : 'z-A'}}</button>
+      </div>
 
       <div class="list-group-flush">
         <div *ngFor="let p of allProductsInStore" class="list-group-item">
-          {{p.title}}
+          <div class="d-flex">
+            <div class="mr-auto">
+              {{ (p.title.length>AppDefaults.MAX_CHARACTER_LIMIT_MED)? (p.title | slice:0:AppDefaults.MAX_CHARACTER_LIMIT_MED)+'...':(p.title) }}
+            </div>
+            <div class="mr-3">{{p.price | currency}}</div>
+            <div class="btn-group">
+              <div class="btn btn-success disabled">Active</div>
+              <button class="btn btn-primary">Edit</button>
+            </div>
+          </div>
         </div>
       </div>
 

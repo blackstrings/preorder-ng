@@ -13,6 +13,7 @@ import {MerchantHowItWorksViewComponent} from "./views/merchant-views/merchant-h
 import {MerchantAddProductViewComponent} from "./views/merchant-views/merchant-add-product-view/merchant-add-product-view.component";
 import {UserOrderCheckoutViewComponent} from "./views/user-views/user-order-checkout-view/user-order-checkout-view.component";
 import {MerchantHomeViewComponent} from "./views/merchant-views/merchant-home-view/merchant-home-view.component";
+import {MerchantStoreEditorComponent} from "./views/merchant-views/merchant-store-editor/merchant-store-editor.component";
 
 // configure your SPA routing for AppComponent routing here
 const routes: Routes = [
@@ -28,7 +29,7 @@ const routes: Routes = [
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE, component: MerchantCreateViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_CREATE_PRODUCT, component: MerchantAddProductViewComponent, canActivate: [BasicViewGuard]},
-  {path: ViewRoutes.MERCHANT_STORE_EDITOR + '/:id', component: MerchantAddProductViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.MERCHANT_STORE_EDITOR + '/:id', component: MerchantStoreEditorComponent, canActivate: [BasicViewGuard]},
   {path: '**', component: UserLoginViewComponent },  // Wildcard route for a 404 page
   //{path: '', redirectTo: ViewRoutes.LOGIN, pathMatch: 'full'},
 ];

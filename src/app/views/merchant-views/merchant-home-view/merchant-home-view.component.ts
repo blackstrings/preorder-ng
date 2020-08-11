@@ -3,7 +3,6 @@ import {Router} from "@angular/router";
 import {ViewRoutes} from "../../view-routes";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
 import {UserService} from "../../../services/user-service/user.service";
-import {take} from "rxjs/operators";
 import {Merchant} from "../../../models/merchant/merchant";
 
 @Component({
@@ -13,8 +12,11 @@ import {Merchant} from "../../../models/merchant/merchant";
 })
 export class MerchantHomeViewComponent implements OnInit {
 
+  /** the merchants registered to the user */
   public userMerchants: Merchant[] = [];
-  constructor(private router: Router, private merchantService: MerchantService, private userService: UserService) { }
+  constructor(private router: Router, private merchantService: MerchantService, private userService: UserService) {
+    console.log('<< MerchantHomeView >> init');
+  }
 
   ngOnInit(): void {
     this.getAllMerchantsForUser();
