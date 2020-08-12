@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Merchant } from './../../../models/merchant/merchant';
 import { RegisterMerchantService } from './../../../services/register-merchant-service/register-merchant.service';
 import { MerchantService } from './../../../services/merchant-service/merchant.service';
@@ -19,9 +20,16 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public form: FormGroup;
   public product: Product = new Product();
   public merchant: Merchant;
+  public merchantID: number;
 
-  constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService,
-    private merchantService: MerchantService) { }
+  constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.paramMap.subscribe( (params) => {
+      const id = params.get('id');
+      if(id){
+        this.merchantID = parseInt(id);
+      }
+    });
+  }
 
   public productNameFC: FormControl = new FormControl(
     this.product.getName(), [
@@ -63,15 +71,8 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public unsub: Observable<boolean> = this._unsub.asObservable();
 
   ngOnInit(): void {
-    this.merchantService.getMerchantForUser(this.userService.getAuthToken())
-    .pipe(take(1))
-    .subscribe((val) => {
-      if(val && val[0]){
-        this.merchant = val[0];
-      }else{
-        console.error("<< MerchantAddProduct >> No merchant or merchant id")
-      }
-    });
+
+
 
     this.form = new FormGroup({
       productName: this.productNameFC,
@@ -109,9 +110,9 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
 
   public registerProduct(): void {
     if(this.validateForm()){
-      /*this.registerMerchantService.registerProduct(this.userService.getAuthToken(), this.product, this.merchantService.getMerchant()).subscribe((resp) => {
+      this.registerMerchantService.registerProduct(this.userService.getAuthToken(), this.product, this.merchantID).subscribe((resp) => {
         console.log(resp);
-      });*/
+      });
     }
   }
 

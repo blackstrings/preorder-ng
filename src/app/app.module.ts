@@ -70,8 +70,7 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     MerchantHowItWorksViewComponent,
     MerchantAddProductViewComponent,
     UserOrderCheckoutViewComponent,
-    MerchantHomeViewComponent,
-    MerchantStoreEditorComponent
+    MerchantHomeViewComponent
   ],
   imports: [
     BrowserModule,

@@ -35,8 +35,8 @@ export class RegisterMerchantService {
     );
   }
 
-  public registerProduct(token: string, product: Product, merchant: Merchant): Observable<boolean | HttpErrorContainer> {
-    const uri: string = ApiEndPoints.MERCHANT + "/" + merchant.id + "/" + ApiEndPoints.MERCHANT_ADD_PRODUCT;
+  public registerProduct(token: string, product: Product, merchantID: number): Observable<boolean | HttpErrorContainer> {
+    const uri: string = ApiEndPoints.MERCHANT + "/" + merchantID + "/" + ApiEndPoints.MERCHANT_ADD_PRODUCT;
     const body = product;
     const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
 
