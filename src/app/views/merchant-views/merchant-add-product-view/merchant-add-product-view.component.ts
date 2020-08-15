@@ -22,11 +22,22 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public merchant: Merchant;
   public merchantID: number;
 
+  public initSuccess: boolean = false;
+
   constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService, private activatedRoute: ActivatedRoute) {
     this.activatedRoute.paramMap.subscribe( (params) => {
       const id = params.get('id');
       if(id){
-        this.merchantID = parseInt(id);
+
+        try{
+          this.merchantID = parseInt(id);
+          this.initSuccess = true;
+        } catch(e) {
+          console.error('<< MerchantAddProductView >> merchant id parse error');
+        }
+
+      } else {
+        console.error('<< MerchantAddProductView >> merchant id null or invalid');
       }
     });
   }
@@ -71,8 +82,6 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public unsub: Observable<boolean> = this._unsub.asObservable();
 
   ngOnInit(): void {
-
-
 
     this.form = new FormGroup({
       productName: this.productNameFC,
