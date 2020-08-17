@@ -1,3 +1,4 @@
+import { ViewRoutes } from './../../view-routes';
 import {Component, OnInit} from '@angular/core';
 import { Product } from 'src/app/models/product/product';
 import {ActivatedRoute, Router} from "@angular/router";
@@ -27,6 +28,7 @@ export class MerchantStoreEditorComponent implements OnInit {
 
   // so we don't get invalid merchant.name at init
   public merchantName: string = '';
+  public merchantID: number;
 
   constructor(private router: Router, private userService: UserService,
               private merchantService: MerchantService,
@@ -95,7 +97,7 @@ export class MerchantStoreEditorComponent implements OnInit {
   }
 
   /** load the target merchant to edit then loads the products for the merchant */
-  public loadMerchant(merhcantID: number): void {
+  public loadMerchant(merchantID: number): void {
     const token: string = this.userService.getAuthToken();
     if(token) {
       this.merchantService.getAllMerchantsForUser(token)
@@ -103,11 +105,12 @@ export class MerchantStoreEditorComponent implements OnInit {
             if(response && response.length) {
               // response will return all merchants for the user
               // but we filter for the correct merchant being selected
-              const merchant: Merchant = response.filter( m => m.id === merhcantID)[0];
+              const merchant: Merchant = response.filter( m => m.id === merchantID)[0];
               if(merchant) {
                 this.merchant = merchant;
                 this.merchantName = this.merchant.name;
-                this.loadProducts(merhcantID);
+                this.merchantID = merchantID;
+                this.loadProducts(merchantID);
               } else {
                 console.error('<< MerchantStoreEditor >> loadMerchant failed, merchant null');
               }
@@ -127,6 +130,10 @@ export class MerchantStoreEditorComponent implements OnInit {
 
   private alertInvalidMerchantID(): void {
     this.invalidMerchantID = true;
+  }
+
+  public goToAddProduct(): void{
+    this.router.navigate([ViewRoutes.MERCHANT_CREATE_PRODUCT, this.merchantID]);
   }
 
 
