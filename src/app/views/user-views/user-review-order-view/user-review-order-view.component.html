@@ -51,7 +51,10 @@
       <hr>
       <div class="row">
         <div class="col-sm text-align-right">
-      <button class="btn-dark btn" (click)="checkout()">Go to checkout</button>
+          <div class="alert alert-danger" *ngIf="checkoutError">
+            Sorry, an internal error occurred, try again later.
+          </div>
+          <button class="btn-dark btn" (click)="checkout()">Go to checkout</button>
         </div>
       </div>
 

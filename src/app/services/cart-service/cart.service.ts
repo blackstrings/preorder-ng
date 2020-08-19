@@ -23,7 +23,11 @@ export class CartService {
 
 	// the only order that can exist at any given time in the service
 	// multi orders not supported unless business decides to need it
-	private order: Order = new Order();
+  // this is the order that has not been checked out yet
+	private pendingOrder: Order = new Order();
+
+	// when the order is checked out, the order id should be saved in case of a quick recall
+	private submittedOrderID: string;
 
 	/**
 	 * Handles send order
@@ -34,43 +38,63 @@ export class CartService {
 	  sub.onAddToOrder = this._onAddToOrder.asObservable();
 
 	  // make this first order by default pickup
-	  if(this.order){
-	    this.order.deliveryType = DeliveryType.PICKUP;
+	  if(this.pendingOrder){
+	    this.pendingOrder.deliveryType = DeliveryType.PICKUP;
     }
 	}
 
+	public getSubmittedOrderID(): string {
+	  return this.submittedOrderID;
+  }
+
   /**
-   * When all orders and payments are validated then we send it to the backend to get process.
-   * todo incomplete
+   * Checks out the order and prepares it for the payment page.
+   * This will creat an order record in the backend.
+   * On return if successful it will store the order id for later retrieving the order for payment processing.
    */
-  public placeOrder(token): Observable<Order | HttpErrorContainer> {
-    if(token && this.order) {
-      if(OrderValidator.validate(this.order)) {
+  public checkout(token): Observable<Order | HttpErrorContainer> {
+    if(token && this.pendingOrder) {
+      if(OrderValidator.validate(this.pendingOrder)) {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
         // const uri: string = 'merchants/' + this.order.merchant.id + '/products/';
 
-        const products: Product[] = this.order.getProducts();
+        // construct the products into a model that will fit the backend
+        const products: Product[] = this.pendingOrder.getProducts();
         let orderItemsArray: any = products.map(p => {
           return {product_id: p.id, quantity_id: p.orderQTY}
         });
 
-        // for encapsulating the array into another order_items object if needed
+        // construct the body structure for the backend
         const body =
           {
             order: {
               items: orderItemsArray,
-              merchant_id: this.order.merchant.id
+              merchant_id: this.pendingOrder.merchant.id
             }
           };
 
+        // create the header
         const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+
+        // treat all currently as guest, store order id in cookies
         return this.httpWrapper.post(uri, body, options)
           .pipe(
             map( (resp: any) => {
-              console.warn('<< CarServices >> finalizeOrder response not yet implemented, returning resp as any');
-              // deserialize into order object
-              // const order: Order = new Order();
-              // Object.assign(order, resp); // copy the properties
+
+              // success is expected
+              if(resp.success) {
+                console.log('<< CarServices >> checkout success');
+                // deserialize into order object
+                const order: Order = new Order();
+                // Object.assign(order, resp); // copy all the properties into the order object
+                order.orderID = resp.orderID;
+                this.submittedOrderID = order.orderID;
+                resp = order;
+              } else {
+                console.error('<< CarServices >> checkout failed, back end error, returning null');
+                resp = null;
+              }
+
               return resp;
             })
           );
@@ -116,8 +140,8 @@ export class CartService {
 		let result: boolean = false;
 		if(container && container.product) {
 			// check product can be added to current order base on having same merchant id
-			if(this.order && this.order.merchant) {
-				return this.order.getMerchantId() === container.product.merchant_id;
+			if(this.pendingOrder && this.pendingOrder.merchant) {
+				return this.pendingOrder.getMerchantId() === container.product.merchant_id;
 			} else {
 				console.error('<< CartService >> doesProductMatchCurrentOderMerchant failed, order or merchant null');
 			}
@@ -134,11 +158,11 @@ export class CartService {
     if(!container) { result = false; }
 
     // order is not null and the product being add matches the current order's merchant
-    if(this.order) {
+    if(this.pendingOrder) {
       // if first time running app, there is no merchant set in the order,
       // so we handle setting the initial merchant into order here.
-      if(!this.order.merchant) {
-        this.order.setMerchant(container.merchant);
+      if(!this.pendingOrder.merchant) {
+        this.pendingOrder.setMerchant(container.merchant);
       }
       if(!this.doesProductMatchCurrentOrderMerchant(container)) {
         result = false;
@@ -166,10 +190,10 @@ export class CartService {
 		if(container) {
 			if(container.getValidationStatus()) {
 
-					this.order.addProduct(container.product);
-					this._onAddToOrder.next(this.order);
+					this.pendingOrder.addProduct(container.product);
+					this._onAddToOrder.next(this.pendingOrder);
 					console.debug('<< CartService >> product added');
-					console.dir(this.order);
+					console.dir(this.pendingOrder);
 					return true;
 
 			} else {
@@ -187,18 +211,38 @@ export class CartService {
    */
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {
-			this.order = new Order();
-      this.order.deliveryType = DeliveryType.PICKUP;
-			this.order.setMerchant(container.merchant);
+			this.pendingOrder = new Order();
+      this.pendingOrder.deliveryType = DeliveryType.PICKUP;
+			this.pendingOrder.setMerchant(container.merchant);
 		} else {
 			throw new Error('<< CartServices >> startNewOrder failed, container null');
 		}
 	}
 
-	/** returns direct reference of the current order */
-	public getCurrentOrder(): Order {
-		return this.order;
+	/** returns direct reference of the current pending order */
+	public getPendingOrder(): Order {
+		return this.pendingOrder;
 	}
+
+	/**
+   * returns the order the user checked out on.
+   * Used for during navigating the user to the payment processing view to display the order.
+   */
+	public getCheckedOutOrder(orderID: string, token: string): Observable<Order | HttpErrorContainer> {
+	  const uri: string = ApiEndPoints.USER_ORDER + '/' + orderID + '/edit';
+	  const opts: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+	  // we only map, don't subscribe, the caller to this method is the one subscribing
+	  return this.httpWrapper.get(uri, opts).pipe(
+	    map( (resp: any) => {
+	      // handling deserialization
+	      if(resp) {
+	        const order: Order = new Order();
+	        Object.assign(order, resp);
+        }
+	      return resp;
+      })
+    );
+  }
 
 
 }

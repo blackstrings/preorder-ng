@@ -23,7 +23,7 @@ const routes: Routes = [
   {path: ViewRoutes.USER_PROFILE, component: UserProfileViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_CREATE_ORDER + '/:id', component: UserCreateOrderViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.USER_ORDER_REVIEW, component: UserReviewOrderViewComponent, canActivate: [BasicViewGuard]},
-  {path: ViewRoutes.USER_ORDER_CHECKOUT, component: UserOrderCheckoutViewComponent, canActivate: [BasicViewGuard]},
+  {path: ViewRoutes.USER_ORDER_CHECKOUT + '/:orderId', component: UserOrderCheckoutViewComponent, canActivate: [BasicViewGuard]},
   {path: ViewRoutes.MERCHANT_HOME, component: MerchantHomeViewComponent},
   {path: ViewRoutes.MERCHANT_HOW_IT_WORKS, component: MerchantHowItWorksViewComponent},
   {path: ViewRoutes.MERCHANT_LIST, component: UserMerchantListViewComponent, canActivate: [BasicViewGuard]},

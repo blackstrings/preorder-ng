@@ -1,5 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from "@angular/router";
+import {CartService} from "../../../services/cart-service/cart.service";
+import {Order} from "../../../models/order/order";
+import {UserService} from "../../../services/user-service/user.service";
 
+/**
+ * Mainly this page handles payment for the order or items in the order/cart.
+ * User cannot edit the order anymore and must start a new order or start over if they wish to edit the order.
+ */
 @Component({
   selector: 'app-user-order-checkout-view',
   templateUrl: './user-order-checkout-view.component.html',
@@ -7,7 +15,59 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserOrderCheckoutViewComponent implements OnInit {
 
-  constructor() { }
+  // the customer's order id to be displayed on the page
+  public order: Order = new Order;
+
+  // during init should the order not be able to load
+  public loadOrderError: boolean;
+
+  constructor(private activatedRoute: ActivatedRoute,
+              private cartService: CartService,
+              private userService: UserService) {
+    this.setupView();
+  }
+
+  /** pulls the orderID from the url if available */
+  private setupView(): void {
+    this.activatedRoute.paramMap.subscribe(params => {
+      let orderId: string = params.get('orderId');
+      if(!orderId) {
+        // should the user not come directly from the review orders page
+        // verify if the orderID can be retrieved from the cartService
+        orderId = this.cartService.getSubmittedOrderID();
+      }
+
+      // after getting the order id, load the order from the backend
+      this.loadOrder(orderId);
+    });
+  }
+
+  /** load and display the order based by order id */
+  private loadOrder(orderID: string): void {
+    if(orderID) {
+      const token: string = this.userService.getAuthToken();
+      if(token) {
+
+        this.cartService.getCheckedOutOrder(orderID, token)
+          .subscribe( (resp: Order) => {
+              if(resp instanceof Order) {
+                this.order = resp;
+              } else {
+                console.error('<< UserOrderCheckoutView >> loadOrder failed, response not instanceof Order');
+              }
+            },
+            (e) => {
+              console.error(e)
+            });
+
+      } else {
+        console.error('<< UserOrderCheckoutView >> loadOrder failed, token null');
+      }
+
+    } else {
+      console.error('<< UserOrderCheckoutView >> loadOrder failed, orderID null');
+    }
+  }
 
   ngOnInit(): void {
   }

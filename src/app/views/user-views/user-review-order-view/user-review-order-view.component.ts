@@ -8,6 +8,7 @@ import {OrderValidator} from "../../../validators/order-validator/order-validato
 import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 
+/** this view allows user to review their orders or items before going to checkout */
 @Component({
   selector: 'app-user-review-order-view',
   templateUrl: './user-review-order-view.component.html',
@@ -27,6 +28,7 @@ export class UserReviewOrderViewComponent implements OnInit {
   public orderTotal: number;
 
   public productNameMaxCharacter: number = 30;
+  public checkoutError: boolean = false;
 
   constructor(private cartService: CartService, private userService: UserService, private router: Router) { }
 
@@ -34,13 +36,18 @@ export class UserReviewOrderViewComponent implements OnInit {
     this.setupViewData();
   }
 
+  /** creates the order into the record for the current user */
   public checkout(): void {
     if(this.validatePlacingOrder()){
-      this.cartService.placeOrder(this.userService.getAuthToken())
-        .subscribe( (resp: any) => {
-            console.debug('<< UserReviewOrderView >> response returned');
-            console.debug(resp);
-            this.router.navigate([ViewRoutes.USER_ORDER_CHECKOUT]);
+      this.cartService.checkout(this.userService.getAuthToken())
+        .subscribe( (order: Order) => {
+            if(order) {
+              // need to send the order ID from the returned order post in order to go to checkout
+              // for now just store the order id in cookie session
+              this.router.navigate([ViewRoutes.USER_ORDER_CHECKOUT, order.orderID]);
+            } else {
+              this.checkoutError = true;
+            }
           },
           e => {
             console.error(e);
@@ -76,7 +83,7 @@ export class UserReviewOrderViewComponent implements OnInit {
 
   /** required data that should be available on page init */
   private setupViewData(): void {
-    this.order = this.order = this.cartService.getCurrentOrder();
+    this.order = this.order = this.cartService.getPendingOrder();
     if(this.order && this.order.products) {
       this.merchant = this.order.merchant;
       this.merchantName = this.merchant && this.merchant.name ? this.merchant.name : '';

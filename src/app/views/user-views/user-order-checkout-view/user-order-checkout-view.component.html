@@ -2,32 +2,43 @@
   <div class="col">
     <h1>Checkout</h1>
 
-    <div class="card">
-      <div class="card-body">
-        You are ordering from ...
-      </div>
-    </div>
+    <ng-container *ngIf="!loadOrderError; else errorDisplay">
 
-    <!-- Payment info -->
-    <hr>
-    <div>
-      <h3>Payment</h3>
-      <div class="btn-group btn-group-*">
-        <button class="btn btn-primary">Change Card</button>
-        <button class="btn btn-primary">Add New Card</button>
-        <button class="btn btn-primary">PAYPAL</button>
+      <div class="card">
+        <div class="list-group-item d-flex">
+          <h5 class="mr-auto">Order ID:</h5>
+          <span>{{orderID}}</span>
+        </div>
       </div>
-      <div>CardType: Mastercard</div>
-      <div>Ending in: ...7272</div>
-    </div>
 
-    <!-- submit -->
-    <hr>
-    <div class="row">
-      <div class="col-sm text-align-right">
-        <button class="btn-dark btn" (click)="placeOrder()">Place Order</button>
+      <!-- Payment info -->
+      <hr>
+      <div>
+        <h3>Payment</h3>
+        <div class="btn-group btn-group-*">
+          <button class="btn btn-primary">Change Card</button>
+          <button class="btn btn-primary">Add New Card</button>
+          <button class="btn btn-primary">PAYPAL</button>
+        </div>
+        <div>CardType: Mastercard</div>
+        <div>Ending in: ...7272</div>
       </div>
-    </div>
+
+      <!-- submit -->
+      <hr>
+      <div class="row">
+        <div class="col-sm text-align-right">
+          <button class="btn-dark btn" (click)="placeOrder()">Place Order</button>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <ng-template #errorDisplay>
+      <div class="alert alert-danger">
+        Order loading error.
+      </div>
+    </ng-template>
 
   </div>
 </div>
