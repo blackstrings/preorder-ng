@@ -1,3 +1,4 @@
+import { ProductService } from './../../../services/product-service/product.service';
 import { ActivatedRoute } from '@angular/router';
 import { Merchant } from './../../../models/merchant/merchant';
 import { RegisterMerchantService } from './../../../services/register-merchant-service/register-merchant.service';
@@ -23,10 +24,21 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   public merchantID: number;
 
   public initSuccess: boolean = false;
+  public pageViewType: string = "view";
 
-  constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService, private activatedRoute: ActivatedRoute) {
+  public productID: number;
+
+  constructor(private userService: UserService, private registerMerchantService: RegisterMerchantService, private activatedRoute: ActivatedRoute, private productService: ProductService) {
     this.activatedRoute.paramMap.subscribe( (params) => {
       const id = params.get('id');
+      this.productID = parseInt(params.get('productID'));
+
+      this.pageViewType = params.get('action');
+      if(this.pageViewType === 'edit'){
+
+        this.product = this.productService.getCurrentProducts().filter(product => product.id === this.productID)[0];
+      }
+
       if(id){
 
         try{
@@ -40,6 +52,7 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
         console.error('<< MerchantAddProductView >> merchant id null or invalid');
       }
     });
+
   }
 
   public productNameFC: FormControl = new FormControl(
@@ -115,14 +128,48 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
     this.productAvailableEndFC.valueChanges.pipe(takeUntil(this.unsub)).subscribe((val) => {
       this.product.setAvailableEnd(val);
     });
+
+    // if the form is on the update form, then fill in all the product fields of that product
+    if(this.pageViewType === 'edit'){
+      this.loadProductDetails();
+    }
+
+    //console.log(this.productService.getCurrentProducts().filter(product => product.id === this.productID)[0].getName());
   }
 
+  // when the user click the submit button
   public registerProduct(): void {
+
+    if(this.pageViewType === 'edit'){
+      this.updateProduct();
+    }else{
+      this.addProduct();
+    }
+  }
+
+  public updateProduct(): void {
+
+  }
+
+  public addProduct(): void{
     if(this.validateForm()){
       this.registerMerchantService.registerProduct(this.userService.getAuthToken(), this.product, this.merchantID).subscribe((resp) => {
         console.log(resp);
       });
     }
+  }
+
+  public loadProductDetails(): void{
+    this.productNameFC.setValue(this.product.getName());
+    this.productDescriptionFC.setValue(this.product.getDescription());
+    this.productPriceFC.setValue(this.product.getPrice());
+
+    // these values will be undefined until the backends sets them onto the product
+    this.productAdditionalTimeFC.setValue(this.product.getAdditionalTime());
+    this.productAvailableStartFC.setValue(this.product.getAvailableStart());
+    this.productAvailableEndFC.setValue(this.product.getAvailableEnd());
+
+    console.log(this.productAvailableStartFC.setValue(this.product.getAvailableStart()));
   }
 
   public ngOnDestroy(): void{
@@ -147,6 +194,11 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
 
     console.log("Product field not valid");
     return false;
+  }
+
+  public isViewType(val: string): boolean{
+
+    return this.pageViewType === val;
   }
 
 }

@@ -122,7 +122,7 @@ export class MerchantStoreEditorComponent implements OnInit {
             console.error('<< MerchantHomeView >> getAllMerchantForUser failed');
             console.error(e);
           }
-        )
+        );
     } else {
       console.error('<< MerchantHomeView >> getAllMerchantsForUser failed, token null');
     }
@@ -133,7 +133,11 @@ export class MerchantStoreEditorComponent implements OnInit {
   }
 
   public goToAddProduct(): void{
-    this.router.navigate([ViewRoutes.MERCHANT_CREATE_PRODUCT, this.merchantID]);
+    this.router.navigate([ViewRoutes.MERCHANT_CREATE_PRODUCT, this.merchantID, "add", 0]);
+  }
+
+  public goToEditProduct(productID: number): void{
+    this.router.navigate([ViewRoutes.MERCHANT_CREATE_PRODUCT, this.merchantID, "edit", productID]);
   }
 
 
