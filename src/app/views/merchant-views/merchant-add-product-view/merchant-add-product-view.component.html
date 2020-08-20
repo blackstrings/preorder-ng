@@ -4,7 +4,13 @@
   <div class="row">
     <div class="col">
 
-      <h1>Add a product</h1>
+      <div *ngIf="this.isViewType('add')">
+        <h1>Add A Product</h1>
+      </div>
+
+      <div *ngIf="this.isViewType('edit')">
+        <h1>Update Product</h1>
+      </div>
       <form [formGroup]="form" (ngSubmit)="registerProduct()">
 
         <!--Product-->
@@ -43,7 +49,7 @@
         <div class="form-group row">
           <label for="product-available-start" class="col-4 col-form-label">Available Start</label>
           <div class="col-12">
-            <input id="product-available-start" name="text" type="date" class="form-control" [formControl]="productAvailableStartFC">
+            <input id="product-available-start" name="text" type="date" class="form-control" outputDate="returnedDate" [formControl]="productAvailableStartFC">
           </div>
         </div>
 
@@ -57,8 +63,12 @@
         </div>
 
         <!--Submit Button-->
-        <div>
+        <div *ngIf="this.isViewType('add')">
           <button type="submit" class="btn btn-block btn-primary" [disabled]="!form.valid">Register</button>
+        </div>
+
+        <div *ngIf="this.isViewType('edit')">
+          <button type="submit" class="btn btn-block btn-primary" [disabled]="!form.valid">Update</button>
         </div>
 
 
