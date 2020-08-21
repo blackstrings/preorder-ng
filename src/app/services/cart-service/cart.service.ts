@@ -12,6 +12,7 @@ import {AddToOrderValidatorContainer} from '../../validators/add-to-order-valida
 import {CartServiceSubscription} from "./cart-service-subscription";
 import {Product} from "../../models/product/product";
 import {DeliveryType} from "../../models/delivery/delivery-type";
+import { OrderStatus } from 'src/app/models/order/OrderStatus';
 
 @Injectable({
 	providedIn: 'root'
@@ -21,13 +22,18 @@ export class CartService {
   // setup other classes to listen to CartServices using subscriptions
   private _onAddToOrder: Subject<Order> = new Subject<Order>();
 
-	// the only order that can exist at any given time in the service
-	// multi orders not supported unless business decides to need it
-  // this is the order that has not been checked out yet
+  /**
+   * the only order that can exist at any given time in the service
+   * multi orders not supported unless business decides to need it
+   * this is the order that has not been checked out yet
+   */
 	private pendingOrder: Order = new Order();
 
 	// when the order is checked out, the order id should be saved in case of a quick recall
 	private submittedOrderID: string;
+
+	/** when an order is checked out, backend will return this to get the order ready for payment */
+	private client_token: string;
 
 	/**
 	 * Handles send order
@@ -225,7 +231,7 @@ export class CartService {
 	}
 
 	/**
-   * returns the order the user checked out on.
+   * returns the order the user checked out on - to allow the user to begin the payment process
    * Used for during navigating the user to the payment processing view to display the order.
    */
 	public getCheckedOutOrder(orderID: string, token: string): Observable<Order | HttpErrorContainer> {
@@ -236,8 +242,15 @@ export class CartService {
 	    map( (resp: any) => {
 	      // handling deserialization
 	      if(resp) {
+	        // prep to hydrate the json into the real object
 	        const order: Order = new Order();
+
+	        // if you want all properties, hydrate the entire response into the order
 	        Object.assign(order, resp);
+
+	        // hydrate
+	        order.order_status = OrderStatus.fromValue(resp.order_status);
+	        resp = order;
         }
 	      return resp;
       })

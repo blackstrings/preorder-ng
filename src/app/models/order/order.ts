@@ -2,6 +2,7 @@ import {Product} from '../product/product';
 import {Merchant} from '../merchant/merchant';
 import {DeliveryType} from '../delivery/delivery-type';
 import {User} from "../user/user";
+import {OrderStatus} from "./OrderStatus";
 
 export class Order {
 	// turns to true when you run it against the OrderValidator.validate() and succeeds
@@ -26,6 +27,14 @@ export class Order {
 
 	// for pickup and possible future for when to receive delivery time
 	public anticipatedPickupTime: string;
+
+	/**
+   * the phase the order is in. [pending, processing, pickup_ready, complete, cancelled]
+   */
+	public order_status: OrderStatus = OrderStatus.NONE;
+
+	/** the order during chekcout so the client can make payments */
+	public client_token: string;
 
 	constructor(){
   }
@@ -77,7 +86,7 @@ export class Order {
    * Qty is converted to 1 for easier comparison
    * @param p product to convert to json
    */
-	private getProductForEqualityCheck(p: Product): string {
+	private convertProductForEqualityCheck(p: Product): string {
 	  if(p) {
       const clonedProduct: Product = p.clone();
       clonedProduct.orderQTY = 1;
@@ -101,12 +110,12 @@ export class Order {
 	    for(let i=0; i<productsTemp.length; i++) {
 	      const currentProduct: Product = productsTemp[i].clone();
 	      let rolledQty: number = currentProduct.orderQTY;
-        const currentProductJSON: string = this.getProductForEqualityCheck(currentProduct);
+        const currentProductJSON: string = this.convertProductForEqualityCheck(currentProduct);
 
 	      // loop from end index back down to current index
         for(let k=productsTemp.length-1; k>i; k--) {
           const tempQty: number = productsTemp[k].orderQTY;
-          const productFromEndJSON: string = this.getProductForEqualityCheck(productsTemp[k]);
+          const productFromEndJSON: string = this.convertProductForEqualityCheck(productsTemp[k]);
           if(currentProductJSON === productFromEndJSON) {
             // both product are same, accumulate qty
             rolledQty += tempQty;
