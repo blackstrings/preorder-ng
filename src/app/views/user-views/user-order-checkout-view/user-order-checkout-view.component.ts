@@ -15,11 +15,12 @@ import {UserService} from "../../../services/user-service/user.service";
 })
 export class UserOrderCheckoutViewComponent implements OnInit {
 
-  // the customer's order id to be displayed on the page
-  public order: Order = new Order;
+  // the customer's order id to be displayed on the page, doesn't get populated until data comes back
+  public order: Order = new Order();
 
   // during init should the order not be able to load
-  public loadOrderError: boolean;
+  public isScreenInitError: boolean = false;
+  public isScreenLoading: boolean = true;
 
   constructor(private activatedRoute: ActivatedRoute,
               private cartService: CartService,
@@ -54,10 +55,15 @@ export class UserOrderCheckoutViewComponent implements OnInit {
                 this.order = resp;
               } else {
                 console.error('<< UserOrderCheckoutView >> loadOrder failed, response not instanceof Order');
+                this.isScreenInitError = true;
               }
+              this.isScreenLoading = false;
             },
             (e) => {
-              console.error(e)
+              console.error('<< UserOrderCheckoutView >> loadOrder failed, network error');
+              console.error(e);
+              this.isScreenInitError = true;
+              this.isScreenLoading = false;
             });
 
       } else {
