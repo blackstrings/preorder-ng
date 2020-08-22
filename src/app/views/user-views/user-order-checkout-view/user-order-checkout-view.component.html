@@ -2,15 +2,7 @@
   <div class="col">
     <h1>Checkout</h1>
 
-    <ng-container *ngIf="isScreenInitError">
-      <div class="alert alert-danger">
-        An internal error occurred...
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="isScreenLoading">
-      <div class="spinner-border text-primary"></div>
-    </ng-container>
+    <app-loading-view [(isScreenLoading)]="isScreenLoading" [(isScreenInitError)]="isScreenInitError"></app-loading-view>
 
     <ng-container *ngIf="!isScreenLoading && !isScreenInitError">
 

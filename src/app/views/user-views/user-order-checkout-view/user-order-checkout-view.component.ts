@@ -43,7 +43,7 @@ export class UserOrderCheckoutViewComponent implements OnInit {
     });
   }
 
-  /** load and display the order based by order id */
+  /** load and display the order. The payment token will be within the order.*/
   private loadOrder(orderID: string): void {
     if(orderID) {
       const token: string = this.userService.getAuthToken();

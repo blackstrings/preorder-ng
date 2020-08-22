@@ -246,10 +246,10 @@ export class CartService {
 	        const order: Order = new Order();
 
 	        // if you want all properties, hydrate the entire response into the order
-	        Object.assign(order, resp);
-
+	        Object.assign(order, resp.order);
 	        // hydrate
 	        order.order_status = OrderStatus.fromValue(resp.order_status);
+	        order.orderID = resp.order.id;
 	        resp = order;
         }
 	      return resp;

@@ -40,6 +40,7 @@ import { MerchantAddProductViewComponent } from './views/merchant-views/merchant
 import { UserOrderCheckoutViewComponent } from './views/user-views/user-order-checkout-view/user-order-checkout-view.component';
 import { MerchantHomeViewComponent } from './views/merchant-views/merchant-home-view/merchant-home-view.component';
 import {MerchantStoreEditorComponent} from "./views/merchant-views/merchant-store-editor/merchant-store-editor.component";
+import { LoadingViewComponent } from './views/common-views/loading-view/loading-view.component';
 
 //HttpClientModule required for http calls - httpClient
 
@@ -71,7 +72,8 @@ export function appCustomInit(cartService: AppServicesOrderInitializer) {
     MerchantAddProductViewComponent,
     UserOrderCheckoutViewComponent,
     MerchantHomeViewComponent,
-    MerchantStoreEditorComponent
+    MerchantStoreEditorComponent,
+    LoadingViewComponent
   ],
   imports: [
     BrowserModule,

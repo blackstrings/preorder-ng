@@ -9,6 +9,9 @@ export class OrderStatus {
   public static readonly COMPLETE = new OrderStatus('complete');
   public static readonly CANCELLED = new OrderStatus('cancelled');
 
+  // test
+  public static readonly CART = new OrderStatus('cart');
+
   protected constructor(protected value: string) {
     OrderStatus.values.set(value, this);
     // if extending this order status
