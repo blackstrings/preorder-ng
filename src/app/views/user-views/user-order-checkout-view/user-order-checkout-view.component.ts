@@ -3,6 +3,8 @@ import {ActivatedRoute} from "@angular/router";
 import {CartService} from "../../../services/cart-service/cart.service";
 import {Order} from "../../../models/order/order";
 import {UserService} from "../../../services/user-service/user.service";
+import {PaymentService} from "../../../services/payment-service/payment.service";
+import {StripeCardElement} from "@stripe/stripe-js";
 
 /**
  * Mainly this page handles payment for the order or items in the order/cart.
@@ -18,13 +20,16 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   // the customer's order id to be displayed on the page, doesn't get populated until data comes back
   public order: Order = new Order();
 
+  public cardDomId: string = '#cardDomId';
+
   // during init should the order not be able to load
   public isScreenInitError: boolean = false;
   public isScreenLoading: boolean = true;
 
   constructor(private activatedRoute: ActivatedRoute,
               private cartService: CartService,
-              private userService: UserService) {
+              private userService: UserService,
+              private paymentService: PaymentService) {
     this.setupView();
   }
 
@@ -41,6 +46,8 @@ export class UserOrderCheckoutViewComponent implements OnInit {
       // after getting the order id, load the order from the backend
       this.loadOrder(orderId);
     });
+
+    this.setupCard();
   }
 
   /** load and display the order. The payment token will be within the order.*/
@@ -78,8 +85,13 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public setupCard(): void {
+    const card: StripeCardElement = this.paymentService.createCard();
+    card.mount('#card-element');
+  }
+
   public placeOrder(): void {
-    console.error('<< UserOrderCheckoutView >> placeOrder not yet implemented');
+    console.error('not yet implemented');
   }
 
 }

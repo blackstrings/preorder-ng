@@ -7,6 +7,7 @@ import {UserService} from "../../../services/user-service/user.service";
 import {OrderValidator} from "../../../validators/order-validator/order-validator";
 import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
+import {PaymentService} from "../../../services/payment-service/payment.service";
 
 /** this view allows user to review their orders or items before going to checkout */
 @Component({
@@ -30,7 +31,8 @@ export class UserReviewOrderViewComponent implements OnInit {
   public productNameMaxCharacter: number = 30;
   public checkoutError: boolean = false;
 
-  constructor(private cartService: CartService, private userService: UserService, private router: Router) { }
+  constructor(private cartService: CartService, private userService: UserService, private router: Router,
+              private paymentService: PaymentService) { }
 
   ngOnInit(): void {
     this.setupViewData();
