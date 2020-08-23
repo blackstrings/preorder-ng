@@ -89,7 +89,7 @@ export class CartService {
 
               // success is expected
               if(resp.success) {
-                console.log('<< CarServices >> checkout success');
+                console.log('<< CarServices >> order reloaded for checkout success');
                 // deserialize into order object
                 const order: Order = new Order();
                 // Object.assign(order, resp); // copy all the properties into the order object
@@ -231,7 +231,9 @@ export class CartService {
 	}
 
 	/**
-   * returns the order the user checked out on - to allow the user to begin the payment process
+   * returns the order the user checked out on
+   * Goes to the backend to retrieve order.
+   * This allows the user to begin the payment process.
    * Used for during navigating the user to the payment processing view to display the order.
    */
 	public getCheckedOutOrder(orderID: string, token: string): Observable<Order | HttpErrorContainer> {
@@ -243,18 +245,27 @@ export class CartService {
 	      // handling deserialization
 	      if(resp) {
 	        // prep to hydrate the json into the real object
-	        const order: Order = new Order();
-
-	        // if you want all properties, hydrate the entire response into the order
-	        Object.assign(order, resp.order);
-	        // hydrate
-	        order.order_status = OrderStatus.fromValue(resp.order_status);
-	        order.orderID = resp.order.id;
-	        resp = order;
+	        return this.deserializeCheckedOrderModelToOrder(resp);
         }
-	      return resp;
+	      return null;
       })
     );
+  }
+
+  /**
+   * Converts the returned response model to Order object.
+   * @param model
+   */
+  private deserializeCheckedOrderModelToOrder(model: any): Order {
+    const order: Order = new Order();
+
+    // if you want all properties, hydrate the entire response into the order
+    Object.assign(order, model.order);
+    // hydrate
+    order.order_status = OrderStatus.fromValue(model.order_status);
+    order.orderID = model.order.id;
+    order.client_token = model.client_token;
+    return order;
   }
 
 

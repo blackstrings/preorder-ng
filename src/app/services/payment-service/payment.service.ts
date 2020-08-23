@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {loadStripe, Stripe, StripeCardElement} from '@stripe/stripe-js';
 import {Observable, of} from "rxjs";
+import {PaymentResponseRK} from "../../models/payment/payment-response-rk";
 
 /**
  * In order for stripe front end to work with backend, you need your stripe secret key put in the .bashrc file.
@@ -20,48 +21,113 @@ export class PaymentService {
     });
   }
 
-  public placeOrder(): Observable<boolean> {
-    if(this.stripe) {
+  public payWithCard(card: StripeCardElement, clientSecret: string): Observable<PaymentResponseRK> {
+    return new Observable<PaymentResponseRK>( subscriber => {
+      if(this.stripe) {
 
+        // Calls stripe.confirmCardPayment
+        // If the card requires authentication Stripe shows a pop-up modal to
+        // prompt the user to enter authentication details without leaving your page.
 
-    } else {
-      return of(false);
-    }
+        // show loading icon?
+        // loading(true);
+
+        this.stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: card
+          }
+        }).then(function(result) {
+
+          if (result.error) {
+
+            // Show error to your customer
+            const resp: PaymentResponseRK = new PaymentResponseRK()
+              .setMessage(result.error.message)
+              .setStatus(false);
+            subscriber.next(resp);
+            subscriber.complete();
+
+          } else {
+
+            // The payment succeeded!
+            const resp: PaymentResponseRK = new PaymentResponseRK()
+              .setStatus(true)
+              .setPaymentIntentId(result.paymentIntent.id);
+            subscriber.next(resp);
+            subscriber.complete();
+
+          }
+        });
+
+      } else {
+        console.error('<< PaymentService >> payWithCard failed, stripe null');
+        const resp: PaymentResponseRK = new PaymentResponseRK()
+          .setStatus(false);
+        subscriber.next(resp);
+        subscriber.complete();
+      }
+
+    });
+
   }
 
-  public createCard(): StripeCardElement {
+  public checkOrderIsPaid(orderClientToken: string): Observable<boolean> {
+
+    return new Observable<boolean>((subscriber) => {
+
+      this.stripe.retrievePaymentIntent(orderClientToken).then(function(response) {
+        if (response.paymentIntent && response.paymentIntent.status === 'succeeded') {
+          // Handle successful payment here
+          subscriber.next(true);
+          subscriber.complete();
+        } else {
+          // Handle unsuccessful, processing, or canceled payments and API errors here
+          subscriber.next(false);
+          subscriber.complete();
+        }
+      });
+
+    });
+  }
+
+  /**
+   * Returns a stripe card configured dom element.
+   * Note: Stripe can return many other card format and bank forms.
+   */
+  public createCard(divContainer?: HTMLDivElement): StripeCardElement {
     // Custom styling can be passed to options when creating an Element.
     // (Note that this demo uses a wider set of styles than the guide below.)
-    // const style = {
+    const style = {
+      base: {
+        color: '#32325d',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    };
+    // var style = {
     //   base: {
-    //     color: '#32325d',
-    //     fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    //     fontSmoothing: 'antialiased',
-    //     fontSize: '16px',
-    //     '::placeholder': {
-    //       color: '#aab7c4'
-    //     }
-    //   },
-    //   invalid: {
-    //     color: '#fa755a',
-    //     iconColor: '#fa755a'
+    //     color: "#32325d",
     //   }
     // };
 
     // Create an instance of the card Element.
     const elements = this.stripe.elements();
 
-    var style = {
-      base: {
-        color: "#32325d",
-      }
-    };
-
-    let card;
-
     if(elements){
       const card: StripeCardElement = elements.create("card", {style: style});
-      // Add an instance of the card Element into the `card-element` <div>.
+
+      // if a dom container was provided, set the stripe card dom element into it, else call mount at a later time
+      if(divContainer) {
+        card.mount(divContainer);
+      }
       return card;
     }
     return null;

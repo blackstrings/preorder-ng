@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {CartService} from "../../../services/cart-service/cart.service";
 import {Order} from "../../../models/order/order";
 import {UserService} from "../../../services/user-service/user.service";
 import {PaymentService} from "../../../services/payment-service/payment.service";
 import {StripeCardElement} from "@stripe/stripe-js";
+import {FormControl, FormGroup} from "@angular/forms";
+import {take} from "rxjs/operators";
+import {PaymentResponseRK} from "../../../models/payment/payment-response-rk";
+import {Observable} from "rxjs";
 
 /**
  * Mainly this page handles payment for the order or items in the order/cart.
@@ -20,22 +24,48 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   // the customer's order id to be displayed on the page, doesn't get populated until data comes back
   public order: Order = new Order();
 
-  public cardDomId: string = '#cardDomId';
+  // if static is false, use in ngAfter
+  // if static is true, use in ngInit
+  // subscribe changes should be used in ngInit
+  @ViewChild('cardDomRef', {static: true, read: ElementRef})
+  public cardDomElement: ElementRef<HTMLDivElement>;
+
+  @ViewChild('placeOrderBtn', {static: true, read: ElementRef})
+  public placeOrderBtn: ElementRef<HTMLButtonElement>;
+
 
   // during init should the order not be able to load
   public isScreenInitError: boolean = false;
   public isScreenLoading: boolean = true;
 
+  // stripe card generated from the payment service, required for payment to process through
+  private stripeCard: StripeCardElement
+
+  public formPayment: FormGroup;
+  public cardFC: FormControl;
+
   constructor(private activatedRoute: ActivatedRoute,
               private cartService: CartService,
               private userService: UserService,
-              private paymentService: PaymentService) {
+              private paymentService: PaymentService){
+
+  }
+
+  public ngOnInit(): void {
+    this.setupForm();
     this.setupView();
+    this.setupCard();
+  }
+
+  private setupForm(): void {
+    this.formPayment = new FormGroup({});
   }
 
   /** pulls the orderID from the url if available */
   private setupView(): void {
+
     this.activatedRoute.paramMap.subscribe(params => {
+      // get order from url params
       let orderId: string = params.get('orderId');
       if(!orderId) {
         // should the user not come directly from the review orders page
@@ -45,9 +75,9 @@ export class UserOrderCheckoutViewComponent implements OnInit {
 
       // after getting the order id, load the order from the backend
       this.loadOrder(orderId);
+
     });
 
-    this.setupCard();
   }
 
   /** load and display the order. The payment token will be within the order.*/
@@ -60,6 +90,16 @@ export class UserOrderCheckoutViewComponent implements OnInit {
           .subscribe( (resp: Order) => {
               if(resp instanceof Order) {
                 this.order = resp;
+
+                // check order is paid in case they pulling up old paid orders
+                this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe((isOrderPaid: boolean) => {
+                  if(isOrderPaid) {
+                    this.isScreenInitError = true;
+                  } else {
+                    console.dir("<< UserOrderCheckOutView >> order not yet paid");
+                  }
+                });
+
               } else {
                 console.error('<< UserOrderCheckoutView >> loadOrder failed, response not instanceof Order');
                 this.isScreenInitError = true;
@@ -82,16 +122,91 @@ export class UserOrderCheckoutViewComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void {
+  public setupCard(): void {
+
+    // start off the form place order button as disabled
+    if(this.placeOrderBtn) {
+      this.placeOrderBtn.nativeElement.disabled = true;
+    }
+
+    this.stripeCard = this.paymentService.createCard();
+    try {
+      if(this.stripeCard) {
+        if(this.cardDomElement) {
+
+          // insert strip card element into the dom container
+          this.stripeCard.mount(this.cardDomElement.nativeElement);
+
+          // detect and validate card on every card inputs
+          this.stripeCard.on('change', (event) => {
+            (document.querySelector("button#placeOrderBtn") as HTMLButtonElement).disabled = event.error || event.empty ? true : false;
+            document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
+          });
+
+          // test auto fill test card
+          // stripeCard.update({cardNumber: '5513 8400 0382 1111'})
+
+        } else {
+          console.error('<< UserOrderCheckoutView >> setupCard failed, cardElementDom null');
+        }
+      } else {
+        console.error('<< UserOrderCheckoutView >> setupCard failed, stripeCard null');
+      }
+    } catch(e) {
+      console.error('<< UserOrderCheckoutView >> setupCard failed, error occurred');
+      console.error(e);
+    }
   }
 
-  public setupCard(): void {
-    const card: StripeCardElement = this.paymentService.createCard();
-    card.mount('#card-element');
+  /**
+   * Ensure customer isn't paying for an order that is already paid.
+   * This relies on the returned checked out order client token.
+   * @param order
+   */
+  private checkOrderIsPaid(order: Order): Observable<boolean> {
+    return new Observable<boolean>(subscriber =>  {
+
+      if(order && order.client_token) {
+        this.paymentService.checkOrderIsPaid(order.client_token)
+          .pipe(take(1))
+          .subscribe((isOrderAlreadyPaid) => {
+            // show error if order is already paid
+            if(isOrderAlreadyPaid) {
+              subscriber.next(true);
+            }
+          });
+      } else {
+        console.error('<< UserOrderCheckOutView >> checkOrderIsPaid failed, order or order client token null');
+        subscriber.next(false);
+      }
+
+    });
   }
 
   public placeOrder(): void {
-    console.error('not yet implemented');
+    // this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe(result => {
+
+      // if(!result) {
+        this.paymentService.payWithCard(this.stripeCard, this.order.client_token)
+          .pipe(take(1))
+          .subscribe( (resp: PaymentResponseRK) => {
+            if(resp && resp.status) {
+              console.dir('<< UserOrderCheckOutView >> Payment success');
+              console.warn('<< UserOrderCheckOutView >> setup webhook at backend to do payment fullfillment');
+              // Note: we are not suppose to handle payment fullfillment on clientside
+              // as user can close browser after submitting payment info
+              // so backend should be using a webhook to listen async
+
+              // but for now we'll do a front handling to backend without webhook
+              console.warn('todo send payment intent full fillment id to backend');
+            } else {
+              console.error('<< UserOrderCheckOutView >> placeOrder failed, response failed');
+              console.error(resp.message);
+            }
+          });
+      // }
+
+    // });
   }
 
 }

@@ -8,9 +8,11 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class LoadingViewComponent implements OnInit {
 
+  // allow you to inject params when loading this view
   @Input()
   public isScreenInitError: boolean = false;
 
+  // allow you to inject params when loading this view
   @Input()
   public isScreenLoading: boolean = true;
 
