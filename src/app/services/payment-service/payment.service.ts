@@ -16,11 +16,24 @@ export class PaymentService {
   private stripe: Stripe;
 
   constructor() {
+    this.loadStripe();
+  }
+
+  /**
+   * When you import loadStripe it will auto load the stripe script you common see if using js vanilla imports.
+   * For security reasons, angular does not allow script imports directly in the html files as it will ignore.
+   */
+  private loadStripe(): void {
     loadStripe('pk_test_CGxkic4y63Qu2gnsXsbniZGh').then( (s: Stripe) => {
       this.stripe = s;
     });
   }
 
+  /**
+   * when the user has entered their card payment. By default this is set to card type payment
+   * @param card the stripe card
+   * @param clientSecret aka the client_token provided from the backend when you recall an order ready to make payment.
+   */
   public payWithCard(card: StripeCardElement, clientSecret: string): Observable<PaymentResponseRK> {
     return new Observable<PaymentResponseRK>( subscriber => {
       if(this.stripe) {
@@ -41,15 +54,16 @@ export class PaymentService {
           if (result.error) {
 
             // Show error to your customer
+            // it could be the clientSecret has already been paid for
             const resp: PaymentResponseRK = new PaymentResponseRK()
-              .setMessage(result.error.message)
+              .setStripeError(result.error)
               .setStatus(false);
             subscriber.next(resp);
             subscriber.complete();
 
           } else {
 
-            // The payment succeeded!
+            // The payment to stripe succeeded!
             const resp: PaymentResponseRK = new PaymentResponseRK()
               .setStatus(true)
               .setPaymentIntentId(result.paymentIntent.id);
