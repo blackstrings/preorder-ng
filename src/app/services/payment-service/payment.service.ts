@@ -53,20 +53,26 @@ export class PaymentService {
 
           if (result.error) {
 
-            // Show error to your customer
+            // Show error to customer
             // it could be the clientSecret has already been paid for
+            // paymentIntent is inside the stripeError
             const resp: PaymentResponseRK = new PaymentResponseRK()
-              .setStripeError(result.error)
-              .setStatus(false);
+              .setStatus(false)
+              .setMessage(result.error.payment_intent.status)
+              .setStripeError(result.error);
+
             subscriber.next(resp);
             subscriber.complete();
 
           } else {
 
             // The payment to stripe succeeded!
+            // if there is no error, there is a paymentIntent
             const resp: PaymentResponseRK = new PaymentResponseRK()
               .setStatus(true)
+              .setMessage(result.paymentIntent.status)
               .setPaymentIntentId(result.paymentIntent.id);
+
             subscriber.next(resp);
             subscriber.complete();
 
@@ -90,10 +96,20 @@ export class PaymentService {
     return new Observable<boolean>((subscriber) => {
 
       this.stripe.retrievePaymentIntent(orderClientToken).then(function(response) {
-        if (response.paymentIntent && response.paymentIntent.status === 'succeeded') {
+        let status: string;
+        if(response && response.paymentIntent) {
+          status = response.paymentIntent.status;
+        }
+        if (status === 'succeeded') {
           // Handle successful payment here
           subscriber.next(true);
           subscriber.complete();
+
+        } else if(status === 'requires_payment_method') {
+          // Handle unpaid, processing, or canceled payments and API errors here
+          subscriber.next(false);
+          subscriber.complete();
+
         } else {
           // Handle unsuccessful, processing, or canceled payments and API errors here
           subscriber.next(false);

@@ -245,28 +245,14 @@ export class CartService {
 	      // handling deserialization
 	      if(resp) {
 	        // prep to hydrate the json into the real object
-	        return this.deserializeCheckedOrderModelToOrder(resp);
+	        return Order.deserialize(resp);
         }
 	      return null;
       })
     );
   }
 
-  /**
-   * Converts the returned response model to Order object.
-   * @param model
-   */
-  private deserializeCheckedOrderModelToOrder(model: any): Order {
-    const order: Order = new Order();
 
-    // if you want all properties, hydrate the entire response into the order
-    Object.assign(order, model.order);
-    // hydrate
-    order.order_status = OrderStatus.fromValue(model.order_status);
-    order.orderID = model.order.id;
-    order.client_token = model.client_token;
-    return order;
-  }
 
 
 }

@@ -33,6 +33,9 @@ export class Order {
    */
 	public order_status: OrderStatus = OrderStatus.NONE;
 
+	public sub_total: string;
+	public tax: string;
+
 	/** the order during chekcout so the client can make payments */
 	public client_token: string;
 
@@ -136,6 +139,10 @@ export class Order {
 	  this.merchant = merchant;
   }
 
+  /**
+   * todo we should only be reading an order total pricing from backend once we hit the backend.
+   * Front end total calculations should only be estimates.
+   */
 	public getTotalPrice(): number {
 		if(this.products && this.products.length) {
 			// short way
@@ -163,5 +170,48 @@ export class Order {
 
 	public getProducts(): Product[] {
 	  return this.products;
+  }
+
+  public getSubTotal(): number {
+    return this.stringCurrencyToUSD(this.sub_total);
+  }
+
+  public getTax(): number {
+	  return this.stringCurrencyToUSD(this.tax);
+  }
+
+  private stringCurrencyToUSD(val: string): number {
+	  let result: number = 0;
+    try{
+      result = parseFloat(this.sub_total);
+    } catch(e) {
+      console.warn('<< Order >> stringCurrencyToUSD failed, parseFloat error');
+    }
+    return result;
+  }
+
+  /**
+   * Converts the returned response model to Order object.
+   * @param model
+   */
+  public static deserialize(model: any): Order {
+    const order: Order = new Order();
+
+    // if you want all properties, hydrate the entire response into the order
+    Object.assign(order, model.order);
+
+    // hydrate and correct any special properties that may not have matching names
+    order.order_status = OrderStatus.fromValue(model.order_status);
+    order.orderID = model.order.id;
+    order.client_token = model.client_token;
+
+    // nested children deserialize
+    if(model.order && model.order.products) {
+      order.products = Product.deserializeAsArray(model.order.products);
+    }
+
+
+    // return the order
+    return order;
   }
 }

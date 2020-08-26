@@ -37,12 +37,16 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   public cardErrorDom: ElementRef<HTMLDivElement>;
 
 
-  // during init should the order not be able to load
+  // during init - are we able to load the order from backend
   public isScreenInitError: boolean = false;
+
+  // the state of the screen loading
   public isScreenLoading: boolean = true;
 
-  // after placing order, did payment go through and valid
-  public isPaymentAccepted: boolean = true;
+  // after placing order, did payment go through and is valid
+  public isPaymentSuccess: boolean = true;
+
+  // to display the error message in the view
   public paymentErrorMessage: string = '';
 
   // stripe card generated from the payment service, required for payment to process through
@@ -98,9 +102,9 @@ export class UserOrderCheckoutViewComponent implements OnInit {
               if(resp instanceof Order) {
                 this.order = resp;
 
-                // check order is paid in case they pulling up old paid orders
                 this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe((isOrderPaid: boolean) => {
                   if(isOrderPaid) {
+                    // the order has been paid for
                     this.isScreenInitError = true;
                   } else {
                     console.dir("<< UserOrderCheckOutView >> order not yet paid");
@@ -129,6 +133,7 @@ export class UserOrderCheckoutViewComponent implements OnInit {
     }
   }
 
+  /** setup the stripe card and dom element into the view */
   public setupCard(): void {
 
     // start off the form place order button as disabled
@@ -180,6 +185,8 @@ export class UserOrderCheckoutViewComponent implements OnInit {
             // show error if order is already paid
             if(isOrderAlreadyPaid) {
               subscriber.next(true);
+            } else {
+              subscriber.next(false);
             }
           });
       } else {
@@ -193,33 +200,45 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   /** when the user is ready to make their payments toward their order */
   public placeOrder(): void {
     this.disablePlaceOrderButton();
-    // this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe(result => {
 
-      // if(!result) {
+    this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe(result => {
+
+      if(!result) {
         this.paymentService.payWithCard(this.stripeCard, this.order.client_token)
           .pipe(take(1))
           .subscribe( (resp: PaymentResponseRK) => {
             if(resp && !resp.stripeError) {
-              console.dir('<< UserOrderCheckOutView >> Payment success');
+
+              // ===============
+              // payment Success
+              console.dir('<< UserOrderCheckOutView >> Payment: ' + resp.message);
 
               console.warn('<< UserOrderCheckOutView >> setup webhook at backend to do payment fullfillment');
-              // Note: we are not suppose to handle payment fullfillment on clientside
+              // Note: not recommend to handle payment full fillment on clientside and then passing to remote
               // as user can close browser after submitting payment info
-              // so backend should be using a webhook to listen async
+              // so backend should be using a webhook to listen async as soon as stripe acknowledge so is backend
               console.log(resp.paymentIntentId);
 
               // but for now we'll do a front handling to backend without webhook
               console.warn('todo send payment intent full fillment id to backend');
+
             } else {
+
+              // ==============
+              // payment failed
               console.dir('<< UserOrderCheckOutView >> Payment failed');
+              console.warn('<< UserOrderCheckOutView >> Reason: ' + resp.message);
               this.paymentErrorMessage = resp.stripeError.code;
               console.error(this.paymentErrorMessage);
-              this.isPaymentAccepted = false;
+              this.isPaymentSuccess = false;
             }
           });
-      // }
+      } else {
+        console.warn('<< UserOrderCheckoutView >> placeOrder failed, order already paid');
+      }
 
-    // });
+    }); // end of check order is paid
+
   }
 
   /** when the user place order, we disable to prevent unnecessary processing until we hear back from payment service */

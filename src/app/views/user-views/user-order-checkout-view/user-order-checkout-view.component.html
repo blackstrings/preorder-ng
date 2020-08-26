@@ -14,6 +14,21 @@
         </div>
       </div>
 
+      <!-- subtotal and tax -->
+      <div class="row mt-4">
+        <div class="col-sm text-align-right">
+          <div>
+            <span>Subtotal: </span>{{order.getTotalPrice() | currency:'USD':'symbol':'1.2-2'}}
+          </div>
+          <div>
+            <span>Tax: </span>{{order.getTax() | currency:'USD':'symbol':'1.2-2'}}
+          </div>
+          <div class="total-font">
+            <strong>Total: {{order.getSubTotal() | currency:'USD':'symbol':'1.2-2'}}</strong>
+          </div>
+        </div>
+      </div>
+
       <!-- Payment info -->
       <hr>
       <div>
@@ -26,24 +41,19 @@
         <!--        <div>CardType: Mastercard</div>-->
         <!--        <div>Ending in: ...7272</div>-->
 
+        <div #cardDomRef><!-- Elements will create input elements here --></div>
 
-<!--        <form [formGroup]="formPayment" id="payment-form" (ngSubmit)="placeOrder()">-->
-          <div #cardDomRef>
-            <!-- Elements will create input elements here -->
-          </div>
+        <!-- stripe element will put the error messages in this element -->
+        <div #cardErrorDom id="card-errors" role="alert"></div>
 
-          <!-- stripe element will put the error messages in this element -->
-          <div #cardErrorDom id="card-errors" role="alert"></div>
-
-<!--        </form>-->
       </div>
 
 
-      <!-- submit -->
+      <!-- place order button -->
       <hr>
       <div class="row">
         <div class="col-sm text-align-right">
-          <div [hidden]="isPaymentAccepted" class="alert alert-danger">{{paymentErrorMessage}}</div>
+          <div [hidden]="isPaymentSuccess" class="alert alert-danger">{{paymentErrorMessage}}</div>
           <button #placeOrderBtn id="placeOrderBtn" class="btn-dark btn" (click)="placeOrder()">Place Order</button>
         </div>
       </div>
