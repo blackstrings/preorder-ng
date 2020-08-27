@@ -12,7 +12,7 @@ import {AddToOrderValidatorContainer} from '../../validators/add-to-order-valida
 import {CartServiceSubscription} from "./cart-service-subscription";
 import {Product} from "../../models/product/product";
 import {DeliveryType} from "../../models/delivery/delivery-type";
-import { OrderStatus } from 'src/app/models/order/OrderStatus';
+import {OrderItem} from "../../models/order-item/order-item";
 
 @Injectable({
 	providedIn: 'root'
@@ -64,10 +64,11 @@ export class CartService {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
         // const uri: string = 'merchants/' + this.order.merchant.id + '/products/';
 
-        // construct the products into a model that will fit the backend
+        // construct the products into a model that matches the backend input structure
         const products: Product[] = this.pendingOrder.getProducts();
-        let orderItemsArray: any = products.map(p => {
-          return {product_id: p.id, quantity_id: p.orderQTY}
+        let orderItemsArray: OrderItem[] = products.map(p => {
+          const orderItem: OrderItem = {product_id: p.id, quantity_id: p.orderQTY};
+          return orderItem;
         });
 
         // construct the body structure for the backend

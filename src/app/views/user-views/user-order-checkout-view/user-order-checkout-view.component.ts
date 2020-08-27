@@ -52,6 +52,8 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   // stripe card generated from the payment service, required for payment to process through
   private stripeCard: StripeCardElement
 
+  public readonly productNameMaxCharacter: number = 20;
+
   public formPayment: FormGroup;
   public cardFC: FormControl;
 
@@ -91,7 +93,10 @@ export class UserOrderCheckoutViewComponent implements OnInit {
 
   }
 
-  /** load and display the order. The payment token will be within the order.*/
+  /**
+   * load and display the order based on the orderID provided from the backend.
+   * The payment token will be within the order.
+   */
   private loadOrder(orderID: string): void {
     if(orderID) {
       const token: string = this.userService.getAuthToken();
