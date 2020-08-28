@@ -3,15 +3,29 @@ import {Merchant} from '../merchant/merchant';
 import {DeliveryType} from '../delivery/delivery-type';
 import {User} from "../user/user";
 import {OrderStatus} from "./OrderStatus";
+import { OrderItem } from '../order-item/order-item';
 
 export class Order {
 	// turns to true when you run it against the OrderValidator.validate() and succeeds
 	isValidateSuccess: boolean;
 
+	public order_total: string;
+	public sub_total: string;
+	public tax: string;
+
 	public user: User;
 
-	// the product this order carries
+  /**
+   * the product this order carries during user selection
+   * used up to the point when the order is process for payment
+   */
 	public products: Product[] = [];
+
+  /**
+   * Once products are put into an order and checked out
+   * this is for storing ordered items that are ready for payment or for displaying an order that is paid
+   */
+	public orderItems: OrderItem[] = [];
 
 	// the merchant this product is from
 	public merchant: Merchant;
@@ -22,22 +36,23 @@ export class Order {
 	// timestamp of order submission from front end
 	public submitTime: string;
 
-	// how the user wish to get the order
+	// how the user wish to get the order (pick_up, delivery, etc)
 	public deliveryType: DeliveryType = DeliveryType.NONE;
 
 	// for pickup and possible future for when to receive delivery time
 	public anticipatedPickupTime: string;
 
 	/**
+   * the order status.
    * the phase the order is in. [pending, processing, pickup_ready, complete, cancelled]
    */
-	public order_status: OrderStatus = OrderStatus.NONE;
+	public status: OrderStatus = OrderStatus.NONE;
 
-	public sub_total: string;
-	public tax: string;
 
 	/** the order during chekcout so the client can make payments */
 	public client_token: string;
+
+	public token: string;
 
 	constructor(){
   }
@@ -47,7 +62,7 @@ export class Order {
   }
 
   getAnticipatedPickupTime(asString: boolean = false): string | Date {
-	  if(this.deliveryType === DeliveryType.PICKUP){
+	  if(this.deliveryType === DeliveryType.PICK_UP){
 
 	    if(this.anticipatedPickupTime){
 
@@ -192,24 +207,26 @@ export class Order {
 
   /**
    * Converts the returned response model to Order object.
+   * The model structur depends on the backend response.
    * @param model
    */
   public static deserialize(model: any): Order {
     const order: Order = new Order();
 
+    // implicit transforms
     // if you want all properties, hydrate the entire response into the order
-    Object.assign(order, model.order);
+    Object.assign(order, model);
 
+    // explicit transforms
     // hydrate and correct any special properties that may not have matching names
-    order.order_status = OrderStatus.fromValue(model.order_status);
-    order.orderID = model.order.id;
-    order.client_token = model.client_token;
+    order.status = OrderStatus.fromValue(model.status);
+    order.deliveryType = DeliveryType.PICK_UP;
+    order.orderID = model.id;
 
     // nested children deserialize
-    if(model.order && model.order.products) {
-      order.products = Product.deserializeAsArray(model.order.products);
+    if(model.items) {
+      order.orderItems = OrderItem.deserializeAsArray(model.items);
     }
-
 
     // return the order
     return order;

@@ -1,4 +1,4 @@
-import {Merchant} from "../merchant/merchant";
+import {OrderItem} from "../order-item/order-item";
 
 export class Product {
 
@@ -160,11 +160,14 @@ export class Product {
     return p;
   }
 
-  public static deserializeAsArray(data: Product[]): Product[] {
+  public static deserializeAsArray(data: any): Product[] {
     if(data) {
+      const orderItems: OrderItem[] = [];
       const products: Product[] = [];
-      data.forEach(d => {
-        products.push(Product.deserialize(d));
+      data.forEach( (_orderItem: any) => {
+        const orderItem: OrderItem = new OrderItem();
+        Object.assign(orderItem, _orderItem);
+        products.push(Product.deserialize(_orderItem));
       });
       return products;
     }

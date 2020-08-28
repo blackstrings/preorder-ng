@@ -66,7 +66,7 @@ export class OrderValidator {
 	 * soft check if order has a valid pickup time if order is for pickup
 	 */
 	public static hasValidPickupTime(order: Order): boolean {
-		if(order && order.deliveryType === DeliveryType.PICKUP && order.anticipatedPickupTime) {
+		if(order && order.deliveryType === DeliveryType.PICK_UP && order.anticipatedPickupTime) {
 			console.error('<< OrderValidator >> not yet implemented');
 			const currentDate: Date = new Date();
 

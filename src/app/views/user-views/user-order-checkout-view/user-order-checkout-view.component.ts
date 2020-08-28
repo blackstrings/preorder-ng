@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {CartService} from "../../../services/cart-service/cart.service";
 import {Order} from "../../../models/order/order";
@@ -9,6 +9,7 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {take} from "rxjs/operators";
 import {PaymentResponseRK} from "../../../models/payment/payment-response-rk";
 import {Observable} from "rxjs";
+import {Merchant} from "../../../models/merchant/merchant";
 
 /**
  * Mainly this page handles payment for the order or items in the order/cart.
@@ -23,6 +24,7 @@ export class UserOrderCheckoutViewComponent implements OnInit {
 
   // the customer's order id to be displayed on the page, doesn't get populated until data comes back
   public order: Order = new Order();
+  public merchant: Merchant;
 
   // if static is false, use in ngAfter
   // if static is true, use in ngInit
@@ -60,14 +62,15 @@ export class UserOrderCheckoutViewComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute,
               private cartService: CartService,
               private userService: UserService,
-              private paymentService: PaymentService){
+              private paymentService: PaymentService,
+              private cd: ChangeDetectorRef){
 
   }
 
   public ngOnInit(): void {
-    this.setupForm();
     this.setupView();
     this.setupCard();
+    this.setupForm();
   }
 
   private setupForm(): void {
@@ -106,13 +109,14 @@ export class UserOrderCheckoutViewComponent implements OnInit {
           .subscribe( (resp: Order) => {
               if(resp instanceof Order) {
                 this.order = resp;
+                this.merchant = this.order.merchant;
 
                 this.checkOrderIsPaid(this.order).pipe(take(1)).subscribe((isOrderPaid: boolean) => {
-                  if(isOrderPaid) {
+                  if(isOrderPaid && !this.order.merchant) {
                     // the order has been paid for
                     this.isScreenInitError = true;
                   } else {
-                    console.dir("<< UserOrderCheckOutView >> order not yet paid");
+                    console.dir("<< UserOrderCheckOutView >> order not yet paid, okay to display");
                   }
                 });
 
@@ -120,7 +124,10 @@ export class UserOrderCheckoutViewComponent implements OnInit {
                 console.error('<< UserOrderCheckoutView >> loadOrder failed, response not instanceof Order');
                 this.isScreenInitError = true;
               }
+
+              // loading complete
               this.isScreenLoading = false;
+
             },
             (e) => {
               console.error('<< UserOrderCheckoutView >> loadOrder failed, network error');

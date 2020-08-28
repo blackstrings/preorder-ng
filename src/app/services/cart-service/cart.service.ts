@@ -45,7 +45,7 @@ export class CartService {
 
 	  // make this first order by default pickup
 	  if(this.pendingOrder){
-	    this.pendingOrder.deliveryType = DeliveryType.PICKUP;
+	    this.pendingOrder.deliveryType = DeliveryType.PICK_UP;
     }
 	}
 
@@ -67,7 +67,7 @@ export class CartService {
         // construct the products into a model that matches the backend input structure
         const products: Product[] = this.pendingOrder.getProducts();
         let orderItemsArray: OrderItem[] = products.map(p => {
-          const orderItem: OrderItem = {product_id: p.id, quantity_id: p.orderQTY};
+          const orderItem: any = {product_id: p.id, quantity_id: p.orderQTY};
           return orderItem;
         });
 
@@ -219,7 +219,7 @@ export class CartService {
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {
 			this.pendingOrder = new Order();
-      this.pendingOrder.deliveryType = DeliveryType.PICKUP;
+      this.pendingOrder.deliveryType = DeliveryType.PICK_UP;
 			this.pendingOrder.setMerchant(container.merchant);
 		} else {
 			throw new Error('<< CartServices >> startNewOrder failed, container null');
