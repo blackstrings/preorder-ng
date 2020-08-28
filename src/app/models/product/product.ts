@@ -141,7 +141,6 @@ export class Product {
   public getId(): number {
     return this.id;
   }
-  /*
 
   // turns serialized object into the concrete form
   public static deserialize(data: Product): Product {
