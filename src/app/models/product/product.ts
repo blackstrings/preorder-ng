@@ -98,10 +98,11 @@ export class Product {
   public getAvailableEnd(): string{
     return this.available_end;
   }
-  /*
+
   public getId(): number {
     return this.id;
   }
+  /*
 
   public getPrice(): number {
 

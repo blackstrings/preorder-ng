@@ -48,4 +48,16 @@ export class RegisterMerchantService {
     );
   }
 
+  public updateProduct(token: string, product: Product, merchantID: number): Observable<boolean | HttpErrorContainer> {
+    const uri: string = ApiEndPoints.MERCHANT + "/" + merchantID + "/" + ApiEndPoints.MERCHANT_UPDATE_PRODUCT + "/" + product.getId();
+    const body = product;
+    const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+
+    return this.httpWrapper.update(uri, body, options).pipe(
+      map((resp: boolean) => {
+        return resp;
+      })
+    );
+  }
+
 }

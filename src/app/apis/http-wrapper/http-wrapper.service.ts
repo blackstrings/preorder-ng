@@ -64,6 +64,10 @@ export class HttpWrapperService<T> {
     return this.postByLocation(this.apiVersion + uri, '', body, httpOptions, timeout);
   }
 
+  public update(uri: string, body: any = {}, httpOptions: HttpOptions = new HttpOptions(), timeout: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.updateByLocation(this.apiVersion + uri, '', body, httpOptions, timeout);
+  }
+
   public get(uri, httpOptions: HttpOptions = null, timeout: number = 20000): Observable<T | HttpErrorContainer> {
     return this.getByLocation('', this.apiVersion + uri, httpOptions, timeout);
   }
@@ -71,6 +75,16 @@ export class HttpWrapperService<T> {
   public postByLocation(uri: string, location: string = '', body: any = null, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
     return this.httpClient
       .post<T>(location + uri, body, {params: options.params, headers: options.headers})
+      .pipe(
+        timeout(timeoutVal),
+        map( (resp: T) => { return resp }),
+        catchError(this.handleError)
+      );
+  }
+
+  public updateByLocation(uri: string, location: string = '', body: any = null, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.httpClient
+      .put<T>(location + uri, body, {params: options.params, headers: options.headers})
       .pipe(
         timeout(timeoutVal),
         map( (resp: T) => { return resp }),

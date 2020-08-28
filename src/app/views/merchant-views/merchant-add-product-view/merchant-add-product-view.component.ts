@@ -148,7 +148,11 @@ export class MerchantAddProductViewComponent implements OnInit, OnDestroy {
   }
 
   public updateProduct(): void {
-
+    if(this.validateForm()){
+      this.registerMerchantService.updateProduct(this.userService.getAuthToken(), this.product, this.merchantID).subscribe((resp) => {
+        console.log(resp);
+      });
+    }
   }
 
   public addProduct(): void{
