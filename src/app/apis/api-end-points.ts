@@ -21,6 +21,7 @@ export class ApiEndPoints {
   public static readonly MERCHANT_LIST: string = 'merchants';
   public static readonly MERCHANT_LIST_BY_USER: string = 'get_all_merchants_for_user';
   public static readonly MERCHANT_ADD_PRODUCT: string = 'products';
+  public static readonly MERCHANT_UPDATE_PRODUCT: string = 'products';
   public static readonly MERCHANT_GET_ID: string = 'TODO';
 
   // get,
