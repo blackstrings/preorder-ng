@@ -16,7 +16,7 @@ export class OrderTest extends Order {
     const order: OrderTest = new OrderTest();
     order.products = [ProductTest.create(1)];
     order.merchant = MerchantTest.createGeneric();
-    order.deliveryType = DeliveryType.PICKUP;
+    order.deliveryType = DeliveryType.PICK_UP;
     return order;
   }
 }

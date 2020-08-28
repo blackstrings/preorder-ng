@@ -2,15 +2,30 @@ import {Product} from '../product/product';
 import {Merchant} from '../merchant/merchant';
 import {DeliveryType} from '../delivery/delivery-type';
 import {User} from "../user/user";
+import {OrderStatus} from "./OrderStatus";
+import { OrderItem } from '../order-item/order-item';
 
 export class Order {
 	// turns to true when you run it against the OrderValidator.validate() and succeeds
 	isValidateSuccess: boolean;
 
+	public order_total: string;
+	public sub_total: string;
+	public tax: string;
+
 	public user: User;
 
-	// the product this order carries
+  /**
+   * the product this order carries during user selection
+   * used up to the point when the order is process for payment
+   */
 	public products: Product[] = [];
+
+  /**
+   * Once products are put into an order and checked out
+   * this is for storing ordered items that are ready for payment or for displaying an order that is paid
+   */
+	public orderItems: OrderItem[] = [];
 
 	// the merchant this product is from
 	public merchant: Merchant;
@@ -21,11 +36,23 @@ export class Order {
 	// timestamp of order submission from front end
 	public submitTime: string;
 
-	// how the user wish to get the order
+	// how the user wish to get the order (pick_up, delivery, etc)
 	public deliveryType: DeliveryType = DeliveryType.NONE;
 
 	// for pickup and possible future for when to receive delivery time
 	public anticipatedPickupTime: string;
+
+	/**
+   * the order status.
+   * the phase the order is in. [pending, processing, pickup_ready, complete, cancelled]
+   */
+	public status: OrderStatus = OrderStatus.NONE;
+
+
+	/** the order during chekcout so the client can make payments */
+	public client_token: string;
+
+	public token: string;
 
 	constructor(){
   }
@@ -35,7 +62,7 @@ export class Order {
   }
 
   getAnticipatedPickupTime(asString: boolean = false): string | Date {
-	  if(this.deliveryType === DeliveryType.PICKUP){
+	  if(this.deliveryType === DeliveryType.PICK_UP){
 
 	    if(this.anticipatedPickupTime){
 
@@ -77,7 +104,7 @@ export class Order {
    * Qty is converted to 1 for easier comparison
    * @param p product to convert to json
    */
-	private getProductForEqualityCheck(p: Product): string {
+	private convertProductForEqualityCheck(p: Product): string {
 	  if(p) {
       const clonedProduct: Product = p.clone();
       clonedProduct.orderQTY = 1;
@@ -101,12 +128,12 @@ export class Order {
 	    for(let i=0; i<productsTemp.length; i++) {
 	      const currentProduct: Product = productsTemp[i].clone();
 	      let rolledQty: number = currentProduct.orderQTY;
-        const currentProductJSON: string = this.getProductForEqualityCheck(currentProduct);
+        const currentProductJSON: string = this.convertProductForEqualityCheck(currentProduct);
 
 	      // loop from end index back down to current index
         for(let k=productsTemp.length-1; k>i; k--) {
           const tempQty: number = productsTemp[k].orderQTY;
-          const productFromEndJSON: string = this.getProductForEqualityCheck(productsTemp[k]);
+          const productFromEndJSON: string = this.convertProductForEqualityCheck(productsTemp[k]);
           if(currentProductJSON === productFromEndJSON) {
             // both product are same, accumulate qty
             rolledQty += tempQty;
@@ -127,6 +154,10 @@ export class Order {
 	  this.merchant = merchant;
   }
 
+  /**
+   * todo we should only be reading an order total pricing from backend once we hit the backend.
+   * Front end total calculations should only be estimates.
+   */
 	public getTotalPrice(): number {
 		if(this.products && this.products.length) {
 			// short way
@@ -154,5 +185,50 @@ export class Order {
 
 	public getProducts(): Product[] {
 	  return this.products;
+  }
+
+  public getSubTotal(): number {
+    return this.stringCurrencyToUSD(this.sub_total);
+  }
+
+  public getTax(): number {
+	  return this.stringCurrencyToUSD(this.tax);
+  }
+
+  private stringCurrencyToUSD(val: string): number {
+	  let result: number = 0;
+    try{
+      result = parseFloat(this.sub_total);
+    } catch(e) {
+      console.warn('<< Order >> stringCurrencyToUSD failed, parseFloat error');
+    }
+    return result;
+  }
+
+  /**
+   * Converts the returned response model to Order object.
+   * The model structur depends on the backend response.
+   * @param model
+   */
+  public static deserialize(model: any): Order {
+    const order: Order = new Order();
+
+    // implicit transforms
+    // if you want all properties, hydrate the entire response into the order
+    Object.assign(order, model);
+
+    // explicit transforms
+    // hydrate and correct any special properties that may not have matching names
+    order.status = OrderStatus.fromValue(model.status);
+    order.deliveryType = DeliveryType.PICK_UP;
+    order.orderID = model.id;
+
+    // nested children deserialize
+    if(model.items) {
+      order.orderItems = OrderItem.deserializeAsArray(model.items);
+    }
+
+    // return the order
+    return order;
   }
 }

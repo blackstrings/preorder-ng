@@ -1,4 +1,4 @@
-import {Merchant} from "../merchant/merchant";
+import {OrderItem} from "../order-item/order-item";
 
 export class Product {
 
@@ -48,30 +48,60 @@ export class Product {
     return total;
   }
 
-
   // SETTERS
-  public setName(val: string): void{
+  public setId(val: number): Product {
+    this.id = val;
+    return this;
+  }
+
+  public setName(val: string): Product {
     this.title = val;
+    return this;
   }
 
-  public setDescription(val: string): void{
+  public setDescription(val: string): Product {
     this.description = val;
+    return this;
   }
 
-  public setPrice(val: number): void{
+  public setPrice(val: number): Product {
     this.price = val;
+    return this;
   }
 
-  public setAdditionalTime(val: string): void{
+  public setAdditionalTime(val: string): Product {
     this.additional_time = val;
+    return this;
   }
 
-  public setAvailableStart(val: string): void{
+  public setAvailableStart(val: string): Product {
     this.available_start = val;
+    return this;
   }
 
-  public setAvailableEnd(val: string): void{
+  public setAvailableEnd(val: string): Product {
     this.available_end = val;
+    return this;
+  }
+
+  public setCreatedAt(val: string): Product {
+    this.created_at = val;
+    return this;
+  }
+
+  public setMerchantId(val: number): Product {
+    this.merchant_id = val;
+    return this;
+  }
+
+  public setTitle(val: string): Product {
+    this.title = val;
+    return this;
+  }
+
+  public setUpdatedAt(val: string): Product {
+    this.updated_at = val;
+    return this;
   }
 
   // GETTERS
@@ -83,19 +113,28 @@ export class Product {
     return this.description;
   }
 
-  public getPrice(): number{
-    return this.price;
+  // loaded price may be a string so we return it as a number
+  public getPrice(): number {
+    let price: number = 0;
+    if(this.price) {
+      try{
+        price = parseFloat(this.price as any)
+      } catch(e) {
+        console.warn('<< Product >> getPrice failed, parse failed for id: ' + this.id + ' returning 0');
+      }
+    }
+    return price;
   }
 
-  public getAdditionalTime(): string{
+  public getAdditionalTime(): string {
     return this.additional_time;
   }
 
-  public getAvailableStart(): string{
+  public getAvailableStart(): string {
     return this.available_start;
   }
 
-  public getAvailableEnd(): string{
+  public getAvailableEnd(): string {
     return this.available_end;
   }
 
@@ -104,42 +143,35 @@ export class Product {
   }
   /*
 
-  public getPrice(): number {
-
-    // let num: number = 0;
-    // if(typeof this.price === 'string') {
-    //   num = parseFloat(this.price);
-    //   return parseFloat(num.toFixed(2));
-    // }
-    return this.price;
-  }
-
   // turns serialized object into the concrete form
   public static deserialize(data: Product): Product {
 
-    return new Product(
-      data.additional_time,
-      data.available_end,
-      data.available_start,
-      data.created_at,
-      data.description,
-      data.id,
-      data.merchant_id,
-      parseFloat(data.price as any),
-      data.title,
-      data.updated_at,
-      data.merchant
-    );
+    const p: Product = new Product();
+    p.setAdditionalTime(data.additional_time)
+    p.setAvailableEnd(data.available_end)
+    p.setAvailableStart(data.available_start)
+    p.setDescription(data.description)
+    p.setCreatedAt(data.created_at)
+    p.setId(data.id)
+    p.setMerchantId(data.merchant_id)
+    p.setPrice(data.price)
+    p.setTitle(data.title)
+    p.setUpdatedAt(data.updated_at);
+
+    return p;
   }
 
-  public static deserializeAsArray(data: Product[]): Product[] {
+  public static deserializeAsArray(data: any): Product[] {
     if(data) {
+      const orderItems: OrderItem[] = [];
       const products: Product[] = [];
-      data.forEach(d => {
-        products.push(Product.deserialize(d));
+      data.forEach( (_orderItem: any) => {
+        const orderItem: OrderItem = new OrderItem();
+        Object.assign(orderItem, _orderItem);
+        products.push(Product.deserialize(_orderItem));
       });
       return products;
     }
   }
-  */
+
 }

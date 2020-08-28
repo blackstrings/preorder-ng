@@ -12,6 +12,7 @@ import {AddToOrderValidatorContainer} from '../../validators/add-to-order-valida
 import {CartServiceSubscription} from "./cart-service-subscription";
 import {Product} from "../../models/product/product";
 import {DeliveryType} from "../../models/delivery/delivery-type";
+import {OrderItem} from "../../models/order-item/order-item";
 
 @Injectable({
 	providedIn: 'root'
@@ -21,13 +22,18 @@ export class CartService {
   // setup other classes to listen to CartServices using subscriptions
   private _onAddToOrder: Subject<Order> = new Subject<Order>();
 
-	// the only order that can exist at any given time in the service
-	// multi orders not supported unless business decides to need it
-  // this is the order that has not been checked out yet
+  /**
+   * the only order that can exist at any given time in the service
+   * multi orders not supported unless business decides to need it
+   * this is the order that has not been checked out yet
+   */
 	private pendingOrder: Order = new Order();
 
 	// when the order is checked out, the order id should be saved in case of a quick recall
 	private submittedOrderID: string;
+
+	/** when an order is checked out, backend will return this to get the order ready for payment */
+	private client_token: string;
 
 	/**
 	 * Handles send order
@@ -39,7 +45,7 @@ export class CartService {
 
 	  // make this first order by default pickup
 	  if(this.pendingOrder){
-	    this.pendingOrder.deliveryType = DeliveryType.PICKUP;
+	    this.pendingOrder.deliveryType = DeliveryType.PICK_UP;
     }
 	}
 
@@ -58,10 +64,11 @@ export class CartService {
         const uri: string = ApiEndPoints.USER_SUBMIT_ORDER;
         // const uri: string = 'merchants/' + this.order.merchant.id + '/products/';
 
-        // construct the products into a model that will fit the backend
+        // construct the products into a model that matches the backend input structure
         const products: Product[] = this.pendingOrder.getProducts();
-        let orderItemsArray: any = products.map(p => {
-          return {product_id: p.id, quantity_id: p.orderQTY}
+        let orderItemsArray: OrderItem[] = products.map(p => {
+          const orderItem: any = {product_id: p.id, quantity_id: p.orderQTY};
+          return orderItem;
         });
 
         // construct the body structure for the backend
@@ -83,7 +90,7 @@ export class CartService {
 
               // success is expected
               if(resp.success) {
-                console.log('<< CarServices >> checkout success');
+                console.log('<< CarServices >> order reloaded for checkout success');
                 // deserialize into order object
                 const order: Order = new Order();
                 // Object.assign(order, resp); // copy all the properties into the order object
@@ -212,7 +219,7 @@ export class CartService {
 	public startNewOrder(container: AddToOrderValidatorContainer): void {
 		if(container) {
 			this.pendingOrder = new Order();
-      this.pendingOrder.deliveryType = DeliveryType.PICKUP;
+      this.pendingOrder.deliveryType = DeliveryType.PICK_UP;
 			this.pendingOrder.setMerchant(container.merchant);
 		} else {
 			throw new Error('<< CartServices >> startNewOrder failed, container null');
@@ -225,7 +232,9 @@ export class CartService {
 	}
 
 	/**
-   * returns the order the user checked out on.
+   * returns the order the user checked out on
+   * Goes to the backend to retrieve order.
+   * This allows the user to begin the payment process.
    * Used for during navigating the user to the payment processing view to display the order.
    */
 	public getCheckedOutOrder(orderID: string, token: string): Observable<Order | HttpErrorContainer> {
@@ -236,13 +245,15 @@ export class CartService {
 	    map( (resp: any) => {
 	      // handling deserialization
 	      if(resp) {
-	        const order: Order = new Order();
-	        Object.assign(order, resp);
+	        // prep to hydrate the json into the real object
+	        return Order.deserialize(resp);
         }
-	      return resp;
+	      return null;
       })
     );
   }
+
+
 
 
 }
