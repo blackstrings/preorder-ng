@@ -3,8 +3,16 @@
  * So we sending products to the backend, we have to transform products into orderItem
  */
 import {Product} from "../product/product";
+import {parseFreeFormArguments} from "@angular/cli/models/parser";
 
 export class OrderItem {
+  private _id: number;
+  private _price: string;
+  private _quantity: number;
+  private _updated_at: string;
+  private _created_at: string;
+  private _product: Product;a
+
   get id(): number {
     return this._id;
   }
@@ -52,12 +60,18 @@ export class OrderItem {
   set product(value: Product) {
     this._product = value;
   }
-  private _id: number;
-  private _price: string;
-  private _quantity: number;
-  private _updated_at: string;
-  private _created_at: string;
-  private _product: Product;
+
+  /**
+   * over price checker
+   * @returns true if price over 1000
+   */
+  public isPriceOverLimit(): boolean {
+    const price: number = parseFloat(this.price);
+    if(price && price > 1000) {
+      return true;
+    }
+    return false;
+  }
 
   public static deserialize(data: any): OrderItem {
     const o: OrderItem = new OrderItem();
