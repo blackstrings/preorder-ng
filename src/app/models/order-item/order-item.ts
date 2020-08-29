@@ -3,7 +3,6 @@
  * So we sending products to the backend, we have to transform products into orderItem
  */
 import {Product} from "../product/product";
-import {parseFreeFormArguments} from "@angular/cli/models/parser";
 
 export class OrderItem {
   private _id: number;
@@ -81,7 +80,6 @@ export class OrderItem {
     o.updated_at = data.updated_at;
     o.created_at = data.created_at;
     o.product = Product.deserialize(data.product);
-
     return o;
   }
 
