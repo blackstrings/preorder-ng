@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {CartService} from "../../../services/cart-service/cart.service";
 import {Order} from "../../../models/order/order";
 import {UserService} from "../../../services/user-service/user.service";
@@ -10,6 +10,7 @@ import {take} from "rxjs/operators";
 import {PaymentResponseRK} from "../../../models/payment/payment-response-rk";
 import {Observable} from "rxjs";
 import {Merchant} from "../../../models/merchant/merchant";
+import {ViewRoutes} from "../../view-routes";
 
 /**
  * Mainly this page handles payment for the order or items in the order/cart.
@@ -63,6 +64,7 @@ export class UserOrderCheckoutViewComponent implements OnInit {
               private cartService: CartService,
               private userService: UserService,
               private paymentService: PaymentService,
+              private router: Router,
               private cd: ChangeDetectorRef){
 
   }
@@ -233,6 +235,8 @@ export class UserOrderCheckoutViewComponent implements OnInit {
 
               // but for now we'll do a front handling to backend without webhook
               console.warn('todo send payment intent full fillment id to backend');
+
+              this.router.navigate([ViewRoutes.USER_ORDER_HISTORY + '/' + this.order.orderID]);
 
             } else {
 

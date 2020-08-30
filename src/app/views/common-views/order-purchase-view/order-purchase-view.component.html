@@ -1,0 +1,24 @@
+<div>
+
+  <app-loading-view [(isScreenLoading)]="isScreenLoading" [(isScreenInitError)]="isScreenInitError"></app-loading-view>
+
+  <!-- this ngIf format allows us to display the section only after the data is loaded -->
+  <div *ngIf="$order | async as order" class="card">
+    <div class="card-header">
+      <h1>Order#: {{order.orderID}}</h1>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        {{order.merchant.name}}
+      </div>
+    </div>
+
+    <div class="list-group-flush">
+      <div class="list-group-item" *ngFor="let p of order.orderItems">
+        {{p.quantity}} : {{p.product.getName()}}
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -30,13 +30,13 @@
       <div class="row mt-4">
         <div class="col-sm text-align-right">
           <div>
-            <span>Subtotal: </span>{{order.getTotalPrice() | currency:'USD':'symbol':'1.2-2'}}
+            <span>Subtotal: </span>{{order.sub_total | currency:'USD':'symbol':'1.2-2'}}
           </div>
           <div>
-            <span>Tax: </span>{{order.getTax() | currency:'USD':'symbol':'1.2-2'}}
+            <span>Tax: </span>{{order.tax | currency:'USD':'symbol':'1.2-2'}}
           </div>
           <div class="total-font">
-            <strong>Total: {{order.getSubTotal() | currency:'USD':'symbol':'1.2-2'}}</strong>
+            <strong>Total: {{order.order_total| currency:'USD':'symbol':'1.2-2'}}</strong>
           </div>
         </div>
       </div>

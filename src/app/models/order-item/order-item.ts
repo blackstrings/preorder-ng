@@ -1,9 +1,9 @@
+import {Product} from "../product/product";
+
 /**
  * products under an order are orderItems in the backend
  * So we sending products to the backend, we have to transform products into orderItem
  */
-import {Product} from "../product/product";
-
 export class OrderItem {
   private _id: number;
   private _price: string;
@@ -72,6 +72,7 @@ export class OrderItem {
     return false;
   }
 
+  // transform model to an OrderItem
   public static deserialize(data: any): OrderItem {
     const o: OrderItem = new OrderItem();
     o.id = data.id;
@@ -83,6 +84,7 @@ export class OrderItem {
     return o;
   }
 
+  // transforms an array of data into an array of OrderItem
   public static deserializeAsArray(data: any[]): OrderItem[] {
     const orderItems: OrderItem[] = [];
     if(data) {

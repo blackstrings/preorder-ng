@@ -143,7 +143,7 @@ export class Product {
   }
 
   // turns serialized object into the concrete form
-  public static deserialize(data: Product): Product {
+  public static deserialize(data: any): Product {
 
     const p: Product = new Product();
     p.setAdditionalTime(data.additional_time)
@@ -162,12 +162,9 @@ export class Product {
 
   public static deserializeAsArray(data: any): Product[] {
     if(data) {
-      const orderItems: OrderItem[] = [];
       const products: Product[] = [];
-      data.forEach( (_orderItem: any) => {
-        const orderItem: OrderItem = new OrderItem();
-        Object.assign(orderItem, _orderItem);
-        products.push(Product.deserialize(_orderItem));
+      data.forEach( (productData: any) => {
+        products.push(Product.deserialize(productData));
       });
       return products;
     }
