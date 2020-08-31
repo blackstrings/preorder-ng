@@ -7,6 +7,7 @@ import {ActivatedRoute} from "@angular/router";
 import {take} from "rxjs/operators";
 import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-container";
 
+/** displays an order that has been paid for. Possible turned into a modal? */
 @Component({
   selector: 'app-order-purchase-view',
   templateUrl: './order-purchase-view.component.html',

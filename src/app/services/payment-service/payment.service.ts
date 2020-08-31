@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {loadStripe, Stripe, StripeCardElement} from '@stripe/stripe-js';
-import {Observable, of} from "rxjs";
+import {Observable} from "rxjs";
 import {PaymentResponseRK} from "../../models/payment/payment-response-rk";
 
 /**
@@ -42,9 +42,6 @@ export class PaymentService {
         // If the card requires authentication Stripe shows a pop-up modal to
         // prompt the user to enter authentication details without leaving your page.
 
-        // show loading icon?
-        // loading(true);
-
         this.stripe.confirmCardPayment(clientSecret, {
           payment_method: {
             card: card
@@ -58,8 +55,14 @@ export class PaymentService {
             // paymentIntent is inside the stripeError
             const resp: PaymentResponseRK = new PaymentResponseRK()
               .setStatus(false)
-              .setMessage(result.error.payment_intent.status)
               .setStripeError(result.error);
+
+            // stripe has a few types of error, currently we only handle a few and not all yet
+            if(result.error.type === 'validation_error') {
+              resp.setMessage(result.error.message)
+            } else if(result.error.payment_intent) {
+              resp.setMessage(result.error.payment_intent.status)
+            }
 
             subscriber.next(resp);
             subscriber.complete();
@@ -91,6 +94,7 @@ export class PaymentService {
 
   }
 
+  // verifies an order has been paid or not
   public checkOrderIsPaid(orderClientToken: string): Observable<boolean> {
 
     return new Observable<boolean>((subscriber) => {
@@ -154,7 +158,8 @@ export class PaymentService {
     if(elements){
       const card: StripeCardElement = elements.create("card", {style: style});
 
-      // if a dom container was provided, set the stripe card dom element into it, else call mount at a later time
+      // if a dom container was provided, call mount to use the pre-generated strip card dom element for you
+      // if container not provided, you must call mount after getting the stripeCard to display the card
       if(divContainer) {
         card.mount(divContainer);
       }

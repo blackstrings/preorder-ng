@@ -1,5 +1,7 @@
 
-/** custom enum */
+/** custom enum
+ * [none, cancelled, pending, processing, received, accepted, ready, complete]
+ **/
 export class OrderStatus {
   protected static values: Map<string, OrderStatus> = new Map<string, OrderStatus>();
 
