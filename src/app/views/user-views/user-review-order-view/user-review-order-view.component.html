@@ -25,7 +25,7 @@
       </div>
 
       <ng-container *ngFor="let p of order.products">
-        <div class="list-group-item list-group-item-action">
+        <div class="list-group-item list-group-item-action" (click)="showModalProductView(p.id)">
           <span class="badge badge-dark">{{p.orderQTY}}</span>
           {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
           <span class="badge-pill float-right"> {{p.calculateTotalPrice() | currency:'USD':'symbol':'1.2-2'}} </span>
