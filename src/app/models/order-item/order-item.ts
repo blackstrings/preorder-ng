@@ -10,7 +10,7 @@ export class OrderItem {
   private _quantity: number;
   private _updated_at: string;
   private _created_at: string;
-  private _product: Product;a
+  private _product: Product;
 
   get id(): number {
     return this._id;

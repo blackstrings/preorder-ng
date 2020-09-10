@@ -42,6 +42,8 @@ export class Order {
 	// for pickup and possible future for when to receive delivery time
 	public anticipatedPickupTime: string;
 
+	public order_token: string;
+
 	/**
    * the order status.
    * the phase the order is in. [pending, processing, pickup_ready, complete, cancelled]
