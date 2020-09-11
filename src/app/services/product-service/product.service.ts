@@ -78,4 +78,5 @@ export class ProductService {
   public getCurrentProducts(): Product[] {
     return this.availableProducts.slice();
   }
+
 }

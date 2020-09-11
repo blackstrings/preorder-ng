@@ -1,3 +1,5 @@
+import { CartService } from './../../../../services/cart-service/cart.service';
+import { ProductService } from './../../../../services/product-service/product.service';
 import {Component, Input, OnInit} from '@angular/core';
 import {Product} from "../../../../models/product/product";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
@@ -40,6 +42,7 @@ export class ProductAddModalViewComponent implements OnInit {
   public init(product: Product): void {
     this.product = product;
     this.totalPrice = this.product.price;
+    console.log(this.product.orderQTY);
   }
 
   ngOnInit(): void {
@@ -48,11 +51,16 @@ export class ProductAddModalViewComponent implements OnInit {
   /** increment the qty - highest can go is 99 */
   public add(): void {
     // public add(productID: number, qty): void {
+
+    /*
     this.qty++;
     if(this.qty > 99) {
       this.qty = 99;
     }
-    this.updateTotalPrice();
+    */
+
+   this.qty++;
+   this.updateTotalPrice();
   }
 
   /** lower the qty - lowest can go is 1 */
@@ -75,7 +83,7 @@ export class ProductAddModalViewComponent implements OnInit {
    */
   public dismiss(): void {
   	this.activeModal.dismiss();
-  	this._onClose.next(null);
+    this._onClose.next(null);
   }
 
   /**

@@ -95,7 +95,7 @@ export class UserReviewOrderViewComponent implements OnInit {
 
   /** required data that should be available on page init */
   private setupViewData(): void {
-    this.order = this.order = this.cartService.getPendingOrder();
+    this.order = this.cartService.getPendingOrder();
     if(this.order && this.order.products) {
       this.merchant = this.order.merchant;
       this.merchantName = this.merchant && this.merchant.name ? this.merchant.name : '';
@@ -181,6 +181,10 @@ export class UserReviewOrderViewComponent implements OnInit {
           }
         });
     }
+  }
+
+  public deleteOrder(id: number){
+    this.cartService.removeProduct(id);
   }
 
 }

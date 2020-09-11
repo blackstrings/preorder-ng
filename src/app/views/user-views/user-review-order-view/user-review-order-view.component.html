@@ -30,6 +30,7 @@
           {{ (p.title.length>productNameMaxCharacter)? (p.title | slice:0:productNameMaxCharacter)+'...':(p.title) }}
           <span class="badge-pill float-right"> {{p.calculateTotalPrice() | currency:'USD':'symbol':'1.2-2'}} </span>
         </div>
+        <button (click)="deleteOrder(p.id)">delete</button>
       </ng-container>
 
       <!-- subtotal and tax -->
