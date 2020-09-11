@@ -253,6 +253,12 @@ export class CartService {
     );
   }
 
+  //** removes a product based on the passed in product id */
+  public removeProduct(id: number) {
+    const index: number = this.pendingOrder.products.indexOf(this.pendingOrder.products.filter(x => x.id === id)[0]);
+    this.pendingOrder.products.splice(index, 1);
+  }
+
 
 
 
