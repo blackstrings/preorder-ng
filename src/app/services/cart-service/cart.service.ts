@@ -20,7 +20,7 @@ import {OrderItem} from "../../models/order-item/order-item";
 export class CartService {
 
   // setup other classes to listen to CartServices using subscriptions
-  private _onAddToOrder: Subject<Order> = new Subject<Order>();
+  private onOrderUpdate: Subject<Order> = new Subject<Order>();
 
   /**
    * the only order that can exist at any given time in the service
@@ -41,7 +41,7 @@ export class CartService {
 	 */
 	constructor(private sub: CartServiceSubscription, private httpWrapper: HttpWrapperService<Order>) {
 	  console.debug('<< CartService >> Init');
-	  sub.onAddToOrder = this._onAddToOrder.asObservable();
+	  sub.onOrderUpdate$ = this.onOrderUpdate.asObservable();
 
 	  // make this first order by default pickup
 	  if(this.pendingOrder){
@@ -198,7 +198,7 @@ export class CartService {
 			if(container.getValidationStatus()) {
 
 					this.pendingOrder.addProduct(container.product);
-					this._onAddToOrder.next(this.pendingOrder);
+					this.onOrderUpdate.next(this.pendingOrder);
 					console.debug('<< CartService >> product added');
 					console.dir(this.pendingOrder);
 					return true;
@@ -256,10 +256,13 @@ export class CartService {
   //** removes a product based on the passed in product id */
   public removeProduct(id: number) {
     const index: number = this.pendingOrder.products.indexOf(this.pendingOrder.products.filter(x => x.id === id)[0]);
-    this.pendingOrder.products.splice(index, 1);
+    if(index >= 0) {
+    	this.pendingOrder.products.splice(index, 1);
+    	this.onOrderUpdate.next(this.pendingOrder);
+    } else {
+    	console.warn('<< CartService >> removeProduct failed, index null');
+    }
   }
-
-
 
 
 }

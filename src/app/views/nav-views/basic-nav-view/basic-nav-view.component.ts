@@ -36,7 +36,7 @@ export class BasicNavViewComponent {
     });
 
     // add product to order subscription
-    this.cartServiceSub.onAddToOrder.subscribe( (order: Order) => {
+    this.cartServiceSub.onOrderUpdate$.subscribe( (order: Order) => {
       this.shoppingCartItemCount = order.getNumberOfProducts();
     });
   }

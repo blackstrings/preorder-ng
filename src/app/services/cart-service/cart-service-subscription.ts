@@ -11,7 +11,7 @@ export class CartServiceSubscription {
    * subscription to know when addToOrder was called, wired in CartService
    * @see CartService
    */
-  public onAddToOrder: Observable<Order>;
+  public onOrderUpdate$: Observable<Order>;
 
   constructor(){
     console.debug('<< CartServiceSubscription >> Init');
