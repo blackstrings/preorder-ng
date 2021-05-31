@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, VERSION} from '@angular/core';
 
 @Component({
   selector: 'app-footer-view',
@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FooterViewComponent implements OnInit {
 
+  public ver: string = VERSION.major;
   public currentYear: number;
   constructor() {
 

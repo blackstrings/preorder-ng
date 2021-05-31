@@ -2,15 +2,22 @@
 
   <app-loading-view [(isScreenLoading)]="isScreenLoading" [(isScreenInitError)]="isScreenInitError"></app-loading-view>
 
-  <!-- this ngIf format allows us to display the section only after the data is loaded -->
+  <!-- this ngIf format combo with async allows us to display the section only after the data is loaded -->
   <div *ngIf="$order | async as order" class="card">
-    <div class="card-header">
-      <h1>Order#: {{order.orderID}}</h1>
-    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        <h3 class="card-title">{{order.merchant.name | titlecase}}</h3>
+      </div>
+      <div id="merchant-info" class="card-body">
+        // todo hard coded
+        <p>todo - Open/Close - 7am - 9pm<br>
+          3533 N Clairmont, Eau Claire, WI</p>
+      </div>
 
     <div class="row">
       <div class="col">
-        {{order.merchant.name}}
+      <h3>Order#: {{order.orderID}}</h3>
       </div>
     </div>
 

@@ -4,7 +4,7 @@ import {ViewRoutes} from "../../view-routes";
 import {Observable, Subject, throwError} from "rxjs";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ResponseLogin} from "../../../apis/responses/response-login";
-import {catchError, take, takeUntil} from 'rxjs/operators';
+import {catchError, delay, take, takeUntil} from 'rxjs/operators';
 import {UserService} from "../../../services/user-service/user.service";
 import {User} from "../../../models/user/user";
 import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-container";
@@ -22,6 +22,9 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
   // custom
   public showLoginFailed: boolean = false;
   public showServerError: boolean = false;
+
+  private onLoading: Subject<boolean> = new Subject<boolean>();
+  public onLoading$: Observable<boolean> = this.onLoading.asObservable();
 
   // the model
   public user: User = new User();
@@ -85,7 +88,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
    * Takes care of logging in and handling errors.
    */
   public login(): void {
-
+    this.onLoading.next(true);
     if(this.isFormValid()) {
 
       // debug only for faster login test
@@ -95,6 +98,7 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
 
       this.userService.login(this.user.email, this.user.password)
         .pipe(
+          delay(1000),
           take(1),
           catchError( e => throwError(e))
         )
@@ -103,27 +107,25 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
               // handle server errors
               if(response instanceof HttpErrorContainer) {
                 if(response.status === 401) {
-                  this.showLoginFailed = true;
-                  this.showServerError = false;
+                  this.respondToLogin(true, false);
                 } else {
                   console.error('<< UserLoginView >> login failed, server issue: Is server up and Database up?');
-                  this.showLoginFailed = false;
-                  this.showServerError = true;
+                  this.respondToLogin(false, true);
                 }
               } else {
                 console.log('<< UserLoginView >> Login success');
+                this.respondToLogin(!response.isLoginSuccess);
                 this.router.navigate([ViewRoutes.MERCHANT_LIST]);
-                this.showLoginFailed = !response.isLoginSuccess;
               }
 
             } else {
               console.error('<< UserLoginView >> login failed, data returned is null');
-              this.showLoginFailed = true;
+              this.respondToLogin(true);
             }
           },
           (e) => {
             console.error(e);
-            this.showLoginFailed = true;
+            this.respondToLogin(true);
           }
         );
 
@@ -131,6 +133,13 @@ export class UserLoginViewComponent implements OnInit, AfterViewInit, OnDestroy 
       console.warn('<< UserLoginView >> login failed, form is invalid');
     }
 
+  }
+
+  private respondToLogin(isFailed: boolean, isServerError: boolean = false): void {
+    this.showLoginFailed = isFailed;
+    this.showServerError = isServerError;
+    // processing login is done and results are back
+    this.onLoading.next(false);
   }
 
   /** final form check before making call */

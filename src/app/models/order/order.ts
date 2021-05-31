@@ -5,6 +5,9 @@ import {User} from "../user/user";
 import {OrderStatus} from "./OrderStatus";
 import { OrderItem } from '../order-item/order-item';
 
+/**
+ * The main container to hold selected items under one order.
+ */
 export class Order {
 	// turns to true when you run it against the OrderValidator.validate() and succeeds
 	isValidateSuccess: boolean;

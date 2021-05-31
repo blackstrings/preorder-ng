@@ -1,6 +1,5 @@
 <div id="user-login-container">
 
-
     <!-- ngOnSubmit will handle pressing enter and when the form is done -->
     <form [formGroup]="formLogin" (ngSubmit)="login()">
 
@@ -36,7 +35,9 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>
+      <div *ngIf="!(onLoading$ | async) else loadingDiv">
+        <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>
+      </div>
     </form>
 
     <hr>
@@ -53,3 +54,4 @@
 
 <!-- templates -->
 <ng-template #greenCheck><fa-icon style="color: green" icon="check"></fa-icon></ng-template>
+<ng-template #loadingDiv>Logging in ...</ng-template>
