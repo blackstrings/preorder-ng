@@ -1,4 +1,4 @@
-<div>
+<div id="loading">
   <ng-container *ngIf="isScreenInitError">
     <div class="alert alert-danger">
       An internal error occurred...
@@ -6,6 +6,8 @@
   </ng-container>
 
   <ng-container *ngIf="isScreenLoading">
-    <div class="spinner-border text-primary"></div>
+    <div class="spinner-grow text-info text-center" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
   </ng-container>
 </div>

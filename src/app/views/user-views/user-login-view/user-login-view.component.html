@@ -35,9 +35,11 @@
         </div>
       </div>
 
+      <!-- show loader on login submit -->
       <div *ngIf="!(onLoading$ | async) else loadingDiv">
-        <button type="submit" class="btn btn-block btn-primary" [disabled]="!formLogin.valid">Login</button>
+        <button type="submit" class="btn btn-bl1ock btn-primary" [disabled]="!formLogin.valid">Login</button>
       </div>
+
     </form>
 
     <hr>
@@ -54,4 +56,8 @@
 
 <!-- templates -->
 <ng-template #greenCheck><fa-icon style="color: green" icon="check"></fa-icon></ng-template>
-<ng-template #loadingDiv>Logging in ...</ng-template>
+
+<ng-template #loadingDiv>
+  <div class="small">Logging in</div>
+  <app-loading-view></app-loading-view>
+</ng-template>

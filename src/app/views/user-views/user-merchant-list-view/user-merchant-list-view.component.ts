@@ -1,18 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  ChangeDetectionStrategy,
+  Component
+} from '@angular/core';
 import {Merchant} from "../../../models/merchant/merchant";
-import {take} from "rxjs/operators";
+import {delay, take} from "rxjs/operators";
 import {ViewRoutes} from "../../view-routes";
 import {Router} from "@angular/router";
 import {UserService} from "../../../services/user-service/user.service";
 import {MerchantService} from "../../../services/merchant-service/merchant.service";
 import {FormGroup} from "@angular/forms";
+import {Observable, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-user-merhchant-list-view',
   templateUrl: './user-merchant-list-view.component.html',
-  styleUrls: ['./user-merchant-list-view.component.scss']
+  styleUrls: ['./user-merchant-list-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserMerchantListViewComponent implements OnInit {
+export class UserMerchantListViewComponent implements AfterContentInit {
 
   ViewRoutes = ViewRoutes;
 
@@ -20,16 +26,34 @@ export class UserMerchantListViewComponent implements OnInit {
   public readonly maxCharLimit: number = 36;
   public formSearchType: FormGroup = new FormGroup({});
 
-  constructor(private router: Router, private userService: UserService, private merchantService: MerchantService) {
+  private onLoadingComplete: Subject<boolean> = new Subject<boolean>();
+  public onLoadingComplete$: Observable<boolean> = this.onLoadingComplete.asObservable();
+
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private merchantService: MerchantService
+  ) {
     console.log('<< UserMerchantListView >> View Initiated');
   }
 
-  ngOnInit(): void {
-    const token: string = this.userService.getAuthToken();
+  /**
+   * rather than ngAfterViewInit, this one is used to avoid error with content
+   * change detection with the pipe async in the html
+   */
+  ngAfterContentInit() {
+    this.populateMerchantList();
+  }
 
-    // todo check if need to fetch new merchants or not, if not, grab from cache instead
+  /**
+   * todo user should provide zipcode or search by string name
+   * currently just returning all list in the database
+   */
+  private populateMerchantList(): void {
+    this.onLoadingComplete.next(false);
+    const token: string = this.userService.getAuthToken();
     this.merchantService.getMerchantList(token)
-      .pipe(take(1))
+      .pipe(delay(1000), take(1))
       .subscribe((data: Merchant[]) => {
         console.debug(data);
         this.merchants = data;
@@ -37,9 +61,11 @@ export class UserMerchantListViewComponent implements OnInit {
         // if the object is a blob, you can try to push it into its shape with
         // this.merchants = {...data}
         // this.merchants = [...data]
+        this.onLoadingComplete.next(true);
       }, (e) => {
         console.error(e);
-        console.error('<< MerchantListView >> getMerchantList failed');
+        console.error('<< UserMerchantListView >> populateMerchantList failed');
+        this.onLoadingComplete.next(true);
       });
   }
 

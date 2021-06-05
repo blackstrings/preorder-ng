@@ -1,10 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 
 /** used for displaying a loading status screens on every page */
 @Component({
   selector: 'app-loading-view',
   templateUrl: './loading-view.component.html',
-  styleUrls: ['./loading-view.component.scss']
+  styleUrls: ['./loading-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoadingViewComponent implements OnInit {
 

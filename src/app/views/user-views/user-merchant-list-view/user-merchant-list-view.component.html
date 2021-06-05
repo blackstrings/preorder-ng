@@ -1,30 +1,42 @@
-<div id="search-box" class="row">
-  <div class="col-12">
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <div class="input-group-text" id="btnGroupAddon2">
-          <fa-icon icon="search"></fa-icon>
+<div>
+  <div class="display-5">Select a vendor</div>
+  <div *ngIf="(onLoadingComplete$ | async) else loadingDiv">
+    <div id="search-box" class="row">
+      <div class="col-12">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <div class="input-group-text" id="btnGroupAddon2">
+              <fa-icon icon="search"></fa-icon>
+            </div>
+          </div>
+          <input type="text" class="form-control" placeholder="pizza, chinese, store name, ..." aria-label="Input group example" aria-describedby="btnGroupAddon2">
         </div>
       </div>
-      <input type="text" class="form-control" placeholder="pizza, chinese, store name, ..." aria-label="Input group example" aria-describedby="btnGroupAddon2">
     </div>
+
+    <div style="padding-bottom: 10px;">
+      <form [formGroup]="formSearchType">
+        <input type="radio" value="selected" id="opt1" name="searchby"> Location
+        <input type="radio" value="v1" id="opt2" name="searchby"> Keyword
+      </form>
+    </div>
+
+    <div class="row">
+      <div class="col-12 list-group no-padding-right">
+        <ng-container *ngFor="let merchant of merchants">
+          <a class="list-group-item list-group-item-action"
+             (click)="goToUserCreateOrderView(merchant.id)">
+            {{ (merchant.name.length>maxCharLimit) ? (merchant.name | titlecase | slice:0:maxCharLimit)+'...' : (merchant.name | titlecase) }}
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
-<div style="padding-bottom: 10px;">
-  <form [formGroup]="formSearchType">
-    <input type="radio" value="selected" id="opt1" name="searchby"> Location
-    <input type="radio" value="v1" id="opt2" name="searchby"> Keyword
-  </form>
-</div>
-
-<div class="row">
-  <div class="col-12 list-group no-padding-right">
-    <ng-container *ngFor="let merchant of merchants">
-      <a class="list-group-item list-group-item-action"
-         (click)="goToUserCreateOrderView(merchant.id)">
-        {{ (merchant.name.length>maxCharLimit) ? (merchant.name | titlecase | slice:0:maxCharLimit)+'...' : (merchant.name | titlecase) }}
-      </a>
-    </ng-container>
-  </div>
-</div>
+<ng-template #loadingDiv>
+  <div class="small">Loading vendor list</div>
+  <app-loading-view></app-loading-view>
+</ng-template>
