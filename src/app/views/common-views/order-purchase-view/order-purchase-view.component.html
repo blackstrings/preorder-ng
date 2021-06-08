@@ -3,7 +3,7 @@
   <app-loading-view [(isScreenLoading)]="isScreenLoading" [(isScreenInitError)]="isScreenInitError"></app-loading-view>
 
   <!-- this ngIf format combo with async allows us to display the section only after the data is loaded -->
-  <div *ngIf="$order | async as order" class="card">
+  <div *ngIf="onOrderLoaded$ | async as order" class="card">
 
     <div class="card mb-3">
       <div class="card-header">

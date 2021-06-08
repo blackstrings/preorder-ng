@@ -15,7 +15,7 @@ import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-containe
 })
 export class OrderPurchaseViewComponent implements OnInit {
 
-  public $order: Observable<Order | HttpErrorContainer>;
+  public onOrderLoaded$: Observable<Order | HttpErrorContainer>;
 
   public isScreenInitError: boolean = false;
   public isScreenLoading: boolean = true;
@@ -47,9 +47,12 @@ export class OrderPurchaseViewComponent implements OnInit {
       if(token) {
 
         // just store the returned observable so we can rely on it to render the data
-        this.$order = this.cartService.getCheckedOutOrder(orderID, token);
+        this.onOrderLoaded$ = this.cartService.getCheckedOutOrder(orderID, token);
+
         // then subscribe to it separately
-        this.$order.pipe(take(1)).subscribe( (resp: Order) => {
+        this.onOrderLoaded$
+          .pipe(take(1))
+          .subscribe( (resp: Order) => {
               if(resp instanceof Order) {
                 console.log('<< OrderPurchaseView >> load complete and success');
               } else {
