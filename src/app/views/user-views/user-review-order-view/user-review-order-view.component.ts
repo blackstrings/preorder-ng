@@ -42,7 +42,10 @@ export class UserReviewOrderViewComponent implements OnInit {
 
   constructor(private cartService: CartService, private userService: UserService, private router: Router,
               private paymentService: PaymentService, private productService: ProductService,
-              private modalService: NgbModal) { }
+              private modalService: NgbModal)
+  {
+    console.log('<< UserReviewOrderView >> Init');
+  }
 
   ngOnInit(): void {
     this.setupViewData();
