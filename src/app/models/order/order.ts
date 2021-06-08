@@ -4,6 +4,7 @@ import {DeliveryType} from '../delivery/delivery-type';
 import {User} from "../user/user";
 import {OrderStatus} from "./OrderStatus";
 import { OrderItem } from '../order-item/order-item';
+import {PaymentStatus} from "../payment/payment-status";
 
 /**
  * The main container to hold selected items under one order.
@@ -33,10 +34,13 @@ export class Order {
 	// the merchant this product is from
 	public merchant: Merchant;
 
-	// represents a successful order created in the backend
+  /**
+   * The backend generates this id
+   * This can be used to lookup the order and find all information on the order status
+   */
 	public orderID: string;
 
-	// timestamp of order submission from front end
+	// timestamp of order submitted from front end to backend
 	public submitTime: string;
 
 	// how the user wish to get the order (pick_up, delivery, etc)
@@ -52,6 +56,11 @@ export class Order {
    * the phase the order is in. [pending, processing, pickup_ready, complete, cancelled]
    */
 	public status: OrderStatus = OrderStatus.NONE;
+
+  /**
+   * To track the payment status.
+   */
+	public paymentStatus: PaymentStatus = PaymentStatus.NONE;
 
 
 	/** the order during chekcout so the client can make payments */
