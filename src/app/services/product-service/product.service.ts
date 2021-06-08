@@ -33,7 +33,6 @@ export class ProductService {
         .pipe(
           // if you just want to return all the returned properties on merchant
           map( (returnedProducts: Product[]) => {
-
             if(returnedProducts && returnedProducts.length) {
               const products: Product[] = [];
               returnedProducts.forEach( x => {
@@ -45,13 +44,11 @@ export class ProductService {
             } else {
               console.error('<< ProductService >> merchantID: ' + merchantID + ' returned no products');
             }
-
             return returnedProducts;
           })
         );
     }
     return of(null);
-
   }
 
   private setAvailableProducts(products: Product[]): void {
@@ -66,7 +63,9 @@ export class ProductService {
   public getProductFromCache(id: number): Product {
     if(this.availableProducts && this.availableProducts.length) {
       const product: Product = this.availableProducts.filter(x => x.id === id)[0];
-      return product.clone();
+      if(product) {
+        return product.clone();
+      }
     }
     return null;
   }
