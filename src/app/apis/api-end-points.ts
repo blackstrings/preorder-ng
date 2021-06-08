@@ -15,6 +15,7 @@ export class ApiEndPoints {
   public static readonly USER_LOGOUT: string = 'user/logout';
   public static readonly USER_SUBMIT_ORDER: string = 'order_items';
   public static readonly USER_ORDER: string = 'orders';
+  public static readonly EDIT: string = 'edit';
   public static readonly USER_PRE_VALIDATE_ORDER: string = 'ordervalidate';
   public static readonly MERCHANT: string = 'merchants';
   public static readonly MERCHANT_CREATE: string = 'merchants';

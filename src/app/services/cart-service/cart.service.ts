@@ -238,7 +238,7 @@ export class CartService {
    * Used for during navigating the user to the payment processing view to display the order.
    */
 	public getCheckedOutOrder(orderID: string, token: string): Observable<Order | HttpErrorContainer> {
-	  const uri: string = ApiEndPoints.USER_ORDER + '/' + orderID + '/edit';
+	  const uri: string = ApiEndPoints.USER_ORDER + '/' + orderID + '/' + ApiEndPoints.EDIT;
 	  const opts: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
 	  // we only map, don't subscribe, the caller to this method is the one subscribing
 	  return this.httpWrapper.get(uri, opts).pipe(
