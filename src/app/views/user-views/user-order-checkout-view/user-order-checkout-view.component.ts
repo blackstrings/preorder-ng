@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {CartService} from "../../../services/cart-service/cart.service";
 import {Order} from "../../../models/order/order";
 import {UserService} from "../../../services/user-service/user.service";
@@ -8,10 +8,18 @@ import {Observable, Subject} from "rxjs";
 import {ViewRoutes} from "../../view-routes";
 import {HttpErrorContainer} from "../../../apis/http-wrapper/http-error-container";
 import {CardPaymentViewComponent} from "../../common-views/card-payment-view/card-payment-view.component";
+import {PaymentService} from "../../../services/payment-service/payment.service";
+import {take, takeUntil} from "rxjs/operators";
 
 /**
+ * The final stage before sending the order over with the payment.
  * Mainly this page handles payment for the order or items in the order/cart.
  * User cannot edit the order anymore and must start a new order or start over if they wish to edit the order.
+ *
+ * todo If user edits order, or cancels order, take the user back to the userReviewOrderView component,
+ * load the order_items from the backend, and populate the front end (might not have to do this)
+ * do not make a call to clear the backend order_items, when the user checksout again,
+ * backend will automatically delete the old order_items
  */
 @Component({
   selector: 'app-user-order-checkout-view',
@@ -55,8 +63,10 @@ export class UserOrderCheckoutViewComponent implements OnInit, OnDestroy {
   public cardFC: FormControl;
 
   constructor(private activatedRoute: ActivatedRoute,
+              private router: Router,
               private cartService: CartService,
-              private userService: UserService)
+              private userService: UserService,
+              private paymentService: PaymentService)
   {
     console.log('<< UserOrderCheckoutView >> Init');
   }
@@ -64,14 +74,50 @@ export class UserOrderCheckoutViewComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.setupView();
     this.setupForm();
+
+    // on payment success clear cart
+    this.paymentService.onPaymentSuccess$
+      .pipe(take(1), takeUntil(this.unSub))
+      .subscribe((success) => {
+        if(success) {
+          console.log('<< UserOrderCheckoutView >> payment succeeded, clearing cart');
+          this.resetCart();
+        } else {
+          console.error('<< UserOrderCheckoutView >> payment failed');
+        }
+      });
+
   }
 
   ngOnDestroy() {
     this.unSub.next();
   }
 
+  private resetCart(): void {
+    const token: string = this.userService.getAuthToken();
+    this.cartService.resetCart(token)
+      .pipe(take(1), takeUntil(this.unSub))
+      .subscribe(
+        (response) => {
+          console.log('<< UserOrderCheckoutView >> resetCart success, routing to summary');
+          this.routeToSummary();
+        },
+        (e) => {
+          console.log('<< UserOrderCheckoutView >> resetCart failed, routing to summary anyways');
+          console.error(e);
+          this.routeToSummary();
+        }
+      );
+  }
+
   private setupForm(): void {
     this.formPayment = new FormGroup({});
+  }
+
+  private routeToSummary(): void {
+    this.router.navigate([this.navigateUrlOnPaymentSuccess]).then(() => {
+      // do nothing
+    });
   }
 
   /** pulls the orderID from the url if available */
@@ -105,6 +151,7 @@ export class UserOrderCheckoutViewComponent implements OnInit, OnDestroy {
   /**
    * load and display the order based on the orderID provided from the backend.
    * The payment token will be within the order.
+   * When the payment is success, the route url will be generated
    */
   private loadOrder(orderID: string): void {
     if(orderID) {
@@ -117,8 +164,11 @@ export class UserOrderCheckoutViewComponent implements OnInit, OnDestroy {
           .subscribe( (resp: Order) => {
               if(resp instanceof Order) {
 
-                // to pass into orderPurchaseView and the goto url when payment is made placed
-                this.navigateUrlOnPaymentSuccess = ViewRoutes.USER_ORDER_HISTORY + '/' + resp.orderID;
+                if(resp.orderID) {
+                  this.navigateUrlOnPaymentSuccess = ViewRoutes.USER_ORDER_HISTORY + '/' + resp.orderID;
+                } else {
+                  console.error('<< UserOrderCheckoutView >> loadOrder failed, orderID is null or zero');
+                }
 
                 if(resp.merchant) {
                   console.dir("<< UserOrderCheckOutView >> loadOrder success, no issues found");

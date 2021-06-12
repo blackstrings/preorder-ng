@@ -7,8 +7,14 @@
 <!-- place order button -->
 <hr>
 <div class="row">
-  <div class="col-sm text-align-right">
-    <div [hidden]="isPaymentSuccess" class="alert alert-danger">{{paymentErrorMessage}}</div>
-    <button #placeOrderBtn id="placeOrderBtn" class="btn-dark btn" (click)="placeOrder()">Place Order</button>
-  </div>
+    <div class="col-sm text-align-right">
+      <div [hidden]="isPaymentSuccess" class="alert alert-danger">{{paymentErrorMessage}}</div>
+      <button #placeOrderBtn id="placeOrderBtn" class="btn-dark btn" (click)="placeOrder()">Place Order</button>
+    </div>
+  <ng-template *ngIf="!(onOrderPlacedProcessing$ | async) else loadingDiv"></ng-template>
 </div>
+
+<ng-template #loadingDiv>
+  <div class="small">Processing...</div>
+  <app-loading-view></app-loading-view>
+</ng-template>

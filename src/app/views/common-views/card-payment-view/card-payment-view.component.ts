@@ -1,20 +1,23 @@
-import {Component, ElementRef, OnInit, ViewChild, Input, OnDestroy} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild, Input, OnDestroy, AfterViewInit} from '@angular/core';
 import {PaymentService} from "../../../services/payment-service/payment.service";
 import {StripeCardElement} from '@stripe/stripe-js';
-import {Observable, ReplaySubject, Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {take, takeUntil} from "rxjs/operators";
 import {PaymentResponseRK} from "../../../models/payment/payment-response-rk";
-import {ViewRoutes} from "../../view-routes";
 import {Order} from "../../../models/order/order";
 import {Router} from "@angular/router";
 
-/** A view for customer to enter their card payment information */
+/**
+ * A view for customer to enter their card payment information.
+ * Use the paymentService to listen to when the payment is complete.
+ * Checks on init if the order is payable or not base on being paid already or not.
+ */
 @Component({
   selector: 'app-card-payment-view',
   templateUrl: './card-payment-view.component.html',
   styleUrls: ['./card-payment-view.component.scss']
 })
-export class CardPaymentViewComponent implements OnInit, OnDestroy {
+export class CardPaymentViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stripeCard: StripeCardElement;
 
@@ -39,9 +42,14 @@ export class CardPaymentViewComponent implements OnInit, OnDestroy {
   // to display the error message in the view
   public paymentErrorMessage: string = '';
 
+  /** when user places the order */
+  private onOrderPlacedProcessing: Subject<boolean> = new Subject<boolean>();
+  public onOrderPlacedProcessing$: Observable<boolean> = this.onOrderPlacedProcessing.asObservable();
+
   @Input()
   public loadedOrder: Order;
 
+  /** option if provided, it will auto route when payment completess */
   @Input()
   public navigateUrlOnPaymentSuccess: string;
 
@@ -49,79 +57,120 @@ export class CardPaymentViewComponent implements OnInit, OnDestroy {
 
   constructor(private paymentService: PaymentService, private router: Router) {
     console.log('<< CardPaymentView >> Init');
+    if(this.navigateUrlOnPaymentSuccess) {
+      console.log('<< CardPaymentView >> navigateUrlOnPaymentSuccess is null so next routing will be handled in here');
+    } else {
+      console.log('<< CardPaymentView >> navigateUrlOnPaymentSuccess was provided, on payment success' +
+        ' routing will go to ' + this.navigateUrlOnPaymentSuccess);
+    }
   }
 
   ngOnInit(): void {
     // check if order is passed in
     if(this.loadedOrder) {
-      this.checkOrderIsPaid(this.loadedOrder).pipe(takeUntil(this.unSub), take(1)).subscribe( (isPaid: boolean) => {
-        if(!isPaid) {
-          this.setupCard();
-          this.enablePaymentProcessing = true;
-          console.log('<< CardPaymentView >> Order is not yet paid and ready for payment');
-        } else {
-          console.error('<< CardPaymentView >> Order seem like it is already paid');
-          this.disablePlaceOrderButton(true);
-          this.enablePaymentProcessing = false;
-        }
+      this.checkOrderIsPaid(this.loadedOrder)
+        .pipe(takeUntil(this.unSub), take(1))
+        .subscribe( (isPaid: boolean) => {
+          if(!isPaid) {
+            this.setupCard();
+            this.enablePaymentProcessing = true;
+            console.log('<< CardPaymentView >> Order is not yet paid and ready for payment');
+          } else {
+            console.error('<< CardPaymentView >> Order seem like it is already paid');
+            this.disablePlaceOrderButton(true);
+            this.enablePaymentProcessing = false;
+          }
       });
     } else {
       console.error('<< CardPaymentView >> init failed, loadedOrder null');
     }
+
+  }
+
+  ngAfterViewInit(): void {
+
   }
 
   ngOnDestroy() {
     this.unSub.next();
   }
 
-  /** when the user is ready to make their payments toward their order */
+  /**
+   * when the user is ready to make their payments toward their order
+   * If the user disconnects after placing the order, we just have to check our server to find out
+   * where they last left off and continue from there.
+   */
   public placeOrder(): void {
     if(this.enablePaymentProcessing) {
 
       this.disablePlaceOrderButton();
 
-      this.paymentService.payWithCard(this.stripeCard, this.loadedOrder.client_token)
-        .pipe(take(1), takeUntil(this.unSub))
-        .subscribe((resp: PaymentResponseRK) => {
-            if (resp && !resp.stripeError) {
+      // todo
+      // notify the backend the user wants to place the order
+      // const validateOrderReadyForPayment: Observable<any> = new Observable<any>(() => {
+        // return this.paymentService.setOrderReadyForPayment(this.loadedOrder.orderID, this.loadedOrder.client_token)
+        //   .pipe(take(1))
+        //   .subscribe((isOkayToProcessPayment) => {
+            // once backend is notify, return back and process the payment
+      this.onOrderPlacedProcessing.next(true);
+      this.processPayment();
+      //     });
+      // });
 
-              // ===============
-              // payment Success
-              console.dir('<< CardPaymentView >> Payment: ' + resp.message);
-
-              console.warn('<< CardPaymentView >> setup webhook at backend to do payment fullfillment');
-              // Note: not recommend to handle payment full fillment on clientside and then passing to remote
-              // as user can close browser after submitting payment info
-              // so backend should be using a webhook to listen async as soon as stripe acknowledge so is backend
-              console.log(resp.paymentIntentId);
-
-              // but for now we'll do a front handling to backend without webhook
-              console.warn('todo send payment intent full fillment id to backend to change order status in backend');
-
-              if (this.navigateUrlOnPaymentSuccess) {
-                this.router.navigate([ViewRoutes.USER_ORDER_HISTORY + '/' + this.loadedOrder.orderID]);
-              } else {
-                console.warn('<< CardPaymentView >> placeOrder partial fail, navigateUrl is null');
-              }
-            } else {
-
-              // ==============
-              // payment failed
-              console.dir('<< CardPaymentView >> Payment failed');
-              console.warn('<< CardPaymentView >> Reason: ' + resp.message);
-              this.paymentErrorMessage = resp.stripeError.code;
-              console.error(this.paymentErrorMessage);
-              this.isPaymentSuccess = false;
-            }
-          },
-          (e) => {
-            console.error('<< CardPaymentView >> placeOrder error');
-            console.error(e);
-          });
 
     } else {
       console.warn('<< CardPaymentView >> palceOrder failed, enablePaymentProcessing is false due to invalid errors');
     }
+  }
+
+  /**
+   * Call this only after checking with backend to validate is okay to proceed with payment.
+   * There may be cases where the order is already paid for and if so, route to the receipt view.
+   * the caller can Subscribe to the paymentService to know when the payment is success or not
+   */
+  private processPayment(): void {
+    this.paymentService.payWithCard(this.stripeCard, this.loadedOrder.client_token)
+      .pipe(take(1), takeUntil(this.unSub))
+      .subscribe((resp: PaymentResponseRK) => {
+          if (resp && !resp.stripeError) {
+
+            // ===============
+            // payment Success
+            console.dir('<< CardPaymentView >> Payment: ' + resp.message);
+
+            console.warn('<< CardPaymentView >> setup webhook at backend to do payment fullfillment');
+            // Note: not recommend to handle payment full fillment on clientside and then passing to remote
+            // as user can close browser after submitting payment info
+            // so backend should be using a webhook to listen async as soon as stripe acknowledge so is backend
+            console.log(resp.paymentIntentId);
+
+            // but for now we'll do a front handling to backend without webhook
+            console.warn('todo send payment intent full fillment id to backend to change order status in backend');
+
+            // call to BE to notify payment on frontend went through and pass successfully
+            if (this.navigateUrlOnPaymentSuccess) {
+              console.log('<< CardPaymentView >> processPayment success, navigateUrl provided, so routing to ' + this.navigateUrlOnPaymentSuccess);
+              this.router.navigate([this.navigateUrlOnPaymentSuccess]);
+            }
+
+          } else {
+
+            // ==============
+            // payment failed
+            console.dir('<< CardPaymentView >> Payment failed');
+            console.warn('<< CardPaymentView >> Reason: ' + resp.message);
+            this.paymentErrorMessage = resp.stripeError.code;
+            console.error(this.paymentErrorMessage);
+            this.isPaymentSuccess = false;
+
+          }
+          // processing is done - notify loading to stop
+          this.onOrderPlacedProcessing.next(false);
+        },
+        (e) => {
+          console.error('<< CardPaymentView >> placeOrder error');
+          console.error(e);
+        });
   }
 
   /** when the user place order, we disable to prevent unnecessary processing until we hear back from payment service */
@@ -188,7 +237,7 @@ export class CardPaymentViewComponent implements OnInit, OnDestroy {
           }
         });
       } else {
-        console.error('<< UserOrderCheckOutView >> checkOrderIsPaid failed, order or order client token null');
+        console.error('<< CardPaymentView >> checkOrderIsPaid failed, order or order client token null');
         subscriber.next(false);
       }
 

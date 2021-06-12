@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {loadStripe, Stripe, StripeCardElement} from '@stripe/stripe-js';
-import {Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {PaymentResponseRK} from "../../models/payment/payment-response-rk";
 
 /**
@@ -13,6 +13,10 @@ import {PaymentResponseRK} from "../../models/payment/payment-response-rk";
 })
 export class PaymentService {
 
+  private onPaymentSuccess: Subject<boolean> = new Subject<boolean>();
+  public onPaymentSuccess$: Observable<boolean> = this.onPaymentSuccess.asObservable();
+
+  // the loaded stripe object
   private stripe: Stripe;
 
   constructor() {
@@ -46,8 +50,8 @@ export class PaymentService {
           payment_method: {
             card: card
           }
-        }).then(function(result) {
-
+        }).then((result) => {
+          // result : {error? : StripeError, paymentIntent?: PaymentIntent}
           if (result.error) {
 
             // Show error to customer
@@ -64,6 +68,7 @@ export class PaymentService {
               resp.setMessage(result.error.payment_intent.status)
             }
 
+            this.onPaymentSuccess.next(false);
             subscriber.next(resp);
             subscriber.complete();
 
@@ -76,6 +81,7 @@ export class PaymentService {
               .setMessage(result.paymentIntent.status)
               .setPaymentIntentId(result.paymentIntent.id);
 
+            this.onPaymentSuccess.next(true);
             subscriber.next(resp);
             subscriber.complete();
 
@@ -93,6 +99,18 @@ export class PaymentService {
     });
 
   }
+
+  //todo
+  // make this call after a payment is success to alert and notify backend that payment on front end is success
+  // this will also clear the order in the cart for the user once the backend receives the call
+  // the backend will also do a 2nd check to verify the payment intent is truly paid
+  // this is needed so tha a new order can be created and get a new order id
+  // public notifyPaymentSuccess(orderId: number): Observable<boolean> {
+    // do a update/put call to
+    // if(orderId) {
+    //   // orders/orderId
+    // }
+  // }
 
   // verifies an order has been paid or not
   public checkOrderIsPaid(orderClientToken: string): Observable<boolean> {
@@ -168,4 +186,5 @@ export class PaymentService {
     return null;
 
   }
+
 }

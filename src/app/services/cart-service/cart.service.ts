@@ -36,7 +36,7 @@ export class CartService {
 	private client_token: string;
 
 	/**
-	 * Handles send order
+	 * Handles sending order to the cart or getting the current active order from the cart.
 	 * @param httpWrapper
 	 */
 	constructor(private sub: CartServiceSubscription, private httpWrapper: HttpWrapperService<Order>) {
@@ -51,6 +51,31 @@ export class CartService {
 
 	public getSubmittedOrderID(): string {
 	  return this.submittedOrderID;
+  }
+
+  /**
+   * Reset the front and backend cart. This is needed to be done in the following scenarios:
+   * - order has been verified and paid for on the front end.
+   * - there is something invalid with the order and must start fresh.
+   */
+  public resetCart(token: string): Observable<boolean> {
+    this.pendingOrder = null; // clear front end regardless of backend success or not
+    if(token) {
+      const uri: string = ApiEndPoints.USER_RESET_SHOPPING_CART;
+      const body = {};
+      const options: HttpOptions = HttpBuilders.getHttpOptionsWithAuthHeaders(token);
+      return this.httpWrapper.delete(uri, options)
+        .pipe(
+          map((resp: any) => {
+            console.log('<< CartService >> resetCart success');
+            console.log(resp);
+            return resp;
+          })
+        );
+    } else {
+      console.log('<< CartService >> resetCart failed, token null');
+      return of(false);
+    }
   }
 
   /**
@@ -115,7 +140,8 @@ export class CartService {
 
 	/**
 	 * validate order before allowing proceed to check and or submission of the order to merchant.
-	 * - check order date is valid against the merchant open times
+   * todo
+	 * - if order is for current business day, check order date is valid against the merchant's open time
 	 * - check order qty is legit against merchant's rules
 	 */
 	private preValidateOrder(token: string, order: Order): Observable<boolean | HttpErrorContainer> {

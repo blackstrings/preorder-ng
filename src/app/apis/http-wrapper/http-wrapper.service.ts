@@ -72,6 +72,10 @@ export class HttpWrapperService<T> {
     return this.getByLocation('', this.apiVersion + uri, httpOptions, timeout);
   }
 
+  public delete(uri: string, httpOptions: HttpOptions = new HttpOptions(), timeout: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.deleteByLocation(this.apiVersion + uri, '', httpOptions, timeout);
+  }
+
   public postByLocation(uri: string, location: string = '', body: any = null, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
     return this.httpClient
       .post<T>(location + uri, body, {params: options.params, headers: options.headers})
@@ -95,6 +99,16 @@ export class HttpWrapperService<T> {
   public getByLocation(location: string = '', uri: string, options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
     return this.httpClient
       .get<T>(location + uri, {params: options.params, headers: options.headers})
+      .pipe(
+        timeout(timeoutVal),
+        map( (resp: T) => { return resp }),
+        catchError(this.handleError)
+      );
+  }
+
+  public deleteByLocation(uri: string, location: string = '', options: HttpOptions = null, timeoutVal: number = 20000): Observable<T | HttpErrorContainer> {
+    return this.httpClient
+      .delete<T>(location + uri, {params: options.params, headers: options.headers})
       .pipe(
         timeout(timeoutVal),
         map( (resp: T) => { return resp }),

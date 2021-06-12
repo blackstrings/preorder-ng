@@ -17,6 +17,8 @@ export class ApiEndPoints {
   public static readonly USER_ORDER: string = 'orders';
   public static readonly EDIT: string = 'edit';
   public static readonly USER_PRE_VALIDATE_ORDER: string = 'ordervalidate';
+  public static readonly USER_RESET_SHOPPING_CART: string = 'delete_shopping_cart';
+
   public static readonly MERCHANT: string = 'merchants';
   public static readonly MERCHANT_CREATE: string = 'merchants';
   public static readonly MERCHANT_LIST: string = 'merchants';
