@@ -15,7 +15,7 @@ import {User} from "../../models/user/user";
 export class UserService {
 
   // Use UserServiceSubscription to listen to the subjects
-  private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  private _onLogin: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
 
   /**
    * This is a front end expire timer regardless of what's set in the backend.
